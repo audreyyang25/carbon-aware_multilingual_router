@@ -1,0 +1,1 @@
+# Initialize algorithm comparison module

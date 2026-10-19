@@ -1,0 +1,115 @@
+defaults:
+  datasets: ['all']
+  samples_per_dataset: 500
+  model_ids: ['all']
+  random_seed: &standard_random_seed 40
+  lambda_weight: &standard_lambda_weight 0.5
+  n_runs: &standard_n_runs 5
+  features: &standard_features ['dataset_index', 'complexity', 'semantic_cluster']
+  
+epsilon_greedy_defaults: &epsilon_greedy_defaults
+  initial_epsilon: 1.0
+  decay_factor: 0.98
+  min_epsilon: 0.01
+
+linear_epsilon_greedy_defaults: &linear_epsilon_greedy_defaults
+  initial_epsilon: 1.0
+  decay_factor: 0.985
+  min_epsilon: 0.01
+  lambda_: 0.25
+
+linucb_defaults: &linucb_defaults
+  alpha: 0.1
+  regularization: 0.05
+
+thompson_sampling_defaults: &thompson_sampling_defaults
+  sigma: 0.25
+  prior_variance: 2
+
+X0_warmup:
+  category: 'Algorithm Warm-up'
+  lambda_weight: *standard_lambda_weight
+  random_seed: *standard_random_seed
+  algorithms:
+    epsilon_greedy:
+      <<: *epsilon_greedy_defaults
+    contextual_epsilon_greedy:
+      <<: *linear_epsilon_greedy_defaults
+    linucb:
+      <<: *linucb_defaults
+
+X1_algorithm_comparison:
+  category: 'Algorithm Bakeoff'
+  n_runs: *standard_n_runs
+  lambda_weight: *standard_lambda_weight
+  random_seed: *standard_random_seed
+  features: *standard_features
+  algorithms:
+    epsilon_greedy:
+      <<: *epsilon_greedy_defaults
+    linear_epsilon_greedy:
+      <<: *linear_epsilon_greedy_defaults
+    linucb:
+      <<: *linucb_defaults
+    thompson_sampling:
+      <<: *thompson_sampling_defaults
+
+X2_feature_ablation:
+  category: 'Feature Ablation'
+  active_algorithm: 'linucb'
+  lambda_weight: *standard_lambda_weight
+  random_seed: *standard_random_seed
+  n_runs: *standard_n_runs
+  feature_sets:
+    - 'none'
+    - 'task'
+    - 'cluster'
+    - 'complex'
+    - 'task_cluster'
+    - 'task_complex'
+    - 'cluster_complex'
+    - 'full'
+  exclude_models: [ ]
+  algorithms:
+    epsilon_greedy:
+      <<: *epsilon_greedy_defaults
+    linear_epsilon_greedy:
+      <<: *linear_epsilon_greedy_defaults
+    linucb:
+      <<: *linucb_defaults
+    thompson_sampling:
+      <<: *thompson_sampling_defaults
+
+X3_lambda_sweep:
+  category: 'Lambda Parameter Sweep'
+  n_runs: *standard_n_runs
+  random_seed: *standard_random_seed
+  lambda_weight: *standard_lambda_weight
+  features: *standard_features
+  lambda_values: [0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]
+  algorithms:
+    epsilon_greedy:
+      <<: *epsilon_greedy_defaults
+    linear_epsilon_greedy:
+      <<: *linear_epsilon_greedy_defaults
+    linucb:
+      <<: *linucb_defaults
+    thompson_sampling:
+      <<: *thompson_sampling_defaults
+
+X4_adaptability:
+  category: 'Model Pool Adaptability'
+  n_runs: *standard_n_runs
+  lambda_weight: *standard_lambda_weight
+  random_seed: *standard_random_seed
+  features: *standard_features
+  change_point_query_index: 1000
+  model_to_add: 'gemma-3-12b'
+  model_to_remove: 'llama-3.1-8b'
+  active_algorithm: 'linucb'
+  algorithms:
+    linucb:
+      <<: *linucb_defaults
+    thompson_sampling:
+      <<: *thompson_sampling_defaults
+
