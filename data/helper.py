@@ -6,102 +6,71 @@ from datasets import Dataset
 dataset_config = load_config("datasets")["datasets"]
 
 
-def restructure_mmlu(entry, config):
-    """Convert mmlu format to standard format"""
+def restructure_xnli(entry, config):
+    """Convert xnli format to standard format"""
     input1_col = config.get("input1", "")
-    input2_col = config.get("input2", [])
+    input2_col = config.get("input2", "")
     reference_col = config.get("reference", "")
 
     return {
         'input1': entry[input1_col],
         'input2': entry[input2_col],
-        'reference': entry[reference_col]
+        'reference': int(entry[reference_col])  # 0 entailment, 1 neutral, 2 contradiction
     }
 
 
-def restructure_hellaswag(entry, config):
-    """Convert hellaswag format to standard format"""
-    input1_col = config.get("input1", "")
-    input2_col = config.get("input2", [])
-    reference_col = config.get("reference", "")
-
-    return {
-        'input1': entry[input1_col],
-        'input2': entry[input2_col],
-        'reference': entry[reference_col]
-    }
-
-
-def restructure_winogrande(entry, config):
-    """Convert winogrande format to standard format"""
-    input1_col = config.get("input1", "")
+def restructure_belebele(entry, config):
+    """Convert belebele format to standard format"""
+    passage_col, question_col = config.get("input1", [])
     input2 = [entry[col] for col in config.get("input2", [])]
     reference_col = config.get("reference", "")
-    reference = str(int(entry[reference_col]) - 1)  # Convert to 0-based index
 
     return {
-        'input1': entry[input1_col],
+        'input1': entry[passage_col] + "\nQuestion:\n" + entry[question_col],
         'input2': input2,
-        'reference': reference
+        'reference': int(entry[reference_col]) - 1  # Convert "1"-"4" to 0-based index
     }
 
 
-def restructure_gsm8k(entry, config):
-    """Convert gsm8k format to standard format"""
+def restructure_mgsm(entry, config):
+    """Convert mgsm format to standard format"""
     input1_col = config.get("input1", "")
-    input1 = entry[input1_col] + "\n\nAnswer:\n"
-    reference_col = config.get("reference", "") 
-    reference = entry[reference_col].split("####")[1].strip()
-
-    return {
-        'input1': input1,
-        'reference': reference
-    }
-
-
-def restructure_cnn_dailymail(entry, config):
-    """Convert cnn_dailymail format to standard format"""
-    input1_col = config.get("input1", "")
-    input1 = entry[input1_col] + "\n\nSummary:\n"
     reference_col = config.get("reference", "")
 
     return {
-        'input1': input1,
-        'reference': entry[reference_col]
+        'input1': entry[input1_col],
+        'reference': str(entry[reference_col])  # answer_number; the 'answer' column is empty in test
     }
+
+
+RESTRUCTURE_FUNCTIONS = {
+    "xnli": restructure_xnli,
+    "belebele": restructure_belebele,
+    "mgsm": restructure_mgsm,
+}
 
 
 def preprocess_dataset(dataset_name, dataset):
-    """Apply dataset-specific preprocessing"""
+    """Apply dataset-specific preprocessing.
+
+    Keeps any align_key columns (e.g. belebele's link/question_number) as 'item_key'
+    so the same item can be matched across languages.
+    """
     print("Preprocessing dataset: ", dataset_name)
-    print("First entry:", dataset[0])
-    
-    # Create a new list to hold processed entries
-    processed_entries = []
-    config = dataset_config[dataset_name]["columns"]
 
-    if dataset_name == "hellaswag":
-        for entry in dataset:
-            processed_entries.append(restructure_hellaswag(entry, config))
-    elif dataset_name == "winogrande":
-        for entry in dataset:
-            processed_entries.append(restructure_winogrande(entry, config))
-    elif dataset_name == "gsm8k":
-        for entry in dataset:
-            processed_entries.append(restructure_gsm8k(entry, config))
-    elif dataset_name == "mmlu":
-        for entry in dataset:
-            processed_entries.append(restructure_mmlu(entry, config))
-    elif dataset_name == "cnn_dailymail":
-        for entry in dataset:
-            processed_entries.append(restructure_cnn_dailymail(entry, config))
-    else:
+    if dataset_name not in RESTRUCTURE_FUNCTIONS:
         raise ValueError(f"No preprocessing function for {dataset_name} found")
+    restructure = RESTRUCTURE_FUNCTIONS[dataset_name]
+    config = dataset_config[dataset_name]["columns"]
+    align_key = dataset_config[dataset_name].get("align_key")
 
-    # Convert processed entries to a new dataset
+    processed_entries = []
+    for entry in dataset:
+        processed = restructure(entry, config)
+        if align_key:
+            processed['item_key'] = "#".join(str(entry[col]) for col in align_key)
+        processed_entries.append(processed)
+
     new_dataset = Dataset.from_list(processed_entries)
-    
     print("First entry after preprocessing:", new_dataset[0])
-    # Default: return as-is
-    print("Processed Dataset: ", new_dataset)
     return new_dataset

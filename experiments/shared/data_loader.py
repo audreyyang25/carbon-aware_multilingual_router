@@ -43,7 +43,7 @@ def load_evaluation_dataset(
         sampled_queries_list = []
         for dataset in all_queries_df["dataset"].unique():
             dataset_queries = all_queries_df[all_queries_df["dataset"] == dataset]
-            if len(dataset_queries) > samples_per_dataset:
+            if samples_per_dataset and len(dataset_queries) > samples_per_dataset:
                 dataset_samples = dataset_queries.sample(
                     n=samples_per_dataset, random_state=random_seed
                 )

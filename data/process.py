@@ -4,10 +4,69 @@ import sys
 import pandas as pd
 import random
 import argparse
+from collections import defaultdict
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from config.manager import load_config
 from data.load import load_datasets
 from data.helper import preprocess_dataset
+
+
+def difficulty_strata(pivot_dataset, stratify):
+    """Assign each pivot item a stratum from difficulty proxies (label, length tertile)."""
+    keys = [[] for _ in range(len(pivot_dataset))]
+    if "label" in stratify:
+        for i, example in enumerate(pivot_dataset):
+            keys[i].append(str(example["reference"]))
+    if "length" in stratify:
+        lengths = [
+            len(example["input1"]) + len(str(example.get("input2") or ""))
+            for example in pivot_dataset
+        ]
+        tertiles = pd.qcut(lengths, 3, labels=False, duplicates="drop")
+        for i, t in enumerate(tertiles):
+            keys[i].append(f"len{t}")
+    return ["|".join(k) for k in keys]
+
+
+def select_items(pivot_dataset, n, stratify, seed):
+    """Pick n pivot-language item positions, balanced across difficulty strata.
+
+    Draws round-robin from each stratum so every label/length bucket is equally represented.
+    """
+    if n is None or n >= len(pivot_dataset):
+        return list(range(len(pivot_dataset)))
+
+    rng = random.Random(seed)
+    groups = defaultdict(list)
+    for i, stratum in enumerate(difficulty_strata(pivot_dataset, stratify or [])):
+        groups[stratum].append(i)
+    for members in groups.values():
+        rng.shuffle(members)
+
+    selected = []
+    strata = sorted(groups)
+    while len(selected) < n and any(groups[s] for s in strata):
+        for s in strata:
+            if groups[s] and len(selected) < n:
+                selected.append(groups[s].pop())
+    return sorted(selected)
+
+
+def align_items(pivot_dataset, dataset, pivot_items):
+    """Map pivot positions to the same items in another language (by item_key, else by position)."""
+    if "item_key" in pivot_dataset.column_names:
+        position = {key: i for i, key in enumerate(dataset["item_key"])}
+        missing = [pivot_dataset[i]["item_key"] for i in pivot_items if pivot_dataset[i]["item_key"] not in position]
+        if missing:
+            raise KeyError(f"{len(missing)} items not found in this language, e.g. {missing[:3]}")
+        return [position[pivot_dataset[i]["item_key"]] for i in pivot_items]
+
+    if len(dataset) != len(pivot_dataset):
+        raise ValueError(
+            f"Row counts differ ({len(dataset)} vs pivot {len(pivot_dataset)}); set align_key in config/datasets.yaml"
+        )
+    return list(pivot_items)
+
 
 class DataProcessor:
     """Process datasets according to configuration"""
@@ -19,10 +78,11 @@ class DataProcessor:
         self.columns = self.config.get("columns", {})
         self.preprocessing = self.config.get("preprocessing", {})
         
-    def process_example(self, example):
+    def process_example(self, example, language=None):
         """Process a single example to standardized format"""
         processed = {
             "dataset": self.name,
+            "language": language,
         }
         
         input_text = example["input1"]
@@ -77,24 +137,19 @@ class DataProcessor:
         
         return processed
         
-    def process_dataset(self, dataset, n_samples=None, seed=None):
-        """Process dataset and convert to DataFrame"""        
-        if seed is None:
-            general_config = load_config("general")
-            seed = general_config.get("random_seed", 40)
-        
-        if n_samples is not None and n_samples < len(dataset):
-            random.seed(seed)
-            indices = random.sample(range(len(dataset)), n_samples)
-            dataset = dataset.select(indices)
-        
-        # Process all examples
+    def process_dataset(self, dataset, language, indices, pivot_items):
+        """Process the selected rows of one language and convert to DataFrame.
+
+        indices are row positions in this language; pivot_items are the matching
+        pivot-language positions, used as the shared item id across languages.
+        """
         processed_data = []
-        for i, example in enumerate(dataset):
-            processed = self.process_example(example)
-            processed["id"] = f"{self.name}_{i+1}"
+        for row, item in zip(indices, pivot_items):
+            processed = self.process_example(dataset[row], language)
+            processed["item_id"] = f"{self.name}_{item:04d}"
+            processed["id"] = f"{self.name}_{language}_{item:04d}"
             processed_data.append(processed)
-        
+
         # Convert to DataFrame
         return pd.DataFrame(processed_data)
     
@@ -135,33 +190,47 @@ def main():
     """Download, process and save datasets as CSV"""
     parser = argparse.ArgumentParser(description="Process datasets into CSV files")
     parser.add_argument("--datasets", nargs="*", help="Specific datasets to process")
-    parser.add_argument("--samples", type=int, help="Number of samples per dataset")
-    
+    parser.add_argument("--languages", nargs="*", help="Specific languages to process (pivot is always loaded)")
+    parser.add_argument("--samples", type=int, help="Override sampling.n for every dataset (e.g. a small dry run)")
+
     args = parser.parse_args()
-    
+
     # Get config
     general_config = load_config("general")
-    samples_per_dataset = args.samples or general_config.get("samples_per_dataset", 500)
+    datasets_config = load_config("datasets")
+    seed = general_config.get("random_seed", 40)
     output_dir = general_config.get("preprocessed_dir", "data/preprocessed")
-    
+    pivot = datasets_config.get("pivot_language", "en")
+
     # Load datasets from HuggingFace
-    datasets = load_datasets(args.datasets)
-    
+    languages = sorted(set(args.languages) | {pivot}) if args.languages else None
+    datasets = load_datasets(args.datasets, languages=languages)
+
     all_data = []
     # Process each dataset
-    for name, dataset in datasets.items():
+    for name, by_language in datasets.items():
         print(f"Processing {name}...")
-        
+        if pivot not in by_language:
+            raise ValueError(f"{name}: pivot language '{pivot}' failed to load")
+
         # Apply dataset-specific preprocessing
-        preprocessed_dataset = preprocess_dataset(name, dataset)
-        
+        preprocessed = {lang: preprocess_dataset(name, ds) for lang, ds in by_language.items()}
+
         processor = DataProcessor(name)
-        
-        # Process dataset
-        df = processor.process_dataset(
-            preprocessed_dataset, 
-            n_samples=samples_per_dataset
-        )
+        sampling = processor.config.get("sampling", {})
+        n_samples = args.samples or sampling.get("n")
+
+        # Choose items once on the pivot language, then take the same items everywhere
+        pivot_items = select_items(preprocessed[pivot], n_samples, sampling.get("stratify"), seed)
+        print(f"Selected {len(pivot_items)} {name} items (stratify={sampling.get('stratify')})")
+
+        frames = []
+        for lang, dataset in preprocessed.items():
+            if args.languages and lang not in args.languages:
+                continue
+            indices = align_items(preprocessed[pivot], dataset, pivot_items)
+            frames.append(processor.process_dataset(dataset, lang, indices, pivot_items))
+        df = pd.concat(frames, ignore_index=True)
         print("df:", df.head())
         # Save individual dataset
         processor.save_to_csv(df, output_dir)

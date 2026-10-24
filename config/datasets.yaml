@@ -1,101 +1,58 @@
 # config/datasets.yaml
+# Single source of truth for benchmarks and sampling (read by data/ and experiments/).
+#
+# sampling:
+#   n:        items per benchmark; the same items are used in every language
+#   stratify: difficulty proxies, computed on the pivot language
+#             label  = answer class (balances XNLI labels)
+#             length = short/medium/long tertile of the input text
+# align_key: columns that identify the same item across languages (default: row position)
+
+pivot_language: "en"
+
 datasets:
-  mmlu:
-    load_params:
-      path: "cais/mmlu"
-      name: "all"
+  xnli:
+    load_params: {path: "facebook/xnli"}
     split: "test"
-    columns:
-      input1: "question"
-      input2: "choices"
-      reference: "answer"
+    languages: {en: en, de: de, es: es, fr: fr, ru: ru, zh: zh, th: th, sw: sw}
+    sampling: {n: 250, stratify: [label, length]}
+    columns: {input1: "premise", input2: "hypothesis", reference: "label"}   # 0 entail, 1 neutral, 2 contradict
     preprocessing:
-      input1_prefix: "Choose the correct answer. Respond with a single letter.\nQuestion:\n"
+      input1_prefix: "Does the premise entail the hypothesis? Respond with a single letter.\nPremise:\n"
+      input2_prefix: "Hypothesis:\n"
+      output_prefix: "\nA. entailment\nB. neutral\nC. contradiction\nAnswer:\n"
+      reference_mapping: "index_to_letter"
+    extraction: {method: "multiple_choice", pattern: "([A-C])"}
+    evaluation_metric: "exact_match"
+    generation: {max_new_tokens: 1, stop_sequence: ["\n"]}
+
+  belebele:
+    load_params: {path: "facebook/belebele"}
+    split: "test"
+    languages: {en: eng_Latn, de: deu_Latn, es: spa_Latn, fr: fra_Latn, ru: rus_Cyrl, zh: zho_Hans, th: tha_Thai, sw: swh_Latn}
+    sampling: {n: 250, stratify: [length]}
+    align_key: ["link", "question_number"]
+    columns:
+      input1: ["flores_passage", "question"]
+      input2: ["mc_answer1", "mc_answer2", "mc_answer3", "mc_answer4"]
+      reference: "correct_answer_num"          # "1"–"4", so subtract 1
+    preprocessing:
+      input1_prefix: "Read the passage and choose the correct answer. Respond with a single letter.\n"
       input2_prefix: "Options:\n"
       output_prefix: "Answer:\n"
       reference_mapping: "index_to_letter"
-    extraction:
-      method: "multiple_choice"
-      pattern: "([A-D])"
+    extraction: {method: "multiple_choice", pattern: "([A-D])"}
     evaluation_metric: "exact_match"
-    generation:
-      max_new_tokens: 1
-      stop_sequence: ["\n"]
+    generation: {max_new_tokens: 1, stop_sequence: ["\n"]}
 
-  hellaswag:
-    load_params:
-      path: "Rowan/hellaswag"
-      name: ""
-      split: "validation"
-    columns:
-      input1: "ctx"
-      input2: "endings"
-      reference: "label"
-    preprocessing:
-      input1_prefix: "Choose the correct answer. Respond with a single letter.\nContext:\n"
-      input2_prefix: "Options:\n"
-      output_prefix: "Answer:\n"
-      reference_mapping: "index_to_letter"
-    extraction:
-      method: "multiple_choice"
-      pattern: "([A-D])"
-    evaluation_metric: "exact_match"
-    generation:
-      max_new_tokens: 1
-      stop_sequence: ["\n"]
-
-  winogrande:
-    load_params:
-      path: "allenai/winogrande"
-      name: "winogrande_xl"
-      split: "validation"
-    columns:
-      input1: "sentence"
-      input2: ["option1", "option2"]
-      reference: "answer"
-    preprocessing:
-      input1_prefix: "Choose the correct answer. Respond with a single letter.\nContext:\n"
-      input2_prefix: "Options:\n"
-      output_prefix: "Answer:\n"
-      reference_mapping: "index_to_letter"
-    extraction:
-      method: "multiple_choice"
-      pattern: "([A-B])"
-    evaluation_metric: "exact_match"
-    generation:
-      max_new_tokens: 1
-      stop_sequence: ["\n"]
-
-  gsm8k:
-    load_params:
-      path: "gsm8k"
-      name: "main"
-      split: "test"
-    columns:
-      input1: "question"
-      reference: "answer"
+  mgsm:
+    load_params: {path: "juletxara/mgsm"}
+    split: "test"
+    languages: {en: en, de: de, es: es, fr: fr, ru: ru, zh: zh, th: th, sw: sw}
+    sampling: {n: 250, stratify: [length]}     # MGSM has 250 items, so this takes all of them
+    columns: {input1: "question", reference: "answer_number"}
     preprocessing:
       input1_prefix: "Solve this step by step. Provide your final answer in the format 'Answer: <answer> ####'.\nQuestion:\n"
-    extraction:
-      method: "numeric"
+    extraction: {method: "numeric"}
     evaluation_metric: "exact_match"
-    generation:
-      max_new_tokens: 256
-      stop_sequence: ["####"]
-      
-  cnn_dailymail:
-    load_params:
-      path: "cnn_dailymail"
-      name: "3.0.0"
-      split: "test"
-    columns:
-      input1: "article"
-      reference: "highlights"
-    preprocessing:
-      input1_prefix: "Write 2-3 concise sentences summarizing the key details of the article. End with ####.\nArticle:\n"
-    extraction:
-      method: "raw"
-    evaluation_metric: "rouge"
-    generation:
-      max_new_tokens: 128
-      stop_sequence: ["####", "\n\n\n"]
+    generation: {max_new_tokens: 512, stop_sequence: ["####"]}

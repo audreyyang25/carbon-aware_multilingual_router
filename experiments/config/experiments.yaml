@@ -1,6 +1,6 @@
 defaults:
   datasets: ['all']
-  samples_per_dataset: 500
+  samples_per_dataset: null  # use every ingested query; items are chosen once in config/datasets.yaml
   model_ids: ['all']
   random_seed: &standard_random_seed 40
   lambda_weight: &standard_lambda_weight 0.5

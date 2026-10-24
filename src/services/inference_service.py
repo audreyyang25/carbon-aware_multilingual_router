@@ -130,21 +130,53 @@ class InferenceService:
         """Run a warm-up inference to initialize model compilation and caches"""
         logger.info(f"Warming up model {self.loaded_model_id}")
         try:
-            warm_up_text = "Hello, how are you today?"
-            inputs = tokenizer(warm_up_text, return_tensors="pt").to(model.device)
+            warm_up_text, add_special_tokens = self._format_prompt(
+                "Hello, how are you today?", tokenizer
+            )
+            inputs = tokenizer(
+                warm_up_text, return_tensors="pt", add_special_tokens=add_special_tokens
+            ).to(model.device)
             with torch.no_grad():
                 _ = model.generate(inputs.input_ids, max_new_tokens=20, do_sample=False)
             logger.info("Model warm-up complete")
         except Exception as e:
             logger.warning(f"Model warm-up failed: {e}")
 
+    def _format_prompt(self, query_text, tokenizer):
+        """Wrap the query in the model's chat template (thinking off by default).
+
+        Returns (prompt, add_special_tokens). Per-model template options can be set
+        with `chat_template_kwargs` in config/models.yaml.
+        """
+        if not getattr(tokenizer, "chat_template", None):
+            return query_text, True
+
+        model_config = self.model_configs.get(self.loaded_model_id, {})
+        template_kwargs = {
+            "enable_thinking": False,
+            **model_config.get("chat_template_kwargs", {}),
+        }
+        prompt = tokenizer.apply_chat_template(
+            [{"role": "user", "content": query_text}],
+            tokenize=False,
+            add_generation_prompt=True,
+            **template_kwargs,
+        )
+        # The template already includes BOS/special tokens
+        return prompt, False
+
     def _prepare_generation_params(
         self, query_text, tokenizer, generation_parameters=None
     ):
         """Prepare generation parameters and inputs"""
 
+        prompt, add_special_tokens = self._format_prompt(query_text, tokenizer)
         inputs = tokenizer(
-            query_text, return_tensors="pt", truncation=True, max_length=8192
+            prompt,
+            return_tensors="pt",
+            truncation=True,
+            max_length=8192,
+            add_special_tokens=add_special_tokens,
         ).to(self.device)
         input_tokens = inputs.input_ids.shape[1]
         gen_params = {
