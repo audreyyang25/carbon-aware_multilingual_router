@@ -8,25 +8,38 @@ from src.metrics.normalizer import MetricNormalizer
 logger = logging.getLogger(__name__)
 
 
+def energy_cost(row, ci, ctx):
+    """GreenServ cost: normalized energy per token (ignores grid intensity)."""
+    return row["energy_per_token_norm"]
+
+
+def carbon_cost(row, ci, ctx):
+    """Normalized carbon per query; ctx["carbon_normalizer"] is a CarbonNormalizer."""
+    return ctx["carbon_normalizer"].cost(row["energy_consumption"], ci, row["dataset"])
+
+
+COST_FUNCTIONS = {"energy": energy_cost, "carbon": carbon_cost}
+
+
 def calculate_reward(
-    accuracy_norm: float, energy_norm: float, lambda_weight: float
+    accuracy_norm: float, cost_norm: float, lambda_weight: float
 ) -> float:
-    """Calculate reward based on normalized accuracy and energy.
+    """Calculate reward based on normalized accuracy and cost.
 
     Args:
         accuracy_norm (float): Normalized accuracy (0 to 1).
-        energy_norm (float): Normalized energy (0 to 1, where 0 is best).
-        lambda_weight (float): Weight for energy efficiency (0 to 1).
+        cost_norm (float): Normalized energy or carbon (0 to 1, where 0 is best); user designates which cost is used.
+        lambda_weight (float): Weight for cost efficiency (0 to 1).
 
     Returns:
         float: Calculated reward (0 to 1), or NaN if inputs are NaN.
     """
-    if pd.isna(accuracy_norm) or pd.isna(energy_norm):
+    if pd.isna(accuracy_norm) or pd.isna(cost_norm):
         return np.nan
-    energy_efficiency_norm = 1.0 - energy_norm
+    cost_efficiency_norm = 1.0 - cost_norm
     reward = (
         1.0 - lambda_weight
-    ) * accuracy_norm + lambda_weight * energy_efficiency_norm
+    ) * accuracy_norm + lambda_weight * cost_efficiency_norm
     return max(0.0, min(1.0, reward))
 
 
