@@ -6,7 +6,13 @@ import json
 from psycopg2.extras import execute_values
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from config.manager import load_config
 from db.connect import get_connection
+
+
+def read_preprocessed(path):
+    """Read a preprocessed CSV keeping references as text ("18", "B") and words like "NA" intact."""
+    return pd.read_csv(path, dtype={"reference": str}, keep_default_na=False)
 
 def load_queries(conn, dataset_path, clear_existing=False):
     """Load queries from the preprocessed dataset into the database"""
@@ -14,7 +20,7 @@ def load_queries(conn, dataset_path, clear_existing=False):
         print(f"Dataset file not found: {dataset_path}")
         return
         
-    df = pd.read_csv(dataset_path)
+    df = read_preprocessed(dataset_path)
     cursor = conn.cursor()
     
     if clear_existing:
@@ -37,6 +43,8 @@ def load_queries(conn, dataset_path, clear_existing=False):
         query_data.append((
             row["processed_input"],
             row["dataset"],
+            row.get("language") or None,
+            row.get("item_id") or None,
             row["reference"],
             extraction_method,
             evaluation_metrics,
@@ -47,13 +55,72 @@ def load_queries(conn, dataset_path, clear_existing=False):
     execute_values(
         cursor,
         """INSERT INTO queries 
-           (text, dataset, reference, extraction_method, evaluation_metrics, 
+           (text, dataset, language, item_id, reference, extraction_method, evaluation_metrics, 
             generation_parameters, source_id) 
-           VALUES %s RETURNING query_id""",
+           VALUES %s
+           ON CONFLICT (source_id) DO NOTHING""",
         query_data
     )
     
-    print(f"Loaded {len(query_data)} queries")
+    print(f"Loaded {len(query_data)} queries (existing source_ids skipped)")
+    cursor.close()
+
+
+def load_models(conn):
+    """Upsert the model pool from config/models.yaml into the models table."""
+    models = load_config("models")
+    cursor = conn.cursor()
+    execute_values(
+        cursor,
+        """INSERT INTO models (model_id, name, parameter_count, model_type)
+           VALUES %s
+           ON CONFLICT (model_id) DO UPDATE
+           SET name = EXCLUDED.name, parameter_count = EXCLUDED.parameter_count,
+               model_type = EXCLUDED.model_type""",
+        # parameter_count is BIGINT: store raw parameters, config is in billions
+        [(model_id, cfg["name"], int(float(cfg["parameter_count"]) * 1e9), cfg.get("family"))
+         for model_id, cfg in models.items()],
+    )
+    print(f"Upserted {len(models)} models")
+    cursor.close()
+
+
+def load_results(conn, results_path, run_id=0):
+    """Load generation results (JSONL from data/generate.py) into pregenerated_results.
+
+    Rows are matched to queries by source_id, so ingest the queries first.
+    """
+    load_models(conn)
+    results = pd.read_json(results_path, lines=True, dtype={"source_id": str})
+    cursor = conn.cursor()
+    cursor.execute("SELECT source_id, query_id FROM queries WHERE source_id IS NOT NULL")
+    query_ids = dict(cursor.fetchall())
+
+    missing = sorted(set(results["source_id"]) - set(query_ids))
+    if missing:
+        print(f"Warning: {len(missing)} results have no matching query (e.g. {missing[:3]}); skipping them")
+
+    rows = [
+        (query_ids[r.source_id], r.model_id, run_id, r.generated_output, float(r.accuracy),
+         float(r.energy_consumption), float(r.latency), int(r.input_tokens), int(r.output_tokens),
+         r.hardware, r.energy_method, r.timestamp)
+        for r in results.itertuples() if r.source_id in query_ids
+    ]
+    execute_values(
+        cursor,
+        """INSERT INTO pregenerated_results
+           (query_id, model_id, run_id, generated_output, accuracy, energy_consumption,
+            latency, input_tokens, output_tokens, hardware, energy_method, timestamp)
+           VALUES %s
+           ON CONFLICT (query_id, model_id, run_id) DO UPDATE
+           SET generated_output = EXCLUDED.generated_output, accuracy = EXCLUDED.accuracy,
+               energy_consumption = EXCLUDED.energy_consumption, latency = EXCLUDED.latency,
+               input_tokens = EXCLUDED.input_tokens, output_tokens = EXCLUDED.output_tokens,
+               hardware = EXCLUDED.hardware, energy_method = EXCLUDED.energy_method,
+               timestamp = EXCLUDED.timestamp""",
+        rows,
+    )
+    print(f"Loaded {len(rows)} results from {results_path}")
     cursor.close()
 
 def update_queries(conn, dataset_path, start_id, exclude=None):
@@ -180,11 +247,20 @@ def main():
     parser.add_argument("--exclude", nargs='+', help="Fields to exclude from update")
     parser.add_argument("--append-skip-rows", type=int, help="Number of rows to skip in the input CSV when appending")
     parser.add_argument("--append-start-id", type=int, help="The starting query_id for the appended data")
+    parser.add_argument("--results-file", help="JSONL from data/generate.py to load into pregenerated_results")
+    parser.add_argument("--run-id", type=int, default=0, help="run_id for --results-file")
     args = parser.parse_args()
     
     conn = get_connection()
     if not conn:
         print("Failed to connect to database")
+        return
+
+    if args.results_file:
+        try:
+            load_results(conn, args.results_file, args.run_id)
+        finally:
+            conn.close()
         return
     
     dataset_path = None # Initialize dataset_path

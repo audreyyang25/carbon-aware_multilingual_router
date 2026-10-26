@@ -30,6 +30,35 @@ class RegexAnswerExtractor(BaseAnswerExtractor):
             return response.strip()
 
 
+# A number with optional thousands groups (1,000 / 1.000 / 1 000) and decimals.
+# \d also matches native digits (e.g. Thai), which float() understands.
+NUMBER_PATTERN = r"\d+(?:[,.\u00a0\u202f ]\d{3})*(?:[.,]\d+)?"
+
+
+def canonical_number(text):
+    """Parse a number string in US or European format; return e.g. "1000" or "2.5" (or "")."""
+    if text is None:
+        return ""
+    s = re.sub(r"[\u00a0\u202f ]", "", str(text).strip()).rstrip(".,")
+    if not s:
+        return ""
+    if "," in s and "." in s:
+        # Whichever separator comes last is the decimal point
+        decimal = "," if s.rfind(",") > s.rfind(".") else "."
+        s = s.replace("." if decimal == "," else ",", "").replace(decimal, ".")
+    elif "," in s or "." in s:
+        sep = "," if "," in s else "."
+        if re.fullmatch(r"\d{1,3}(?:" + re.escape(sep) + r"\d{3})+", s):
+            s = s.replace(sep, "")  # thousands separators
+        else:
+            s = s.replace(",", ".")
+    try:
+        value = float(s)
+    except ValueError:
+        return ""
+    return str(int(value)) if value.is_integer() else str(value)
+
+
 class NumericAnswerExtractor(BaseAnswerExtractor):
     """Extract numeric answers, first from 'Answer: X' format, then last number in text."""
 
@@ -39,17 +68,15 @@ class NumericAnswerExtractor(BaseAnswerExtractor):
             return ""
 
         try:
-            answer_match = re.search(r"Answer:\s*(\d[\d,\.]*)", response)
+            answer_match = re.search(
+                r"Answer:\s*[*$]*\s*(" + NUMBER_PATTERN + ")", response
+            )
             if answer_match:
-                return self._clean_number(answer_match.group(1))
-            numbers = re.findall(r"\b(\d[\d,\.]*)\b", response)
-            return self._clean_number(numbers[-1]) if numbers else ""
+                return canonical_number(answer_match.group(1))
+            numbers = re.findall(NUMBER_PATTERN, response)
+            return canonical_number(numbers[-1]) if numbers else ""
         except Exception:
             return ""
-
-    def _clean_number(self, number):
-        """Clean up a number string to standard US format."""
-        return re.sub(r"[^\d\.]", "", number.replace(",", "")).strip()
 
     @staticmethod
     def is_numeric_method(extraction_method):
@@ -64,11 +91,12 @@ class NumericAnswerExtractor(BaseAnswerExtractor):
 class MultipleChoiceExtractor(BaseAnswerExtractor):
     """Extract multiple choice answers (A, B, C, D)."""
 
-    def extract(self, response, extraction_params={}):
-        """Extract multiple choice answer from response."""
-        pattern = extraction_params.get("pattern", "([A-D])")
-        match = re.search(pattern, response)
-        return match.group(1) if match else response.strip()
+    def extract(self, response, extraction_params=None):
+        """Extract multiple choice answer from response (a standalone letter, so the
+        "A" in "Answer" doesn't count)."""
+        pattern = (extraction_params or {}).get("pattern", r"\b([A-D])\b")
+        match = re.search(pattern, response or "")
+        return match.group(1) if match else ""
 
 
 class RawTextExtractor(BaseAnswerExtractor):

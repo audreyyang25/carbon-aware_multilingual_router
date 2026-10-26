@@ -1,0 +1,661 @@
+dataset,language,processed_input,reference,max_new_tokens,stop_sequence,extraction_method,evaluation_metric,item_id,id
+belebele,en,"Read the passage and choose the correct answer. Respond with a single letter.
+Army ant colonies march and nest in different phases as well. In the nomadic phase, army ants march at night and stop to camp during the day. The colony begins a nomadic phase when available food has decreased. During this phase, the colony makes temporary nests that are changed everyday. Each of these nomadic rampages or marches lasts for approximately 17 days.
+Question:
+According to the passage, what is true of an army ant colony entering a nomadic phase?
+Options:
+A. They nest during the night
+B. They have a low supply of food
+C. They make nests that are changed after 17 days
+D. They march during the day
+Answer:
+",B,8,['\n'],multiple_choice,exact_match,belebele_0010,belebele_en_0010
+belebele,en,"Read the passage and choose the correct answer. Respond with a single letter.
+Proper nutritional practices alone cannot generate elite performances, but they can significantly affect young athletes' overall wellness. Maintaining a healthy energy balance, practicing effective hydration habits, and understanding the various aspects of supplementation practices can help athletes improve their performance and increase their enjoyment of the sport.
+Question:
+For an athlete, which of the following can not be achieved solely through nutritional practices?
+Options:
+A. Improved performance
+B. Increased enjoyment 
+C. Elite performance
+D. General wellness
+Answer:
+",C,8,['\n'],multiple_choice,exact_match,belebele_0031,belebele_en_0031
+belebele,en,"Read the passage and choose the correct answer. Respond with a single letter.
+Although AI has a strong connotation of science fiction, AI forms a very important branch of computer science, dealing with behavior, learning and intelligent adaptation in a machine. Research in AI involves making machines to automate tasks that require intelligent behavior. Examples include control, planning and scheduling, the ability to answer customer diagnoses and questions, as well as handwriting recognition, voice and face. Such things have become separate disciplines, which focus on providing solutions to real life problems. The AI ​​system is now often used in the fields of economics, medicine, engineering and the military, as has been built in several home computer and video game software applications.
+Question:
+According to the passage, which of the following is AI often associated with?
+Options:
+A. Customer service
+B. Planning and scheduling
+C. Science fiction
+D. Handwriting recognition
+Answer:
+",C,8,['\n'],multiple_choice,exact_match,belebele_0040,belebele_en_0040
+belebele,en,"Read the passage and choose the correct answer. Respond with a single letter.
+""The """"up bow"""" mark looks like a V and the """"down bow mark"""" like a staple or a square missing its bottom side. Up means you should start at the tip and push the bow, and down means you should start at the frog (which is where your hand is holding the bow) and pull the bow. An up-bow usually generates a softer sound, while a down-bow is stronger and more assertive. Feel free to pencil in your own marks, but remember the printed bowing marks are there for a musical reason, so they should usually be respected.""
+Question:
+According to the passage, which of the following is associated with gentler sound?
+Options:
+A. A down bow mark
+B. Pulling the bow
+C. A mark that looks like a V
+D. Starting where your hand is holding the bow
+Answer:
+",C,8,['\n'],multiple_choice,exact_match,belebele_0090,belebele_en_0090
+belebele,en,"Read the passage and choose the correct answer. Respond with a single letter.
+Subsistence agriculture is agriculture carried out for the production of enough food to meet just the needs of the agriculturalist and his/her family. Subsistence agriculture is a simple, often organic, system using saved seed native to the ecoregion combined with crop rotation or other relatively simple techniques to maximize yield. Historically most farmers were engaged in subsistence agriculture and this is still the case in many developing nations.
+Question:
+Which of the following accurately describes the practice of subsistence agriculture?
+Options:
+A. It's an entirely organic system
+B. It uses unique techniques to maximize crops
+C. It allows agriculturalists to share their crops throughout their region
+D. It’s still utilized by farmers in some nations
+Answer:
+",D,8,['\n'],multiple_choice,exact_match,belebele_0103,belebele_en_0103
+belebele,en,"Read the passage and choose the correct answer. Respond with a single letter.
+""Attention Deficit Disorder """"is a neurological syndrome whose classic defining triad of symptoms including impulsivity, distractibility, and hyperactivity or excess energy"""". It is not a learning disability, it is a learning disorder; it """"affects 3 to 5 percent of all children, perhaps as many as 2 million American children"""". Children with ADD have a hard time focusing on things like school work, but they can concentrate on things they enjoy doing like playing games or watching their favorite cartoons or writing sentences without punctuation. These children tend to get into a lot of trouble, because they """"engage in risky behaviors, get into fights, and challenge authority"""" in order to stimulate their brain, since their brain can not be stimulated by normal methods. ADD affects relationships with other peers because other children can not understand why they act the way that they do or why they spell they way they do or that their maturity level is different.""
+Question:
+According to the passage, why do children with Attention Deficit Disorder tend to engage in risky behaviors?
+Options:
+A. To reduce hyperactivity
+B. To help them connect with peers
+C. To get attention from their parents
+D. To stimulate their brain
+Answer:
+",D,8,['\n'],multiple_choice,exact_match,belebele_0141,belebele_en_0141
+belebele,en,"Read the passage and choose the correct answer. Respond with a single letter.
+In the warm climate of the Middle East, the house was not so important. Most of the life of the Hebrew family happened in the open air. Women did the cooking in the yard; stores were just open counters looking into the street. Stone was used for building houses. There were no large forests in the land of Canaan, so wood was extremely expensive.
+Question:
+Where did the Hebrew family spend much of their time?
+Options:
+A. In the open air
+B. In the street
+C. In the yard
+D. In the house
+Answer:
+",A,8,['\n'],multiple_choice,exact_match,belebele_0165,belebele_en_0165
+belebele,en,"Read the passage and choose the correct answer. Respond with a single letter.
+Many paleontologists today believe that one group of dinosaurs survived and is alive today. We call them birds. Many people don't think about them as dinosaurs because they have feathers and can fly. But there are a lot of things about birds that still look like a dinosaur. They have feet with scales and claws, they lay eggs, and they walk on their two back legs like a T-Rex.
+Question:
+Which of the following is not commonly considered as a shared characteristic of birds and dinosaurs?
+Options:
+A. Laying eggs
+B. Using two back legs to walk
+C. The ability to fly
+D. Feet with claws
+Answer:
+",C,8,['\n'],multiple_choice,exact_match,belebele_0202,belebele_en_0202
+belebele,en,"Read the passage and choose the correct answer. Respond with a single letter.
+Italy's national football, along with German national football team is the second most successful team in the world and were the FIFA World Cup champions in 2006. Popular sports include football, basketball, volleyball, water-polo, fencing, rugby, cycling, ice hockey, roller hockey and F1 motor racing. Winter sports are most popular in the Northern regions, with Italians competing in international games and Olympic events.
+Question:
+Based on the information given in the passage, which of the following sports won a world championship for Italy?
+Options:
+A. Football
+B. Water-polo
+C. Basketball
+D. Cycling
+Answer:
+",A,8,['\n'],multiple_choice,exact_match,belebele_0206,belebele_en_0206
+belebele,en,"Read the passage and choose the correct answer. Respond with a single letter.
+Every year around October nearly 1.5 million herbivores travel towards the southern plains, crossing the Mara River, from the northern hills for the rains. And then back to the north through the west, once again crossing the Mara river, after the rains in around April. The Serengeti region contains the Serengeti National Park, the Ngorongoro Conservation Area and Maswa Game Reserve in Tanzania and the Maasai Mara National Reserve in Kenya.
+Question:
+According to the passage, where do herbivores travel from in pursuit of the rains?
+Options:
+A. The western plains
+B. The northern hills
+C. The southern plains
+D. The western hills
+Answer:
+",B,8,['\n'],multiple_choice,exact_match,belebele_0260,belebele_en_0260
+belebele,en,"Read the passage and choose the correct answer. Respond with a single letter.
+""The D-Day landings and the following battles had freed the north of France, but the south still wasn't free. It was ruled by the """"Vichy"""" French. These were French people who had made peace with the Germans in 1940 and worked with the invaders instead of fighting them. On 15 August 1940, the Allies invaded southern France, the invasion was called """"Operation Dragoon"""". In just two weeks the Americans and Free French forces had liberated southern France and were turning towards Germany.""
+Question:
+Who were the Allies involved in Operation Dragoon?
+Options:
+A. The Americans and Free French
+B. The Vichy French and the Americans
+C. The Germans and the French
+D. The Americans and the Germans
+Answer:
+",A,8,['\n'],multiple_choice,exact_match,belebele_0267,belebele_en_0267
+belebele,en,"Read the passage and choose the correct answer. Respond with a single letter.
+Iraq's Abu Ghraib prison has been set alight during a riot. The jail became notorious after prisoner abuse was discovered there after US forces took over.
+Question:
+What occurred during the riot at Abu Ghraib?
+Options:
+A. Inmate abuse
+B. A lockdown
+C. US forces assumed control
+D. The prison was set on fire
+Answer:
+",D,8,['\n'],multiple_choice,exact_match,belebele_0287,belebele_en_0287
+belebele,en,"Read the passage and choose the correct answer. Respond with a single letter.
+""The PBS show has more than two-dozen Emmy awards, and its run is shorter only than Sesame Street and Mister Rogers' Neighborhood. Each episode of the show would focus on a theme in a specific book and then explore that theme through multiple stories. Each show would also provide recommendations for books that children should look for when they went to their library. John Grant, from WNED Buffalo (Reading Rainbow's home station) said """"Reading Rainbow taught kids why to read,... the love of reading — [the show] encouraged kids to pick up a book and to read."""" It is believed by some, including John Grant, that both the funding crunch and a shift in the philosophy of educational television programming contributed to ending the series.""
+Question:
+What may have contributed to the cancellation of the Reading Rainbow series?
+Options:
+A. Insufficient funding
+B. Lack of Emmy awards
+C. John Grant’s opinion
+D. The success of Mister Rogers’ Neighborhood
+Answer:
+",A,8,['\n'],multiple_choice,exact_match,belebele_0296,belebele_en_0296
+belebele,en,"Read the passage and choose the correct answer. Respond with a single letter.
+21-year-old Jesus joined Manchester City last year in January 2017 from Brazilian club Palmeiras for a reported fee of £27 million. Since then, the Brazilian has featured in 53 matches for the club in all competitions and has scored 24 goals.
+Question:
+Which club did Jesus receive a £27 million fee for joining?
+Options:
+A. Palmeiras
+B. Manchester City
+C. Cruzeiro
+D. Manchester United
+Answer:
+",B,8,['\n'],multiple_choice,exact_match,belebele_0326,belebele_en_0326
+belebele,en,"Read the passage and choose the correct answer. Respond with a single letter.
+""The comments, live on television, were the first time that senior Iranian sources have admitted that the sanctions are having any effect. They include financial restrictions and a ban by the European Union on the export of crude oil, from which the Iranian economy receives 80% of its foreign income. In its most recent monthly report, OPEC said exports of crude had fallen to their lowest level for two decades at 2.8 million barrels per day. The country's supreme leader, Ayatollah Ali Khamenei, has described the dependency on oil as """"a trap"""" dating from before Iran's Islamic revolution in 1979 and from which the country should free itself.""
+Question:
+According to the passage, who admitted to the sanction’s effects on the Iranian economy?
+Options:
+A. Senior sources
+B. OPEC
+C. Ayatollah Ali Khamenei
+D. The European Union
+Answer:
+",A,8,['\n'],multiple_choice,exact_match,belebele_0371,belebele_en_0371
+belebele,en,"Read the passage and choose the correct answer. Respond with a single letter.
+""According to Ansa, """"police were concerned by a couple of top-level hits they feared might spark a full-blown war of succession. Police said Lo Piccolo had the upper hand because he had been Provenzano's right-hand man in Palermo and his greater experience won him the respect of the older generation of bosses as they pursued Provenzano's policy of keeping as low as possible while strengthening their power network. These bosses had been reined in by Provenzano when he put an end to the Riina-driven war against the state that claimed the lives of Mafia crusaders Giovanni Falcone and Paolo Borsellino in 1992.""""""
+Question:
+Based on the information given in the passage, what was the cause of Falcone’s death?
+Options:
+A. He was killed during the Riina-driven war
+B. He was killed by the police
+C. Lo Piccolo was ordered to kill him
+D. He was killed by fellow Mafia crusader Paolo Borsellino
+Answer:
+",A,8,['\n'],multiple_choice,exact_match,belebele_0443,belebele_en_0443
+belebele,en,"Read the passage and choose the correct answer. Respond with a single letter.
+After it became apparent that many families were seeking legal help to fight the evictions, a meeting was held on March 20 at the East Bay Community Law Center for the victims of the housing scam. When the tenants started sharing what had occurred to them, most of the families involved suddenly realized that Carolyn Wilson of the OHA had stolen their security deposits, and skipped out of town. Tenants at Lockwood Gardens believe that there may be another 40 families or more to face eviction, since they learned that OHA police are also investigating other public housing properties in Oakland that may be caught up in the housing scam.
+Question:
+As stated in the passage, who did Carolyn Wilson work for before leaving town?
+Options:
+A. East Bay Community Law Center
+B. Oakland police
+C. The OHA
+D. Lockwood Gardens
+Answer:
+",C,8,['\n'],multiple_choice,exact_match,belebele_0463,belebele_en_0463
+belebele,en,"Read the passage and choose the correct answer. Respond with a single letter.
+Last week, Naked News announced that it would dramatically increase its international language mandate to news reporting, with three new broadcasts. Already reporting in English and Japanese, the global organization is launching Spanish, Italian, and Korean-language programs, for television, the web, and mobile devices.
+Question:
+According to the passage, where won’t the new Naked News broadcasts be available?
+Options:
+A. Cellphones
+B. The internet
+C. Theaters
+D. Television
+Answer:
+",C,8,['\n'],multiple_choice,exact_match,belebele_0485,belebele_en_0485
+belebele,en,"Read the passage and choose the correct answer. Respond with a single letter.
+The aircraft had been headed to Irkutsk and was being operated by interior troops. An inquiry was established to investigate. The Il-76 has been a major component of both the Russian and Soviet military since the 1970s, and had already seen a serious accident in Russia last month. On October 7 an engine separated on takeoff, without injuries. Russia briefly grounded Il-76s after that accident.
+Question:
+What caused Russia to suspend the use of II-76s?
+Options:
+A. Interior troops
+B. An accident
+C. The Soviet military
+D. A pending investigation
+Answer:
+",B,8,['\n'],multiple_choice,exact_match,belebele_0532,belebele_en_0532
+belebele,en,"Read the passage and choose the correct answer. Respond with a single letter.
+No tsunami warning has been issued, and according to the Jakarta geophysics agency, no tsunami warning will be issued because the quake did not meet the magnitude 6.5 requirement. Despite there being no tsunami threat, residents started to panic and began to leave their businesses and homes.
+Question:
+Why wouldn’t the Jakarta geophysics agency issue a warning?
+Options:
+A. There was no threat of a tsunami
+B. To avoid panic amongst residents
+C. To avoid an affect on local businesses
+D. It didn’t meet the magnitude requirement for quakes
+Answer:
+",D,8,['\n'],multiple_choice,exact_match,belebele_0568,belebele_en_0568
+belebele,en,"Read the passage and choose the correct answer. Respond with a single letter.
+Murray lost the first set in a tie break after both men held each and every serve in the set. Del Potro had the early advantage in the second set, but this too required a tie break after reaching 6-6. Potro received treatment to his shoulder at this point but managed to return to the game.
+Question:
+When did Del Potro need to address his shoulder issue?
+Options:
+A. During the first set
+B. Before the first tie break
+C. During the second set
+D. After the third tie break
+Answer:
+",C,8,['\n'],multiple_choice,exact_match,belebele_0581,belebele_en_0581
+belebele,en,"Read the passage and choose the correct answer. Respond with a single letter.
+""The famous Greek lawyers, Sakis Kechagioglou and George Nikolakopoulos have been imprisoned in the Athens' jail of Korydallus, as they were found guilty of graft and corruption. As a result of this, a big scandal within the Greek legal community has been raised through the exposure of illegal actions that judges, lawyers, solicitors and attorneys have done during the previous years. A few weeks ago, after the information published by the journalist Makis Triantafylopoulos in his popular Television show """"Zoungla"""" in Alpha TV, the member of Parliament and lawyer, Petros Mantouvalos was abdicated as members of his office had been involved in illegal graft and corruption. Moreover, top judge Evangelos Kalousis is imprisoned as he found guilty of corruption and degenerate behaviour.""
+Question:
+Which of the following people is not a lawyer?
+Options:
+A. Petros Mantouvalos
+B. Sakis Kechagioglou
+C. George Nikolakopoulos
+D. Makis Triantafylopoulos
+Answer:
+",D,8,['\n'],multiple_choice,exact_match,belebele_0617,belebele_en_0617
+belebele,en,"Read the passage and choose the correct answer. Respond with a single letter.
+Nowadays air travel is only rarely booked directly through the airline without first searching and comparing prices. Sometimes the same flight can have vastly differing prices at various agregators and it pays to compare search results and to also look at the website of the airline itself before booking.
+Question:
+According to the passage, what should travelers do first in order to secure the best possible flight prices?
+Options:
+A. Check the airline’s website
+B. Compare prices between different aggregators 
+C. Book directly through the airline
+D. Book directly with a travel agent
+Answer:
+",B,8,['\n'],multiple_choice,exact_match,belebele_0629,belebele_en_0629
+belebele,en,"Read the passage and choose the correct answer. Respond with a single letter.
+You should choose your Frequent Flyer airline in an alliance carefully. Although you may think it is intuitive to join the airline you fly most, you should be aware that privileges offered are often different and frequent flyer points may be more generous under a different airline in the same alliance.
+Question:
+Based on the passage, when choosing a Frequent Flyer airline in an alliance, which of the following should you prioritize?
+Options:
+A. The airline that offers the most points
+B. The airline in the biggest alliance
+C. The airline you travel most often
+D. The airline that might be adding additional privileges 
+Answer:
+",A,8,['\n'],multiple_choice,exact_match,belebele_0631,belebele_en_0631
+belebele,en,"Read the passage and choose the correct answer. Respond with a single letter.
+The East African Islands are in the Indian Ocean off the eastern coast of Africa. Madagascar is by far the biggest, and a continent on its own when it comes to wildlife. Most of the smaller islands are independent nations, or associated with France, and known as luxury beach resorts. The Arabs also brought Islam to the lands, and it took in a big way in the Comoros and Mayotte. European influence and colonialism began in the 15th century, as Portuguese explorer Vasco da Gama found the Cape Route from Europe to India.
+Question:
+What is not an attribute of the smaller East African islands? 
+Options:
+A. A connection to France
+B. Many luxurious resorts 
+C. A reputation for wildlife
+D. Independence from other nations
+Answer:
+",C,8,['\n'],multiple_choice,exact_match,belebele_0702,belebele_en_0702
+belebele,en,"Read the passage and choose the correct answer. Respond with a single letter.
+İzmir is the third largest city in Turkey with a population of around 3.7 million, the second biggest port after Istanbul, and a very good transport hub. Once the ancient city of Smyrna, it is now a modern, developed, and busy commercial center, set around a huge bay and surrounded by mountains. The broad boulevards, glass-fronted buildings and modern shopping centers are dotted with traditional red-tiled roofs, the 18th century market, and old mosques and churches, although the city has an atmosphere more of Mediterranean Europe than traditional Turkey.
+Question:
+Which of the following is not an accurate characteristic of Izmir?
+Options:
+A. The city surrounds a large bay
+B. The atmosphere reflects traditional Turkey
+C. You can find both modern shopping centers and old churches 
+D. It has the second biggest port in Turkey
+Answer:
+",B,8,['\n'],multiple_choice,exact_match,belebele_0768,belebele_en_0768
+belebele,en,"Read the passage and choose the correct answer. Respond with a single letter.
+In summer, especially, you'll need to watch out for mosquitoes if you decide to hike through the rainforest. Even if you're driving through the subtropical rainforest, a few seconds with the doors open while you get inside the vehicle is enough time for mosquitoes to get in the vehicle with you.
+Question:
+According to the passage, what should you refrain from doing in order to avoid mosquitoes while driving through the rainforest?
+Options:
+A. Leaving the vehicle’s doors open for too long
+B. Driving through during the summer
+C. Driving through the subtropical areas
+D. Leaving the vehicle unattended while hiking
+Answer:
+",A,8,['\n'],multiple_choice,exact_match,belebele_0841,belebele_en_0841
+belebele,en,"Read the passage and choose the correct answer. Respond with a single letter.
+""Combined with its relative inaccessibility, """"Timbuktu"""" has come to be used as a metaphor for exotic, distant lands. Today, Timbuktu is an impoverished town, although its reputation makes it a tourist attraction, and it has an airport. In 1990, it was added to the list of world heritage sites in danger, due to the threat of desert sands. It was one of the major stops during Henry Louis Gates' PBS special Wonders of the African World. The city is in stark contrast to the rest of the country's cities, because it has more of an Arabic flair than of an African.""
+Question:
+Which of the following facts about Timbuktu is true?
+Options:
+A. The city is accessible by plane
+B. It’s more exotic than impoverished
+C. It has less of an African flair than surrounding cities
+D. The city no longer attracts tourists
+Answer:
+",B,8,['\n'],multiple_choice,exact_match,belebele_0849,belebele_en_0849
+belebele,en,"Read the passage and choose the correct answer. Respond with a single letter.
+There are many different film formats that have been used over the years. Standard 35 mm film (36 by 24 mm negative) is much the commonest. It can usually be replenished fairly easily if you run out, and gives resolution roughly comparable to a current DSLR. Some medium-format film cameras use a 6 by 6 cm format, more precisely a 56 by 56 mm negative. This gives resolution almost four times that of a 35 mm negative (3136 mm2 versus 864).
+Question:
+According to the passage, which negative size reflects the film format used most commonly?
+Options:
+A. 6 x 6 cm negative
+B. 56 x 56 mm negative
+C. 35 mm negative
+D. 36 x 24 mm negative
+Answer:
+",D,8,['\n'],multiple_choice,exact_match,belebele_0863,belebele_en_0863
+belebele,en,"Read the passage and choose the correct answer. Respond with a single letter.
+A World's Fair (commonly called World Exposition, or simply Expo) is large international festival of arts and sciences. Participating countries present artistic and educational displays in national pavilions to showcase world issues or their country's culture and history. International Horticultural Expositions are specialised events which showcase floral displays, botanical gardens and anything else to do with plants. Although in theory they can take place annually (so long as they are in different countries), in practice they are not. These events normally last anywhere between three and six months, and are held on sites no smaller than 50 hectares.
+Question:
+Which of the following statements does not accurately describe a World’s Fair?
+Options:
+A. Displays might showcase a country’s history or culture
+B. Botanical displays are showcased alongside artistic and educational displays
+C. Events can last up to six months
+D. Countries aren’t required to participate
+Answer:
+",B,8,['\n'],multiple_choice,exact_match,belebele_0896,belebele_en_0896
+belebele,sw,"Read the passage and choose the correct answer. Respond with a single letter.
+Makoloni ya siafu huandamana na kuishi katika awamu tofauti vilevile. Katika awamu ya kuhamahama, siafu huandamana usiku na kusimama na kukita kambi mchana. Koloni huanza awamu ya kuhamahama wakati chakula kilichopo kimepunguka. Katika awamu hii, koloni hutengeneza viota visivyo vya kudumu ambavyo hubadilishwa kila siku. Kila moja haya mabwawa ya kuhamahama au maandamano hudumu takriban siku 17.
+Question:
+Kwa mujibu wa kifungu hiki, ni ipi kati ya zifuatazo ni kweli kuhusu makoloni ya siafu yanayoingia awamu ya kuhamahama?
+Options:
+A. Wanatengeneza viota usiku
+B. Wanapata chakula kidogo
+C. Wanatengeneza viota ambavyo hubadilishwa baada ya siku 17
+D. Wanafanya maandamano mchana
+Answer:
+",B,8,['\n'],multiple_choice,exact_match,belebele_0010,belebele_sw_0010
+belebele,sw,"Read the passage and choose the correct answer. Respond with a single letter.
+Mazoea ya lishe sahihi pekee haiwezi kuzalisha usomi wa utendaji, ila yanaweza kuathiri kwa kiasi kikubwa na ustawi wa wakimbiaji wachanga kwa ujumla. Kudumisha uwiano bora wa kawi, kuwa na mazoea ya unywaji wa maji yenye ufanisi, na kuelewa vipengele tofauti vya mazoea ya ziada kunaweza kusaidia wanariadha kuboresha utendaji wao na kuongeza raha yao katika spoti hiyo.
+Question:
+Kwa mwanariadha, ni kipi kati ya zifuatazo hakiwezi kupatikana kupitia mazoea ya lishe pekee?
+Options:
+A. Kuboresha utendaji
+B. Kuongeza raha 
+C. Usomi wa utendaji
+D. Ustawi wa jumla
+Answer:
+",C,8,['\n'],multiple_choice,exact_match,belebele_0031,belebele_sw_0031
+belebele,sw,"Read the passage and choose the correct answer. Respond with a single letter.
+Ingawa Akili Bandia inahusishwa sana na tungo za kisayansi, Akili Bandia huunda sehemu muhimu sana ya tawi la sayansi ya kompyuta, kushughulikia tabia, mafunzo na marekebisho ya akili kwa mashine. Utafiti katika Al unajumuisha kutengeneza mashine za kufanya kazi zinazohitaji tabia za busara kuwa otomatiki. Mfano ni pamoja na kudhibiti, kupanga na kuratibu, uwezo wa kujibu utambuzi na maswali ya wateja, pamoja na utambuzi wa maandishi, sauti na uso. Mambo kama hayo yamekuwa taaluma tofauti, zinazotazamia kutoa suluhu kwa shida za maisha. Mfumo wa AI sasa hutumiwa mara nyingi katika nyanja za uchumi, dawa, uhandisi na jeshi, kama ulivyojengwa katika programu kadhaa za kompyuta za nyumbani na michezo ya video.
+Question:
+Kwa mujibu wa kifungu hiki, ni ipi kati ya zifuatazo inahusishwa sana na AI?
+Options:
+A. Huduma kwa wateja
+B. Kupanga na Kuratibu
+C. Sayansi bandia
+D. Kutambua maandishi
+Answer:
+",C,8,['\n'],multiple_choice,exact_match,belebele_0040,belebele_sw_0040
+belebele,sw,"Read the passage and choose the correct answer. Respond with a single letter.
+""Alama ya """"gubeti la juu"""" inaonekana kama V na """"alama ya gubeti la chini"""" kama kibanio au mraba unaokosa upande wake wa chini. Juu inamaanisha unapaswa kuanzia nchani na kusukuma uta, na chini inamaanisha unafaa kuanzia kwenye frog (mahali ambapo mkono wako unashikilia uta) na kuvuta uta. Upinde wa juu kwa kawaida huzalisha sauti tulivu, huku upinde wa chini ukiwa na nguvu na ni imara zaidi. Jisikie huru kuandika kwa penseli alama zako, lakini kumbuka alama za kuinama zilizochapwa ziko kwa sababu ya kimziki, kwa hivyo yafaa ziheshimiwe.""
+Question:
+Kwa mujibu wa kifungu hiki, ni ipi kati ya zifuatazo inahusishwa na sauti tulivu?
+Options:
+A. Alama ya gubeti la chini
+B. Kuvuta gubeti
+C. Alama inayoonekana kama V
+D. Kuanza pale ambapo mkono wako unashikilia gubeti
+Answer:
+",C,8,['\n'],multiple_choice,exact_match,belebele_0090,belebele_sw_0090
+belebele,sw,"Read the passage and choose the correct answer. Respond with a single letter.
+Kilimo cha kujikimu ni kilimo ambacho hufanywa kwa uzalishaji wa chakula cha kutosha tu kukimu mahitaji ya mkulima na familia yake. Kilimo cha kujikimu ni mfumo rahisi, aghalabu wa kikaboni, unaotumia mbegu zilizohifadhiwa na asilia kwa eneo husika, pamoja na mzunguko wa mimea au mbinu mbadala zilizo rahisi ili kuboresha mavuno. Kihistoria, wakulima wengi walijihusisha na kilimo cha kujikimu na hii bado ndiyo hali katika mataifa mengi yanayoendelea.
+Question:
+Ni ipi kati ya zifuatazo inafafanua kwa usahihi kilimo cha kujikimu?
+Options:
+A. Ni mfumo wa kikaboni kikamilifu
+B. Inatumia mbinu za kipekee kuongeza mazao
+C. Inawawezesha wakulima kushiriki mazao yao kwenye maeneo yao
+D. Bado inatumiwa na wakulima katika baadhi ya nchi
+Answer:
+",D,8,['\n'],multiple_choice,exact_match,belebele_0103,belebele_sw_0103
+belebele,sw,"Read the passage and choose the correct answer. Respond with a single letter.
+""Tatizo la Upungufu wa Umakini """"ni ugonjwa wa neva ambao dalili zake tatu za kawaida za kuufafanua ni msukumo, mvurugo na utendaji wa kupita kiasi au nguvu za ziada."""" Si ulemavu wa kusoma, ni mvurugiko wa kusoma; “unaathiri asilimia 3 hadi 5 ya watoto wote, pengine takriban watoto milioni 2 wa Marekani”. Watoto walio na ADD huwa na wakati mgumu kuangazia mambo kama kazi za shuleni, lakini wanaweza kukazia fikira mambo wanayopenda kuyafanya kama kucheza michezo au kutazama katuni zao vibwedo au kuandika sentensi bila kuakifisha. Watoto hawa huingia kwenye shida nyingi kwa sababu “wanajihusisha na tabia hatari, wanaingia kwenye vita na kuipa changamoto mamlaka” ili kuchechemua akili zao kwa sababu akili zao haziwezi kuchechemuliwa kwa njia za kawaida. Ugonjwa wa Upungufu wa Usikivu huathiri uhusiano wao na wenzi wengine kwa sababu watoto wengine hawawezi kuelewa kwa nini wao hujifanya kwa njia hiyo au kwa nini wao huduwaa jinsi wanavyofanya au kwamba kiwango cha kukomaa kwao ni tofauti.""
+Question:
+Kwa mujibu wa kifungu hiki, kwa nini watoto wenye tatizo la upungufu wa umakini huwa wanashiriki katika tabia hatari?
+Options:
+A. Ili kupunguza utendaji wa kupita kiasi
+B. Ili kuwasaidia kuungana na wenzao
+C. Ili kupewa muda na wazazi wao
+D. Ili kuchechemua akili zao
+Answer:
+",D,8,['\n'],multiple_choice,exact_match,belebele_0141,belebele_sw_0141
+belebele,sw,"Read the passage and choose the correct answer. Respond with a single letter.
+Katika hali joto ya hewa ya Mashariki ya Kati, nyumba haikuwa muhimu sana. Sehemu kubwa ya maisha ya familia ya Kiebrania ilifanyikia nje. Wanawake walifanya mapishi kwenye yadi; stoo zilikuwa kaunta wazi tu zilizoelekea barabarani. Mawe yalitumika kujengea barabara. Hakukua na misitu mikubwa kwenye ardhi ya Canaan, kwa hivyo mbao ziliuzwa kwa bei ghali mno.
+Question:
+Je, Familia ya Kiebrania walitumia muda wao mwingi wapi?
+Options:
+A. Nje kwenye anga wazi
+B. Mitaani
+C. Kwenye yadi
+D. Ndani ya nyumba
+Answer:
+",A,8,['\n'],multiple_choice,exact_match,belebele_0165,belebele_sw_0165
+belebele,sw,"Read the passage and choose the correct answer. Respond with a single letter.
+Wanapaleontolojia wengi leo hii wanaamini kuwa kikundi kimoja cha dinosau kiliponea na kingali hai hata sasa. Tunawaita ndege. Watu wengi hawawachukuliii kuwa dinosau kwa sababu wana manyoya na wanaweza kupaa. Lakini kuna mambo mengi juu ya ndege ambao bado wanaonekana kama dinosau. Wana miguu yenye magamba na makucha, hutaga mayai na hutembea kwa miguu yake miwili ya nyuma kama T-Rex.
+Question:
+Ni ipi kati ya zifuatazo haichukuliwi kama tabia wanayoshiriki ndege na dinosau?
+Options:
+A. Kutaga mayai
+B. Kutembea kwa miguu miwili ya nyuma
+C. Uwezo wa kupaa
+D. Miguu yenye makucha
+Answer:
+",C,8,['\n'],multiple_choice,exact_match,belebele_0202,belebele_sw_0202
+belebele,sw,"Read the passage and choose the correct answer. Respond with a single letter.
+Timu ya soka ya Italia, pamoja na timu ya soka ya Ujerumani ndiyo timu ya pili yenye mafanikio zaidi duniani na ilikuwa bingwa wa kikombe cha dunia cha FIFA mwaka wa 2006. Michezo maarufu ni pamoja na kandanda, mpira wa kikapu, mpira wa wavu, polo ya majini, mchezo wa uzio, raga, uendeshaji baiskeli, hoki ya barafu, hoki ya gogo na mashindano ya magari ya F1. Spoti za msimu wa baridi ni maarufu sana katika maeneo ya Kaskazini, ambako Waitaliano hushindana katika michezo ya kimataifa na ya Olimpiki.
+Question:
+Kulingana na maelezo yaliyotolewa katika kifungu hiki, ni mchezo upi kati ya zifuatazo ambapo Italia ilishinda kikombe cha dunia?
+Options:
+A. Soka
+B. Polo ya majini
+C. Mpira wa kikapu
+D. Uendeshaji baiskeli
+Answer:
+",A,8,['\n'],multiple_choice,exact_match,belebele_0206,belebele_sw_0206
+belebele,sw,"Read the passage and choose the correct answer. Respond with a single letter.
+Kila mwaka karibu Oktoba wala-mimea milioni 1.5 husafiri kuelekea nyanda za kusini, na kuvuka Mto Mara, kutoka vilima vya kaskazini kwa ajili ya mvua. Kisha tena kurudi kaskazini kupitia magharibi, na kuvuka mto Mara mara nyingine tena, baada ya mvua karibu Aprili. Eneo la Serengeti lina Mbuga la Kitaifa la Serengeti, Eneo la Uhifadhi la Ngorongoro na Hifadhi ya Wanyamapori ya Maswa katika Tanzania na Hifadhi ya Kitaifa ya Maasai Mara katika Kenya.
+Question:
+Kwa mujibu wa kifungu hiki, wanyama wala-mimea husafiri kutoka wapi kufuata mvua?
+Options:
+A. Nyanda za magharibi
+B. Milima ya kaskazini
+C. Nyanda za kusini
+D. Milima ya magharibi
+Answer:
+",B,8,['\n'],multiple_choice,exact_match,belebele_0260,belebele_sw_0260
+belebele,sw,"Read the passage and choose the correct answer. Respond with a single letter.
+""Utuaji siku ya shambulio na mapigano yaliyofuata yalikuwa yameweka huru kaskazini mwa Ufaransa, lakini kusini bado haikuwa huru. Ilitawaliwa na Wafaransa wa “Vichy”. Hawa walikuwa watu wa Ufaransa ambao walikuwa wamefanya amani na Wajerumani mnamo 1940 na kufanya kazi na washambulizi badala ya kupigana nao. Mnamo Agosti 15 1940, Majeshi ya Kirafiki yalishambulia Ufaransa kusini, shambulio liliitwa """"Operesheni Dragoon"""". Kwa kipindi cha majuma mawili tu vikosi vya Marekani na Ufaransa Huru vilikuwa vimekomboa Ufaransa kusini na vilikuwa vikielekea Ujerumani.""
+Question:
+Ni majeshi gani yalikuwa washiriki katika Operation Dragoon?
+Options:
+A. Wamarekani na Wafaransa Huru
+B. Wafaransa wa Vichy na Wamarekani
+C. Wajerumani na Wafaransa
+D. Wamarekani na Wajerumani
+Answer:
+",A,8,['\n'],multiple_choice,exact_match,belebele_0267,belebele_sw_0267
+belebele,sw,"Read the passage and choose the correct answer. Respond with a single letter.
+Jela la Abu Ghraib la Iraki limewashwa moto wakati wa ghasia. Jela ilikuwa na sifa mbaya baada ya udhalilishaji wa mahabusu kugunduliwa humo baada ya majeshi ya US kuchukua uongozi.
+Question:
+Ni nini kilitokea wakati wa ghasia katika jela la Abu Ghraib?
+Options:
+A. Udhalilishaji wa mahabusu
+B. Kufungiwa
+C. Majeshi ya Marekani yalijitwalia usukani
+D. Jela lilichomwa moto
+Answer:
+",D,8,['\n'],multiple_choice,exact_match,belebele_0287,belebele_sw_0287
+belebele,sw,"Read the passage and choose the correct answer. Respond with a single letter.
+""Onyesho la PBS lina tuzo zaidi ya dazeni mbili za Emmy, na muda wake ni mfupi kuliko tu Sesame Street na Mister Roger's Neighborhood. Kila kipindi cha onyesho kingeangazia mada katika kitabu maalum na kisha kuchunguza mada hiyo kupitia hadithi nyingi. Kila onyesho pia lingetoa mapendekezo ya vitabu ambavyo watoto wangepaswa kutafuta walipokwenda katika maktaba. John Grant, kutoka WNED Buffalo (kituo cha nyumbani cha Reading Rainbow) alisema """"Reading Rainbow iliwafunza watoto ni kwa nini wasome,…kupenda kusoma — [onyesho] liliwahimiza watoto kuchukua kitabu na kusoma."""" Inaaminika na baadhi, akiwemo John Grant, kwamba hitilafu ya ufadhili na mabadiliko ya falsafa ya maudhui ya televisheni ya kielimu ilichangia kwa kutamatishwa kwa mfululizo.""
+Question:
+Kutamatishwa kwa mfululizo wa Reading Rainbow huenda kulichangiwa na nini?
+Options:
+A. Ufadhili wa haukutosha
+B. Kukosa kushinda tuzo za Emmy
+C. Maoni ya John Grant
+D. Mafanikio ya Mister Rogers’ Neighborhood
+Answer:
+",A,8,['\n'],multiple_choice,exact_match,belebele_0296,belebele_sw_0296
+belebele,sw,"Read the passage and choose the correct answer. Respond with a single letter.
+Yesu aliyekuwa na umri wa miaka 21 alijiunga na Manchester City Januari mwaka uliopita 2017 kutoka klabu cha Kibrazili Palmeiras kwa ada iliyoripotiwa kuwa dola milioni 27. Tangu wakati huo, Mbrazili huyo ameshiriki pakubwa kwa ajili ya klabu hicho kwenye mechi 53 katika mashindano yote na amefunga mabao 24.
+Question:
+Je, Yesu alipokea malipo ya dola milioni 27 alipojiunga na klabu gani?
+Options:
+A. Palmeiras
+B. Timu ya Manchester City
+C. Cruzeiro
+D. Timu ya Manchester United
+Answer:
+",B,8,['\n'],multiple_choice,exact_match,belebele_0326,belebele_sw_0326
+belebele,sw,"Read the passage and choose the correct answer. Respond with a single letter.
+""Maoni ya moja kwa moja kwenye televisheni, yalikuwa ya mara ya kwanza kwa wakuu wa serikali ya Irani kukubali kuwa vikwazo vilikuwa na athari yoyote. Inahusisha vikwazo na umoja wa Ulaya kupiga marufuku kwa usafirishaji wa mafuta yasiyosafishwa, ambapo uchumi wa Iran unapokea 80% ya mapato ya nje. Katika ripoti yake ya kila mwezi ya hivi karibuni, Shirika la Nchi Zinazosafirisha nje Petroli ilisema mauzo ya nje ya ghafi yamepungua sana kwa miongo miwili kwa mapipa milioni 2.8 kwa siku. Kiongozi mkuu wa nchi, Ayatollah Ali Khamenei, ameelezea utegemeaji wa mafuta kama """"mtego"""" ulioanza kabla ya mapinduzi ya Kiislamu ya Irani mnamo 1979 na ambao nchi inafaa kujiokoa kutokana nao.""
+Question:
+Kwa mujibu wa kifungu hiki, ni nani aliyekiri athari za vikwazo kwa uchumi wa Iran?
+Options:
+A. Wakuu wa serikali
+B. Shirika la Nchi Zinazosafirisha nje Petroli
+C. Ayatullah Ali Khamenei
+D. Umoja wa Ulaya
+Answer:
+",A,8,['\n'],multiple_choice,exact_match,belebele_0371,belebele_sw_0371
+belebele,sw,"Read the passage and choose the correct answer. Respond with a single letter.
+""Kulingana na Ansa, """"polisi walihangaishwa na mashambulio machache ya watu wa kiwango cha juu, wakiogopa yanaweza kusababisha vita kamili vya urithi. Polisi walisema Lo Piccolo alikuwa na udhibiti kwa sababu alikuwa msaidizi mwaminifu wa Provenzano katika Palamo na tajiriba yake kuu ilimpatia heshima ya kizazi kizee cha mabosi walipokuwa wakifuatilia sera ya Provenzano ya kuwa watulivu iwezekanavyo huku wakiimarisha mtandao wao wa uwezo. Mabosi hawa walikuwa wamedhibitiwa na Provenzano wakati alipokomesha vita vilivyoendeshwa na Riina dhidi ya taifa ambavyo vilisababisha vifo vya wanaharakati wa Mafia Giovanni Falcone na Paolo Borsellino mnamo 1992.""""""
+Question:
+Kulingana na maelezo katika kifungu hiki, chanzo cha kifo cha Falcone kilikuwa nini?
+Options:
+A. Aliuawa katika vita vilivyoendeshwa na Riina
+B. Aliuawa na polisi
+C. Lo Piccolo aliamrishwa kumuua
+D. Aliuawa na mpiganaji mwenzake wa Mafia Paolo Borsellino
+Answer:
+",A,8,['\n'],multiple_choice,exact_match,belebele_0443,belebele_sw_0443
+belebele,sw,"Read the passage and choose the correct answer. Respond with a single letter.
+Baada ya kuwa dhahiri kwamba familia nyingi zilikuwa zinatafuta usaidizi wa kisheria kupigana na ufukuzwaji, mkutano ulifanywa mnamo Machi 20 katika Kituo cha Sheria cha Jamii cha East Bay kwa waathirika wa utapeli wa makazi. Wakati wapangaji walianza kusumulia yaliyowatendekea, familia nyingi husika ziligundua kuwa Carolyn Wilson wa shirika la OHA aliiba amana yao na kutoweka mjini. Wapangaji katika Lockwood Gardens wanaamini kwamba huenda kukawa na familia nyingine 40 au zaidi zitakazokabili kufukuzwa, kwani walifahamu kuwa polisi wa OHA pia wanachunguza mali nyingine za makazi katika Oakland ambazo huenda zikajipata katika sakata ya nyumba.
+Question:
+Kama ilivyotajwa katika kifungu hiki, Carolyn Wilson alimfanyia kazi nani kabla ya kutoweka mjini?
+Options:
+A. Kituo cha Sheria cha Jamii cha East Bay
+B. Polisi wa Oakland
+C. OHA
+D. Lockwood Gardens
+Answer:
+",C,8,['\n'],multiple_choice,exact_match,belebele_0463,belebele_sw_0463
+belebele,sw,"Read the passage and choose the correct answer. Respond with a single letter.
+Wiki iliyopita, Naked News ilitangaza kuwa wangeongeza sana idhini yake ya utangazaji wa Habari kwa lugha za kimataifa, na watangazaji watatu wapya. Tayari likiripoti kwa Kiingereza na Kijapani, shirika la kimataifa linazindua mipango ya lugha za Kihispania, Kiitaliano, na Kikorea, kwa televisheni, wavuti, na vifaa vya mkononi.
+Question:
+Kwa mujibu wa kifungu hiki, watangazaji wapya wa Naked News hawatapatikana wapi?
+Options:
+A. Simu
+B. Wavuti
+C. Sinema
+D. Televisheni
+Answer:
+",C,8,['\n'],multiple_choice,exact_match,belebele_0485,belebele_sw_0485
+belebele,sw,"Read the passage and choose the correct answer. Respond with a single letter.
+Ndege ilikuwa inaelekea Irkutsk na ilikuwa ikiendeshwa na majeshi ya ndani. Uchunguzi ulianzishwa ili kupeleleza. Il-76 imekuwa sehemu kuu ya wanajeshi wa Urusi na Sovieti tangu miaka ya 1970, na tayari walikuwa wameona ajali mbaya huko Urusi mwezi uliopita. Mnamo Oktoba 7 injini ilijitenga wakati wa kuruka, bila majeraha. Urusi iliweka Il-76 kando baada ya ajali hiyo.
+Question:
+Ni nini kilisababisha Urusi waache kutumia II-76?
+Options:
+A. Majeshi ya ndani
+B. Ajali iliyotokea
+C. Wanajeshi wa Sovieti
+D. Uchunguzi unaoendelea
+Answer:
+",B,8,['\n'],multiple_choice,exact_match,belebele_0532,belebele_sw_0532
+belebele,sw,"Read the passage and choose the correct answer. Respond with a single letter.
+Hakuna ilani ya tsunami iliyotolewa, na kulingana na uwakala wa jeofizikia wa Jakarta, hakuna ilani ya tsunami itakayotolewa kwani mtetemeko haukufikia ukubwa unaohitajika wa 6.5. Licha ya kutokuwa na tishio la tsunami, wakazi walianza kuwa na hofu na wakaanza kuacha biashara na nyumba zao.
+Question:
+Kwa nini uwakala wa jeofizikia wa Jakarta haungetoa ilani?
+Options:
+A. Hakukuwa na tishio la tsunami
+B. Ili kuepuka hofu miongoni mwa wakazi
+C. Ili kuepuka athari kwa biashara za eneo
+D. Haukufikia ukubwa unaohitajika wa mtetemeko wa ardhi
+Answer:
+",D,8,['\n'],multiple_choice,exact_match,belebele_0568,belebele_sw_0568
+belebele,sw,"Read the passage and choose the correct answer. Respond with a single letter.
+Murray alipoteza seti ya kwanza kwa kuvunjwa kwa usawa baada ya wanaume wote kushikilia kila lishe kwenye seti. Del Potro ilikuwa na faida ya mapema katika seti ya pili, lakini hii pia ilihitaji kivunja usawabaada ya kufikia 6-6. Potro alipokea matibabu begani mwake kwa wakati huu lakini akamudu kurejea kwenye mchezo.
+Question:
+Del Potro alihitaji kushughulikia suala lake la bega lini?
+Options:
+A. Wakati wa seti ya kwanza
+B. Kabla ya kivunja usawa cha kwanza
+C. Wakati wa seti ya pili
+D. Baada ya kivunja usawa cha tatu
+Answer:
+",C,8,['\n'],multiple_choice,exact_match,belebele_0581,belebele_sw_0581
+belebele,sw,"Read the passage and choose the correct answer. Respond with a single letter.
+""Mawakili maarufu wa Ugiriki, Sakis Kechagiogluo na George Nikolakopoulos wametiwa korokoroni katika jela ya Athens ya Korydallus, kwani walipatikana na hatia ya kula rushwa na ufisadi. Kama matokeo, sakata kubwa ndani ya jamii ya kisheria ya Ugiriki imeibuliwa kupitia kufunuliwa kwa vitendo haramu ambavyo majaji, mawakili, wanenea, na wanasheria wamefanya katika miaka iliyopita. Wiki chache zilizopita, baada ya taarifa iliyochapishwa na mwanahabari Makis Triantafylopoulos kwenye kipindi chake maarufu cha televisheni """"Zoungla"""" katika Alpha TV, mbunge na Mwanasheria, Petros Mantouvalos alifanywa kujiuzulu kwani memba wa ofisi yake walikuwa wamehusika katika hongo haramu na ufisadi. Waaidha, hakimu mkuu Evangelos Kalousis alifungwa jela kwani alipatikana na hatia ya ufisadi na tabia mbaya.""
+Question:
+Ni yupi kati ya wafuatao sio wakili?
+Options:
+A. Petros Mantouvalos
+B. Sakis Kechagioglou
+C. George Nikolakopoulos
+D. Makis Triantafylopoulos
+Answer:
+",D,8,['\n'],multiple_choice,exact_match,belebele_0617,belebele_sw_0617
+belebele,sw,"Read the passage and choose the correct answer. Respond with a single letter.
+Siku hizi usafiri wa ndege huhifadhiwa moja kwa moja mara chache kupitia kampuni ya ndege bila kwanza kutafuta na kulinganisha bei. Wakati mwingine safari moja inaweza kuwa na bei zinazotofautiana sana katika wajumuishaji tofauti na ina faida kulinganisha matokeo ya utafutaji na pia kuangalia tovuti ya kampuni ya ndege yenyewe kabla ya kuhifadhi.
+Question:
+Kulingana na kifungu, wasafiri wanapaswa kufanya nini la kwanza ili kupata bei bora zaidi za ndege?
+Options:
+A. Kuangalia tovuti ya kampuni ya ndege
+B. Kulinganisha bei kati ya makampuni tofauti 
+C. Kuhifadhi nafasi kupitia shirika la ndege moja kwa moja
+D. Kuhifadhi nafasi na wakala wa usafiri moja kwa moja
+Answer:
+",B,8,['\n'],multiple_choice,exact_match,belebele_0629,belebele_sw_0629
+belebele,sw,"Read the passage and choose the correct answer. Respond with a single letter.
+Unafaa kuchagua kampuni ya Usafiri wa Mara Nyingi katika muungano kwa makini. Ingawa unaweza kudhani ni bora zaidi kujiunga na kampuni ya ndege unayotumia zaidi, unapaswa kujua kuwa marupurupu yanayotolewa mara nyingi ni tofauti na pointi za usafiri wa mara kwa mara huenda zikawa karimu zaidi chini ya kampuni tofauti katika muungano mmoja.
+Question:
+Kulingana na kifungu, unapochagua kampuni ya Usafiri wa Mara Nyingi katika muungano, ni lipi kati ya zifuatazo unapaswa kulipa kipaumbele?
+Options:
+A. Kampuni ya ndege inayotoa pointi nyingi zaidi
+B. Kampuni ya ndege katika muungano mkubwa zaidi
+C. Kampuni ya ndege unayotumia kusafiri mara nyingi zaidi
+D. Kampuni ya ndege ambayo huenda inaongeza marupurupu ya ziada 
+Answer:
+",A,8,['\n'],multiple_choice,exact_match,belebele_0631,belebele_sw_0631
+belebele,sw,"Read the passage and choose the correct answer. Respond with a single letter.
+Visiwa vya Afrika Mashariki vimo katika Bahari ya Hindi karibu na pwani ya mashariki ya Afrika. Madagaska ndiyo kubwa tena kwa mbali, na bara lilojisimamia, ikifikia ni suala la wanyamapori. Vingi vya visiwa vidogo ni mataifa huru, au vinahusishwa na Ufaransa, na vinajulikana kama vituo vya mapumziko vya pwani. Waarabu pia walileta Uislamu katika maeneo, na iliathiri sana Komoros na Mayote. Ushawishi wa Ulaya na ukoloni ulianza katika karne ya 15, wakati mvumbuzi wa Ureno Vasco da Gama alipopata njia Cape kutoka Ulaya kwenda India.
+Question:
+Je, ni nini si sifa ya visiwa vidogo vya Afrika Mashariki? 
+Options:
+A. Kuhusishwa na Ufaransa
+B. Vituo vingi vya mapumziko vya pwani 
+C. Kuwa na wanyamapori
+D. Uhuru kutoka kwa mataifa mengine
+Answer:
+",C,8,['\n'],multiple_choice,exact_match,belebele_0702,belebele_sw_0702
+belebele,sw,"Read the passage and choose the correct answer. Respond with a single letter.
+Izmir ni mji wa tatu kwa ukubwa nchini Uturuki na idadi ya watu ya takribani milioni 3.7, bandari ya pili kwa ukubwa baada ya Istanbul, na kitovu kizuri sana cha uchukuzi. Uliokuwa mji wa kale wa Smyma, sasa ni wa kisasa, ulioendelea, na wa kibiashara wenye shughuli nyingi, ulioewekwa kuzunguka kituo kikubwa na umezungukwa na milima. Njia pana, majengo yenye vioo sehemu za mbele na vituo vya kisasa vya kibiashara vimejaa paa za vigae vyekundu vya jadi, soko la karne ya 18, misikiti na makanisa ya zamani, ingawa jiji lenyewe lina anga ya Uropa kuliko Uturuki ya jadi.
+Question:
+Ni ipi kati ya zifuatazo sio sifa sahihi ya Izmir?
+Options:
+A. Jiji linazunguka ghuba kubwa
+B. Mazingira yanaonyesha Uturuki wa jadi
+C. Unaweza kupata vituo vya kisasa vya kibiashara na makanisa ya zamani 
+D. Ina bandari ya pili kwa ukubwa nchini Uturuki
+Answer:
+",B,8,['\n'],multiple_choice,exact_match,belebele_0768,belebele_sw_0768
+belebele,sw,"Read the passage and choose the correct answer. Respond with a single letter.
+Katika kiangazi, hasa, utahitaji kujihadhari na mbu ukiamua kutembea katika msitu wa mvua. Hata ikiwa unaendesha kupitia msitu wa mvua wa kitropiki ndogo, sekunde chache milango ikiwa wazi unapoingia kwenye gari ni muda unaotosha kwa mbu kuingia na wewe garini.
+Question:
+Kwa mujibu wa kifungu hiki, unapaswa kujiepusha kufanya nini ili kuzuia mbu wakati unaendesha gari kwenye msitu wa mvua?
+Options:
+A. Kuacha milango ya gari wazi kwa muda mrefu sana
+B. Kuendesha gari wakati wa kiangazi
+C. Kuendesha gari kupitia maeneo ya kitropiki
+D. Kuacha gari bila mtu wakati unafanya matembezi
+Answer:
+",A,8,['\n'],multiple_choice,exact_match,belebele_0841,belebele_sw_0841
+belebele,sw,"Read the passage and choose the correct answer. Respond with a single letter.
+Pamoja na kutofikika kwake kwa wastani, “Timbuktu” imekuja kutumika kama sitiari ya nchi za kigeni zilizo mbali sana. Leo hii, Timbuktu ni mji maskini, ingawa sifa zake huufanya kivutio cha watalii, na pia kuna uwanja wa ndege. Mnamo 1990, uliongezwa katika orodha ya maeneo ya urithi duniani yaliyo hatarini, kwa sababu ya tishio la mchanga wa jangwani. Ilikuwa mojawapo ya vituo vikuu wakati wa Maajabu ya Dunia ya Kiafrika spesheli ya PBS ya Henry Louis Gates.. Jiji hilo liko katika ulinganishi mgumu na miji mingine ya nchi, kwa sababu lina wangavu zaidi wa Kiarabu kuliko ule wa Kiafrika.
+Question:
+Je, ni ukweli upi kati ya mambo yafuatayo kuhusu Timbuktu?
+Options:
+A. Mji unaweza kufikika kwa ndege
+B. Ina sifa zaidi ya kuwa ya kigeni kuliko masikini
+C. Ina wangavu zaidi wa Kiafrika kuliko miji inayoizunguka
+D. Mji hauvutii tena watalii
+Answer:
+",B,8,['\n'],multiple_choice,exact_match,belebele_0849,belebele_sw_0849
+belebele,sw,"Read the passage and choose the correct answer. Respond with a single letter.
+Kuna aina nyingi za filamu ambazo zimetumika kwa miaka. Filamu ya milimita 35 (kanda hasi ya milimita 36 kwa milimita 24) ni ya kawaida zaidi. Kwa kawaida inaweza kujazwa tena kwa urahisi kiasi ikiisha, na hutoa ubora wa mwonekano unaoweza kulinganishwa na ule wa DSLR ya sasa. Kamera ingine za muundo wa kati zinatumia muundo wa 6 kwa 6, kwa usahihi 56 kwa 56 hasi. Hii hutoa ubora wa mwonekano karibu mara nne ya ule wa picha hasi ya milimita 35 (3136 mm2 dhidi ya 864).
+Question:
+Kulingana na kifungu hiki, ni saizi gani ya kanda hasi inaonyesha muundo wa filamu unaotumiwa sana?
+Options:
+A. Kanda hasi ya sentimita 6 x 6
+B. Kanda hasi ya 56 x 56 mm
+C. Kanda hasi ya milimita 35
+D. Kanda hasi ya milimita 36 x 24
+Answer:
+",D,8,['\n'],multiple_choice,exact_match,belebele_0863,belebele_sw_0863
+belebele,sw,"Read the passage and choose the correct answer. Respond with a single letter.
+Maonyesho ya Dunia (kwa kawaida yanajulikana kama World Exposition, au Expo tu) ni tamasha kubwa ya kimataifa ya sanaa na sayansi. Nchi zinazoshiriki huwasilisha maonyesho ya kisanaa na kielimu katika kumbi za kitaifa ili kuonyesha masuala ya kidunia au utamaduni na historia ya nchi yao. Maonyesho ya Kimataifa ya Maua ni matukio maalum ambayo huonyesha maonyesho ya maua, bustani za mimea na kitu chochote kingine kinachohusisha mimea. Ingawa katika nadharia zinaweza kutokea kila mwaka (mradi zako katika nchi tofauti), kwa mazoezi hazipo. Matukio hayo huwa kwa miezi mitatu hadi miezi sita, na hufanyika kwenye maeneo yasiyopungua hekta 50.
+Question:
+Ni kauli ipi kati ya zifuatazo haielezi kwa usahihi Maonyesho ya Dunia?
+Options:
+A. Maonyesho yanaweza kuonyesha historia au utamaduni wa nchi
+B. Maonyesho ya mimea yanaonyeshwa pamoja na maonyesho ya kisanaa na kielimu
+C. Matukio yanaweza kudumu hadi miezi sita
+D. Nchi hazihitajiki kushiriki
+Answer:
+",B,8,['\n'],multiple_choice,exact_match,belebele_0896,belebele_sw_0896

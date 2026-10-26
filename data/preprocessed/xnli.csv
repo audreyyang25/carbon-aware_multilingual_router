@@ -1,0 +1,601 @@
+dataset,language,processed_input,reference,max_new_tokens,stop_sequence,extraction_method,evaluation_metric,item_id,id
+xnli,en,"Does the premise entail the hypothesis? Respond with a single letter.
+Premise:
+They have to go through a number of altitude chambers, uh, rides before they start even flying U2's or flying with pressure suits.
+Hypothesis:
+They have to go through a lot of training before they fly U2's.
+A. entailment
+B. neutral
+C. contradiction
+Answer:
+",A,8,['\n'],multiple_choice,exact_match,xnli_0148,xnli_en_0148
+xnli,en,"Does the premise entail the hypothesis? Respond with a single letter.
+Premise:
+We were watching something on TV.
+Hypothesis:
+We didnt own a tv.
+A. entailment
+B. neutral
+C. contradiction
+Answer:
+",C,8,['\n'],multiple_choice,exact_match,xnli_0216,xnli_en_0216
+xnli,en,"Does the premise entail the hypothesis? Respond with a single letter.
+Premise:
+OK, can you hear me?
+Hypothesis:
+I know you can't hear me.
+A. entailment
+B. neutral
+C. contradiction
+Answer:
+",C,8,['\n'],multiple_choice,exact_match,xnli_0254,xnli_en_0254
+xnli,en,"Does the premise entail the hypothesis? Respond with a single letter.
+Premise:
+You know, you can't, you cannot survive if you don't have any counter pressure, increase breathing pressure in those altitudes.
+Hypothesis:
+Counter pressure kills you every time.
+A. entailment
+B. neutral
+C. contradiction
+Answer:
+",C,8,['\n'],multiple_choice,exact_match,xnli_0354,xnli_en_0354
+xnli,en,"Does the premise entail the hypothesis? Respond with a single letter.
+Premise:
+um no i live off campus
+Hypothesis:
+I live a few block away from campus.
+A. entailment
+B. neutral
+C. contradiction
+Answer:
+",B,8,['\n'],multiple_choice,exact_match,xnli_0622,xnli_en_0622
+xnli,en,"Does the premise entail the hypothesis? Respond with a single letter.
+Premise:
+The paradox of the American approach toward equality is that though we trail European societies in our concern about economic equality and wealth discrimination, we lead the world in other areas of egalitarian thinking.
+Hypothesis:
+America leads European societies in the concern about economic equality.
+A. entailment
+B. neutral
+C. contradiction
+Answer:
+",C,8,['\n'],multiple_choice,exact_match,xnli_1338,xnli_en_1338
+xnli,en,"Does the premise entail the hypothesis? Respond with a single letter.
+Premise:
+72 And as I indicated in Chapter 2, the blend of warmth and expectations for mature behavior that make up authoritative parenting is linked to skilled peer interaction as well.
+Hypothesis:
+Authoritative parenting creates children who can function well in society.
+A. entailment
+B. neutral
+C. contradiction
+Answer:
+",B,8,['\n'],multiple_choice,exact_match,xnli_1416,xnli_en_1416
+xnli,en,"Does the premise entail the hypothesis? Respond with a single letter.
+Premise:
+And yet he has been what he has been and done what he has done in these last three years,  said she, but she said it sorrowfully now, without any of her earlier scorn.
+Hypothesis:
+She spoke in sad tones.
+A. entailment
+B. neutral
+C. contradiction
+Answer:
+",A,8,['\n'],multiple_choice,exact_match,xnli_1571,xnli_en_1571
+xnli,en,"Does the premise entail the hypothesis? Respond with a single letter.
+Premise:
+He had found the only way, and repellent though it might be to him, he must take it.
+Hypothesis:
+He had chosen to grab it despite it being off-putting to him.
+A. entailment
+B. neutral
+C. contradiction
+Answer:
+",A,8,['\n'],multiple_choice,exact_match,xnli_1897,xnli_en_1897
+xnli,en,"Does the premise entail the hypothesis? Respond with a single letter.
+Premise:
+I'll be getting my hat and cane and sword, and go ashore in the cock-boat.
+Hypothesis:
+I will go ashore in the small boat.
+A. entailment
+B. neutral
+C. contradiction
+Answer:
+",A,8,['\n'],multiple_choice,exact_match,xnli_1925,xnli_en_1925
+xnli,en,"Does the premise entail the hypothesis? Respond with a single letter.
+Premise:
+The building's most legendary feature is the grasshopper weathervane.
+Hypothesis:
+The building has a huge iron weathervane.
+A. entailment
+B. neutral
+C. contradiction
+Answer:
+",B,8,['\n'],multiple_choice,exact_match,xnli_2334,xnli_en_2334
+xnli,en,"Does the premise entail the hypothesis? Respond with a single letter.
+Premise:
+For information, call (213) 623-2489 on weekdays between 9am and 5pm.
+Hypothesis:
+The phone line is manned on weekdays.
+A. entailment
+B. neutral
+C. contradiction
+Answer:
+",A,8,['\n'],multiple_choice,exact_match,xnli_2347,xnli_en_2347
+xnli,en,"Does the premise entail the hypothesis? Respond with a single letter.
+Premise:
+But with all the new-fangled razzmatazz, the museum hasn't forgotten the charm of mint-condition antique cars and, above all, old train engines behemoths from the great era of steam that truly  made  Canada.
+Hypothesis:
+The museum has 100 cars.
+A. entailment
+B. neutral
+C. contradiction
+Answer:
+",B,8,['\n'],multiple_choice,exact_match,xnli_2416,xnli_en_2416
+xnli,en,"Does the premise entail the hypothesis? Respond with a single letter.
+Premise:
+Retirement fund, consists of exchange revenue and other financing sources.
+Hypothesis:
+The retirement fund is funded by employees.
+A. entailment
+B. neutral
+C. contradiction
+Answer:
+",B,8,['\n'],multiple_choice,exact_match,xnli_2774,xnli_en_2774
+xnli,en,"Does the premise entail the hypothesis? Respond with a single letter.
+Premise:
+Attorney's Office or the judge refused, the FISA Court might reject an application for a FISA warrant on the grounds that the agents were attempting to make an end run around the criminal process.
+Hypothesis:
+The FISA Court must grant all warrant applications, no matter what.
+A. entailment
+B. neutral
+C. contradiction
+Answer:
+",C,8,['\n'],multiple_choice,exact_match,xnli_3244,xnli_en_3244
+xnli,en,"Does the premise entail the hypothesis? Respond with a single letter.
+Premise:
+Before 9/11, no agency of the U.S. government systematically analyzed terrorists' travel strategies.
+Hypothesis:
+Terrorist travel strategies were not systematically analyzed before 9/11.
+A. entailment
+B. neutral
+C. contradiction
+Answer:
+",A,8,['\n'],multiple_choice,exact_match,xnli_3401,xnli_en_3401
+xnli,en,"Does the premise entail the hypothesis? Respond with a single letter.
+Premise:
+Linda Hardwick Director of Development &amp
+Hypothesis:
+The Director of Development is Linda Harwick
+A. entailment
+B. neutral
+C. contradiction
+Answer:
+",A,8,['\n'],multiple_choice,exact_match,xnli_3590,xnli_en_3590
+xnli,en,"Does the premise entail the hypothesis? Respond with a single letter.
+Premise:
+We have so many more accomplishments to strive for, I cannot imagine a better corporate partner to help bring them about.
+Hypothesis:
+We want to raise our sales numbers by 50%.
+A. entailment
+B. neutral
+C. contradiction
+Answer:
+",B,8,['\n'],multiple_choice,exact_match,xnli_3638,xnli_en_3638
+xnli,en,"Does the premise entail the hypothesis? Respond with a single letter.
+Premise:
+With your contribution to the Library, you will become a member of the Citywide Friends.
+Hypothesis:
+To be a Citywide Friend you just need to donate to the Library.
+A. entailment
+B. neutral
+C. contradiction
+Answer:
+",A,8,['\n'],multiple_choice,exact_match,xnli_3731,xnli_en_3731
+xnli,en,"Does the premise entail the hypothesis? Respond with a single letter.
+Premise:
+On behalf of President Bush, I look forward to working with you in the future.
+Hypothesis:
+President Bush and I will be working with you on the new health initiatives.
+A. entailment
+B. neutral
+C. contradiction
+Answer:
+",B,8,['\n'],multiple_choice,exact_match,xnli_3826,xnli_en_3826
+xnli,en,"Does the premise entail the hypothesis? Respond with a single letter.
+Premise:
+I've been affiliated with the IRT for 17 years.
+Hypothesis:
+I don't have anything to do with the IRT.
+A. entailment
+B. neutral
+C. contradiction
+Answer:
+",C,8,['\n'],multiple_choice,exact_match,xnli_3942,xnli_en_3942
+xnli,en,"Does the premise entail the hypothesis? Respond with a single letter.
+Premise:
+The cover story debates whether NATO's goal should be to carve up Kosovo or administer it as a protectorate.
+Hypothesis:
+The short op-ed confirms NATO's goal to protect Macedonia.
+A. entailment
+B. neutral
+C. contradiction
+Answer:
+",C,8,['\n'],multiple_choice,exact_match,xnli_4235,xnli_en_4235
+xnli,en,"Does the premise entail the hypothesis? Respond with a single letter.
+Premise:
+Looking for the Key to Keeping Safe (Sorry for the bad pun.)
+Hypothesis:
+I like to make silly puns.
+A. entailment
+B. neutral
+C. contradiction
+Answer:
+",A,8,['\n'],multiple_choice,exact_match,xnli_4261,xnli_en_4261
+xnli,en,"Does the premise entail the hypothesis? Respond with a single letter.
+Premise:
+Raves for Mrs. Dalloway keep coming, but a more critical take also emerges.
+Hypothesis:
+Along with raves for Mrs. Dalloway, criticism also exists.
+A. entailment
+B. neutral
+C. contradiction
+Answer:
+",A,8,['\n'],multiple_choice,exact_match,xnli_4269,xnli_en_4269
+xnli,en,"Does the premise entail the hypothesis? Respond with a single letter.
+Premise:
+Property is an endless succession of bubbles in space, or cyberspace, with different people claiming an endless variety of interests in them.
+Hypothesis:
+Property is just people saying they own something.
+A. entailment
+B. neutral
+C. contradiction
+Answer:
+",A,8,['\n'],multiple_choice,exact_match,xnli_4415,xnli_en_4415
+xnli,en,"Does the premise entail the hypothesis? Respond with a single letter.
+Premise:
+And I sympathize with your remark on page 19: Brunner's First Law of Authorship   In any given body of text there is at least one error that its writer has read straight past three times.
+Hypothesis:
+Writers are very meticulous; not a single error passes unnoticed under their eyes.
+A. entailment
+B. neutral
+C. contradiction
+Answer:
+",C,8,['\n'],multiple_choice,exact_match,xnli_4526,xnli_en_4526
+xnli,en,"Does the premise entail the hypothesis? Respond with a single letter.
+Premise:
+The association of money names with other weights is  ouguiya (Mauritania) means `ounce.
+Hypothesis:
+Other currencies also use names of weights for their unit of measure.
+A. entailment
+B. neutral
+C. contradiction
+Answer:
+",B,8,['\n'],multiple_choice,exact_match,xnli_4596,xnli_en_4596
+xnli,en,"Does the premise entail the hypothesis? Respond with a single letter.
+Premise:
+An advertisement in Rivington's New York Gazette on October 6, 1774,  wanted a young man acquainted with keeping books in the Italian method,  and another was from one who,  wants a place.
+Hypothesis:
+The Gazette was the most popular newspaper in NY.
+A. entailment
+B. neutral
+C. contradiction
+Answer:
+",B,8,['\n'],multiple_choice,exact_match,xnli_4842,xnli_en_4842
+xnli,en,"Does the premise entail the hypothesis? Respond with a single letter.
+Premise:
+The deleteriously loaded term elaborate scheme popped into the hearings with Representative Jack Brooks' words,  ..
+Hypothesis:
+Jack Brooks is a plumber.
+A. entailment
+B. neutral
+C. contradiction
+Answer:
+",C,8,['\n'],multiple_choice,exact_match,xnli_4911,xnli_en_4911
+xnli,en,"Does the premise entail the hypothesis? Respond with a single letter.
+Premise:
+One must be very cautious in proposing etymologies that attribute the origin of a word to playfulness or  they often turn out to be folk etymologies and totally empty of anything more than hollow speculation.
+Hypothesis:
+You hae to be careful when you think of a new etymology.
+A. entailment
+B. neutral
+C. contradiction
+Answer:
+",A,8,['\n'],multiple_choice,exact_match,xnli_5003,xnli_en_5003
+xnli,sw,"Does the premise entail the hypothesis? Respond with a single letter.
+Premise:
+Wanapaswa kupitia vyumba kadhaa vya urefu, uh, hupanda kabla ya kuanza kupaa na U2's au kuruka kwa suti za pumzi.
+Hypothesis:
+Lazima wapate mafunzo mengi sana, kabla waweze kuendesha denge aina ya U2.
+A. entailment
+B. neutral
+C. contradiction
+Answer:
+",A,8,['\n'],multiple_choice,exact_match,xnli_0148,xnli_sw_0148
+xnli,sw,"Does the premise entail the hypothesis? Respond with a single letter.
+Premise:
+Tulikuwa tukitazama kitu kwenye Televisheni.
+Hypothesis:
+Hatukuwa na televisheni.
+A. entailment
+B. neutral
+C. contradiction
+Answer:
+",C,8,['\n'],multiple_choice,exact_match,xnli_0216,xnli_sw_0216
+xnli,sw,"Does the premise entail the hypothesis? Respond with a single letter.
+Premise:
+Sawa, unaweza kunisikia?
+Hypothesis:
+Najua huwezi kuniskia.
+A. entailment
+B. neutral
+C. contradiction
+Answer:
+",C,8,['\n'],multiple_choice,exact_match,xnli_0254,xnli_sw_0254
+xnli,sw,"Does the premise entail the hypothesis? Respond with a single letter.
+Premise:
+Unajua, hauwezi, hautaweza kudumu kama hauna mkazo wa kupinga na kuongeza mkazo wa kupumua katika mwinuko huo.
+Hypothesis:
+Kupambana na shinikizo hukuua kila wakati.
+A. entailment
+B. neutral
+C. contradiction
+Answer:
+",C,8,['\n'],multiple_choice,exact_match,xnli_0354,xnli_sw_0354
+xnli,sw,"Does the premise entail the hypothesis? Respond with a single letter.
+Premise:
+Mimi huishi nje ya chuo.
+Hypothesis:
+Naishi majengo machache mbali kutoka kampasi.
+A. entailment
+B. neutral
+C. contradiction
+Answer:
+",B,8,['\n'],multiple_choice,exact_match,xnli_0622,xnli_sw_0622
+xnli,sw,"Does the premise entail the hypothesis? Respond with a single letter.
+Premise:
+Mtazamo wa mbinu ya Marekani kuelekea usawa ni kwamba ingawa sisi hutatua jamii za Ulaya katika wasiwasi wetu juu ya usawa wa uchumi na ubaguzi wa mali, tunaongoza ulimwengu katika maeneo mengine ya kufikiri usawa.
+Hypothesis:
+Marekani huongoza jamii za Ulaya katika malalamiko kuhusu usawa wa kiuchumi.
+A. entailment
+B. neutral
+C. contradiction
+Answer:
+",C,8,['\n'],multiple_choice,exact_match,xnli_1338,xnli_sw_1338
+xnli,sw,"Does the premise entail the hypothesis? Respond with a single letter.
+Premise:
+72 Na nilivyosema katika Sura ya 2, mchanganyiko wa joto na matarajio ya tabia ya kukomaa ambayo hufanya uzazi wa heshima,  inahusishwa na ushirikiano wa wenzao wenye ujuzi pia.
+Hypothesis:
+Ulezi wa kiimla hufanya watoto waweze kufanya kazi vizuri katika jamii.
+A. entailment
+B. neutral
+C. contradiction
+Answer:
+",B,8,['\n'],multiple_choice,exact_match,xnli_1416,xnli_sw_1416
+xnli,sw,"Does the premise entail the hypothesis? Respond with a single letter.
+Premise:
+Hata hivyo amekuwa kile alichokuwa  na kufanya kile alichokifanya katika miaka mitatu iliyopita, alisema, lakini alisema kwa huzuni sasa, bila dharau yake ya awali.
+Hypothesis:
+Alinena kwa sauti za kusikitisha.
+A. entailment
+B. neutral
+C. contradiction
+Answer:
+",A,8,['\n'],multiple_choice,exact_match,xnli_1571,xnli_sw_1571
+xnli,sw,"Does the premise entail the hypothesis? Respond with a single letter.
+Premise:
+Alikuwa amepata njia pekee, ijapokuwa hakuiwa njia mwafaka kwake, lazima aichukue.
+Hypothesis:
+Aliamua kuinyakua licha ya kuwa ilimchukiza.
+A. entailment
+B. neutral
+C. contradiction
+Answer:
+",A,8,['\n'],multiple_choice,exact_match,xnli_1897,xnli_sw_1897
+xnli,sw,"Does the premise entail the hypothesis? Respond with a single letter.
+Premise:
+Nitakuwa nikichukua kofia yangu na bakora na upanga, na kuenda pwani ndani ya mashua.
+Hypothesis:
+Nitaenda kusini katika mashua ndogo.
+A. entailment
+B. neutral
+C. contradiction
+Answer:
+",A,8,['\n'],multiple_choice,exact_match,xnli_1925,xnli_sw_1925
+xnli,sw,"Does the premise entail the hypothesis? Respond with a single letter.
+Premise:
+Kitu cha hadith katika ili jengo ni panzi la weathervane.
+Hypothesis:
+jengo hilo lina kipimo kikubwa cha chuma cha haki ya hewa
+A. entailment
+B. neutral
+C. contradiction
+Answer:
+",B,8,['\n'],multiple_choice,exact_match,xnli_2334,xnli_sw_2334
+xnli,sw,"Does the premise entail the hypothesis? Respond with a single letter.
+Premise:
+Kwa ujumbe, piga (213) 623-2489 mnamo siku za siki kati ya saa 3 na saa 11 .
+Hypothesis:
+Njia ya simu husimamiliwa mwisho wa wiki.
+A. entailment
+B. neutral
+C. contradiction
+Answer:
+",A,8,['\n'],multiple_choice,exact_match,xnli_2347,xnli_sw_2347
+xnli,sw,"Does the premise entail the hypothesis? Respond with a single letter.
+Premise:
+Lakini kwa razzmatazz mpya, Jumba la makumbusho haijasahau amali ya magari ya kale na zaidi ya yote, treni kubwa kutoka kwa kipindi kikubwa cha mvuke ambacho kilijenga Canada.
+Hypothesis:
+Makumbusho ina magari 100.
+A. entailment
+B. neutral
+C. contradiction
+Answer:
+",B,8,['\n'],multiple_choice,exact_match,xnli_2416,xnli_sw_2416
+xnli,sw,"Does the premise entail the hypothesis? Respond with a single letter.
+Premise:
+Mfuko wa kustaafu, una pesa za ubadilishanaji na njia zingine za kupata pesa
+Hypothesis:
+Mfuko wa kustaafu unafadhiliwa na wafanyakazi.
+A. entailment
+B. neutral
+C. contradiction
+Answer:
+",B,8,['\n'],multiple_choice,exact_match,xnli_2774,xnli_sw_2774
+xnli,sw,"Does the premise entail the hypothesis? Respond with a single letter.
+Premise:
+Ofisi ya Mwanasheria au hakimu alikataa, Halmashauri ya FISA inaweza kukataa ombi la hati ya FISA kwa sababu mawakala walikuwa wakijaribu kukomesha mchakato wa uhalifu.
+Hypothesis:
+Mahakama ya FISA lazima iwape kibali wote waliotuma maombi.
+A. entailment
+B. neutral
+C. contradiction
+Answer:
+",C,8,['\n'],multiple_choice,exact_match,xnli_3244,xnli_sw_3244
+xnli,sw,"Does the premise entail the hypothesis? Respond with a single letter.
+Premise:
+Kabla ya mashambulizi ya 9/11, hakuna idara ya serikali ya Marekani iliyochunguza kwa maani mitindo ya usafiri ya magaidi.
+Hypothesis:
+Mikakati ya usafiri ya magaidi haikuchunguzwa kabla ya matukio ya 9/11.
+A. entailment
+B. neutral
+C. contradiction
+Answer:
+",A,8,['\n'],multiple_choice,exact_match,xnli_3401,xnli_sw_3401
+xnli,sw,"Does the premise entail the hypothesis? Respond with a single letter.
+Premise:
+Linda Hardwick Mkurugenzi wa Maendeleo & amp
+Hypothesis:
+Mkurugenzi wa Maendeleo ni Linda Harwick.
+A. entailment
+B. neutral
+C. contradiction
+Answer:
+",A,8,['\n'],multiple_choice,exact_match,xnli_3590,xnli_sw_3590
+xnli,sw,"Does the premise entail the hypothesis? Respond with a single letter.
+Premise:
+Tuko na ukamilifu mwingi wa kutilia bidii, siwezi kufikiria kampuni mshiriki nzuri ya kusaidia kuyaleta.
+Hypothesis:
+Tunataka kuinua mauzo yetu kwa asilimia 50%.
+A. entailment
+B. neutral
+C. contradiction
+Answer:
+",B,8,['\n'],multiple_choice,exact_match,xnli_3638,xnli_sw_3638
+xnli,sw,"Does the premise entail the hypothesis? Respond with a single letter.
+Premise:
+Kwa mchango wako kwenye Maktaba, utakuwa mwanachama wa Marafiki wa Jiji.
+Hypothesis:
+ili uwe rafiki wa Citywide unahitaji kuchangia maktaba
+A. entailment
+B. neutral
+C. contradiction
+Answer:
+",A,8,['\n'],multiple_choice,exact_match,xnli_3731,xnli_sw_3731
+xnli,sw,"Does the premise entail the hypothesis? Respond with a single letter.
+Premise:
+Kwa niaba ya Rais Bush, natarajia kufanya kazi na wewe katika siku zijazo.
+Hypothesis:
+Rais Bush na mimi tutashirikiana na nyinyi kuhusu mpango mpya wa afya.
+A. entailment
+B. neutral
+C. contradiction
+Answer:
+",B,8,['\n'],multiple_choice,exact_match,xnli_3826,xnli_sw_3826
+xnli,sw,"Does the premise entail the hypothesis? Respond with a single letter.
+Premise:
+Nimeshirikiana na IRT kwa muda wa miaka 17.
+Hypothesis:
+Sina lolote lakufanya na IRT.
+A. entailment
+B. neutral
+C. contradiction
+Answer:
+",C,8,['\n'],multiple_choice,exact_match,xnli_3942,xnli_sw_3942
+xnli,sw,"Does the premise entail the hypothesis? Respond with a single letter.
+Premise:
+Taarifa kuu inajadili ikiwa lengo la NATO linapaswa kuunda Kosovo au kuitunza kama nchi lindwa.
+Hypothesis:
+op-ed fupi inathibitisha lengo la NATO kulinda Macedonia.
+A. entailment
+B. neutral
+C. contradiction
+Answer:
+",C,8,['\n'],multiple_choice,exact_match,xnli_4235,xnli_sw_4235
+xnli,sw,"Does the premise entail the hypothesis? Respond with a single letter.
+Premise:
+Kutafuta Kitufe cha Kuweka salama (Samahani kwa kutumia maneno mbaya).
+Hypothesis:
+Napenda kufanya upuzi wa kugonganisha.
+A. entailment
+B. neutral
+C. contradiction
+Answer:
+",A,8,['\n'],multiple_choice,exact_match,xnli_4261,xnli_sw_4261
+xnli,sw,"Does the premise entail the hypothesis? Respond with a single letter.
+Premise:
+Hasira za Bi Dalloway zaongezeka, lakini swala muhimu pia latokea.
+Hypothesis:
+Pamoja na mapendekezo kwa Bi Dalloway, upinzani pia upo.
+A. entailment
+B. neutral
+C. contradiction
+Answer:
+",A,8,['\n'],multiple_choice,exact_match,xnli_4269,xnli_sw_4269
+xnli,sw,"Does the premise entail the hypothesis? Respond with a single letter.
+Premise:
+Mali ni mfululizo usio na mwisho wa michemko katika anga, au kwenye mtandao, na watu tofauti wanaodai kuwa na maslahi mbalimbali ndani yake.
+Hypothesis:
+Mali ni watu tu kusema wanamiliki kitu.
+A. entailment
+B. neutral
+C. contradiction
+Answer:
+",A,8,['\n'],multiple_choice,exact_match,xnli_4415,xnli_sw_4415
+xnli,sw,"Does the premise entail the hypothesis? Respond with a single letter.
+Premise:
+Na ninashukuru kwa maneno yako kwenye ukurasa wa 19: Sheria ya Kwanza ya Usimamizi wa Brunner Katika mwili wowote wa maandishi kuna angalau kosa moja ambalo mwandishi amesoma na kulipita mara tatu.
+Hypothesis:
+Waandishi wana makini sana; sio kosa hata moja hupita bila kutambuliwa chini ya macho yao.
+A. entailment
+B. neutral
+C. contradiction
+Answer:
+",C,8,['\n'],multiple_choice,exact_match,xnli_4526,xnli_sw_4526
+xnli,sw,"Does the premise entail the hypothesis? Respond with a single letter.
+Premise:
+Ushirika wa majina ya pesa na uzito mwingine ni ouguiya (Mauritania) inamaanisha ounce.
+Hypothesis:
+Sarafu nyingine pia hutumia majina ya uzito kwa kitengo cha kipimo chao.
+A. entailment
+B. neutral
+C. contradiction
+Answer:
+",B,8,['\n'],multiple_choice,exact_match,xnli_4596,xnli_sw_4596
+xnli,sw,"Does the premise entail the hypothesis? Respond with a single letter.
+Premise:
+Tangazo katika gazeti la New York Gazette la Rivington mnamo Oktoba 6, 1774, lilitaka kijana ajue kuhifadhi vitabu kuzingatia njia ya Italia, na mwingine alikuwa kutoka kwa mtu ambaye anataka mahali.
+Hypothesis:
+Gazette lilikuwa gazeti maarufu zaidi NY.
+A. entailment
+B. neutral
+C. contradiction
+Answer:
+",B,8,['\n'],multiple_choice,exact_match,xnli_4842,xnli_sw_4842
+xnli,sw,"Does the premise entail the hypothesis? Respond with a single letter.
+Premise:
+Mpangilio wa muda mrefu uliowekwa uliopangwa uliingia kwenye mazungumzo na maneno ya Mwakilishi Jack Brooks, ..
+Hypothesis:
+Jack Brooks ni fundi bomba.
+A. entailment
+B. neutral
+C. contradiction
+Answer:
+",C,8,['\n'],multiple_choice,exact_match,xnli_4911,xnli_sw_4911
+xnli,sw,"Does the premise entail the hypothesis? Respond with a single letter.
+Premise:
+Mtu lazima awe mwangalifu sana katika kupendekeza etymologies ambazo zinaonyesha asili ya neno la kucheza au huwa mara nyingi huwa ni etymologies za watu na tupu kabisa ya kitu chochote zaidi kuliko uvumilivu usiojulikana.
+Hypothesis:
+Unafaa kuwa makini wakati unafikiri neno lipya.
+A. entailment
+B. neutral
+C. contradiction
+Answer:
+",A,8,['\n'],multiple_choice,exact_match,xnli_5003,xnli_sw_5003

@@ -4,4 +4,3 @@ random_seed: 40
 # paths
 cache_dir: "~/.cache/huggingface"
 preprocessed_dir: "data/preprocessed"
-hf_token: "XXXXX"

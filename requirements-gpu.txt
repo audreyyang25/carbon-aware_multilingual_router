@@ -1,0 +1,12 @@
+# Minimal installs for data/generate.py on a RunPod GPU Pod.
+# Use a RunPod PyTorch template and keep its torch; only install what's missing:
+#   pip install -r requirements-gpu.txt
+transformers==5.19.0      # Qwen3.5 and Gemma 4 need transformers 5.x
+accelerate==1.15.0
+zeus==0.16.0              # GPU energy via NVML's energy counter (formerly zeus-ml)
+nvidia-ml-py==13.615.71   # provides `import pynvml`
+sentencepiece==0.2.0
+protobuf==6.30.2
+pandas
+numpy
+pyyaml

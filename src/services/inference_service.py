@@ -1,10 +1,12 @@
 # src/worker.py
 import argparse
 import logging
+import os
 import time
 
 # os.environ['TORCH_USE_CUDA_DSA'] = '1'
 import torch
+import transformers
 from transformers import (
     AutoModelForCausalLM,
     AutoTokenizer,
@@ -14,32 +16,39 @@ from transformers import (
 
 from config.manager import load_config
 from src.metrics.energy import EnergyMeasurement
-from src.queue.redis_client import RedisClient
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("worker")
 
 
+def _multimodal_auto_class():
+    """Auto class for *ForConditionalGeneration checkpoints (Qwen3.5, Gemma 4)."""
+    for name in ("AutoModelForMultimodalLM", "AutoModelForImageTextToText"):
+        if hasattr(transformers, name):
+            return getattr(transformers, name)
+    return AutoModelForCausalLM
+
+
 class KeywordsStoppingCriteria(StoppingCriteria):
-    def __init__(self, tokenizer, stop_words):
+    """Stop once a stop string appears in the generated text.
+
+    Matches on decoded text rather than token ids, because a stop string like "####"
+    tokenizes differently mid-sentence than on its own. Leading whitespace is ignored
+    so a "\n" stop doesn't fire before the model has answered.
+    """
+
+    def __init__(self, tokenizer, stop_words, prompt_length):
         self.tokenizer = tokenizer
-        self.stop_word_ids = [
-            self.tokenizer.encode(word, add_special_tokens=False) for word in stop_words
-        ]
+        self.stop_words = [word for word in stop_words if word]
+        self.prompt_length = prompt_length
 
     def __call__(
         self, input_ids: torch.LongTensor, scores: torch.FloatTensor, **kwargs
     ) -> bool:
-        for stop_ids in self.stop_word_ids:
-            if len(stop_ids) == 0:
-                continue
-
-            if (
-                input_ids.shape[1] >= len(stop_ids)
-                and input_ids[0][-len(stop_ids) :].tolist() == stop_ids
-            ):
-                return True
-        return False
+        generated = self.tokenizer.decode(
+            input_ids[0, self.prompt_length :], skip_special_tokens=True
+        ).lstrip()
+        return any(word in generated for word in self.stop_words)
 
 
 class InferenceService:
@@ -77,18 +86,25 @@ class InferenceService:
         logger.info(f"Loading model {model_id}")
         model_config = self.model_configs[model_id]
         model_name = model_config["name"]
+        hf_token = os.environ.get("HF_TOKEN")  # never stored in config files
+        cache_dir = os.path.expanduser(self.general_configs.get("cache_dir", "~/.cache/huggingface"))
         self.tokenizer = AutoTokenizer.from_pretrained(
-            model_name,
-            cache_dir=self.general_configs.get("cache_dir"),
-            token=self.general_configs.get("hf_token"),
+            model_name, cache_dir=cache_dir, token=hf_token
         )
-        self.loaded_model = AutoModelForCausalLM.from_pretrained(
+        auto_class = (
+            _multimodal_auto_class()
+            if model_config.get("auto_class") == "multimodal"
+            else AutoModelForCausalLM
+        )
+        self.loaded_model = auto_class.from_pretrained(
             model_name,
-            torch_dtype=torch.bfloat16,
+            dtype=torch.bfloat16,
             device_map=self.device,
-            cache_dir=self.general_configs.get("cache_dir"),
-            attn_implementation="eager",
+            cache_dir=cache_dir,
+            token=hf_token,
+            attn_implementation=model_config.get("attn_implementation", "sdpa"),
         )
+        self.loaded_model.eval()
         self.loaded_model_id = model_id
         self._warm_up_model(self.loaded_model, self.tokenizer)
 
@@ -107,7 +123,9 @@ class InferenceService:
             f"Generating response for input starting with: {query_text[:100]}..."
         )
         with torch.no_grad():
-            outputs = model.generate(inputs.input_ids, **gen_params)
+            outputs = model.generate(
+                inputs.input_ids, attention_mask=inputs.attention_mask, **gen_params
+            )
         latency = time.time() - start_time
         energy = self.energy_measurement.stop()
         output_tokens = outputs.shape[1] - input_tokens
@@ -179,10 +197,18 @@ class InferenceService:
             add_special_tokens=add_special_tokens,
         ).to(self.device)
         input_tokens = inputs.input_ids.shape[1]
+        # Greedy decoding so accuracy and energy are reproducible across runs
         gen_params = {
             "max_new_tokens": 256,
-            "do_sample": True,
+            "do_sample": False,
+            "temperature": None,
+            "top_p": None,
+            "top_k": None,
+            "pad_token_id": tokenizer.pad_token_id
+            if tokenizer.pad_token_id is not None
+            else tokenizer.eos_token_id,
         }
+        generation_parameters = dict(generation_parameters or {})
         if generation_parameters:
             if "stop_sequence" in generation_parameters:
                 stop_sequences = generation_parameters.pop("stop_sequence")
@@ -198,13 +224,13 @@ class InferenceService:
                 if stop_sequences:
                     stopping_criteria = StoppingCriteriaList()
                     stopping_criteria.append(
-                        KeywordsStoppingCriteria(tokenizer, stop_sequences)
+                        KeywordsStoppingCriteria(tokenizer, stop_sequences, input_tokens)
                     )
                     gen_params["stopping_criteria"] = stopping_criteria
             for key, value in generation_parameters.items():
                 if key in ["max_new_tokens", "max_length"]:
                     gen_params["max_new_tokens"] = int(value)
-                elif key in ["temperature", "top_p", "top_k", "num_beams"]:
+                elif key == "num_beams":
                     gen_params[key] = value
 
         return inputs, input_tokens, gen_params
@@ -268,6 +294,8 @@ def main():
         help="Energy measurement method",
     )
     args = parser.parse_args()
+    from src.queue.redis_client import RedisClient  # only the queue worker needs redis
+
     redis_client = RedisClient(
         host=args.redis_host, port=args.redis_port, password=args.redis_password
     )

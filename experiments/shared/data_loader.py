@@ -27,7 +27,7 @@ def load_evaluation_dataset(
         return pd.DataFrame()
 
     try:
-        query_base = "SELECT query_id, dataset, text FROM queries"
+        query_base = "SELECT query_id, dataset, language, item_id, text FROM queries"
         params = []
         if dataset_names and dataset_names != ["all"]:
             safe_dataset_names = tuple(dataset_names)
@@ -57,7 +57,7 @@ def load_evaluation_dataset(
         logger.info(
             f"Loaded and sampled {len(final_queries_df)} query IDs for evaluation."
         )
-        return final_queries_df[["query_id", "dataset", "text"]]
+        return final_queries_df[["query_id", "dataset", "language", "item_id", "text"]]
 
     except Exception as e:
         logger.error(f"Error loading evaluation dataset: {e}", exc_info=True)
@@ -83,6 +83,8 @@ def check_data_completeness(conn, required_query_ids: list, required_model_ids: 
                 pr.query_id, 
                 pr.model_id, 
                 q.dataset, 
+                q.language, 
+                q.item_id, 
                 pr.accuracy, 
                 pr.energy_consumption, 
                 pr.latency, 

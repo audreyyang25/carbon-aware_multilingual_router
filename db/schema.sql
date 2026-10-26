@@ -3,7 +3,9 @@ CREATE TABLE IF NOT EXISTS queries (
     query_id SERIAL PRIMARY KEY,
     text TEXT NOT NULL,
     dataset TEXT,
-    source_id TEXT,
+    language TEXT,                 -- e.g. 'en', 'sw'
+    item_id TEXT,                  -- same benchmark item across languages, e.g. 'xnli_0042'
+    source_id TEXT UNIQUE,         -- dataset_language_item, e.g. 'xnli_sw_0042'
     reference TEXT,
     extraction_method TEXT,
     evaluation_metrics TEXT,
@@ -53,6 +55,8 @@ CREATE TABLE IF NOT EXISTS pregenerated_results (
     latency FLOAT,
     input_tokens INTEGER,
     output_tokens INTEGER,
+    hardware TEXT,                 -- GPU the energy was measured on
+    energy_method TEXT,            -- zeus / pynvml
     timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     UNIQUE(query_id, model_id, run_id)
 );
@@ -60,4 +64,7 @@ CREATE TABLE IF NOT EXISTS pregenerated_results (
 -- Create index for faster lookups
 CREATE INDEX IF NOT EXISTS idx_pregenerated_results_query_model 
 ON pregenerated_results(query_id, model_id);
+
+CREATE INDEX IF NOT EXISTS idx_queries_dataset_language
+ON queries(dataset, language);
 

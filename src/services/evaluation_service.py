@@ -1,6 +1,6 @@
 from src.metrics.accuracy import QualityMetrics
 from src.metrics.energy import EnergyMetrics
-from src.metrics.extractors import get_extractor
+from src.metrics.extractors import canonical_number, get_extractor
 from src.metrics.normalizer import MetricNormalizer
 from src.metrics.text_utils import TextNormalizer
 
@@ -33,7 +33,7 @@ class EvaluationService:
 
         if skip_normalization:
             normalized_response = extracted_response
-            normalized_reference = reference
+            normalized_reference = canonical_number(reference) or str(reference)
         else:
             normalized_response = self.text_normalizer.normalize(extracted_response)
             normalized_reference = self.text_normalizer.normalize(reference)
