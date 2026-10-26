@@ -67,7 +67,7 @@ The languages covered by all three benchmarks are **en, de, es, fr, ru, zh, th, 
 
 ## How it works
 
-1. **Offline data generation** *(planned)*: every model runs on every benchmark query on a RunPod GPU. Outputs, accuracy, energy, and token counts are stored in Postgres (`pregenerated_results`).
+1. **Offline data generation**: every model runs on every benchmark query on a RunPod GPU (`data/generate.py`) with greedy decoding. Outputs, accuracy, GPU energy (J), token counts and the GPU name are written to a JSONL file, then loaded into Postgres (`pregenerated_results`).
 2. **Simulation**: a router replays a shuffled query stream. For each query it builds a context vector, picks a model, looks up the stored result, computes the reward, and updates the bandit. Regret is measured against the best model for each query.
 3. **Carbon at simulation time** *(planned)*: only energy is stored. Carbon is computed during replay from each zone's PUE and carbon-intensity time series, so one GPU run supports any number of zones.
 
@@ -82,6 +82,25 @@ python -m experiments.run --router random
 ```
 
 Router profiles (cost term, feature blocks, embedding model) will be defined in `experiments/config/routers.yaml`, so adding a router or an ablation only requires a config change.
+
+### Data generation (RunPod)
+
+```bash
+# Locally: choose the items (same items in every language)
+python data/process.py                      # all languages, 250 items per benchmark
+python data/process.py --languages en sw --samples 30   # pilot
+
+# On the Pod (PyTorch template; copy data/preprocessed/combined.csv over)
+pip install -r requirements-gpu.txt
+export HF_TOKEN=...                          # accept the Tiny Aya license on HF first
+python data/generate.py --models qwen3.5-2b qwen3.5-9b gemma-4-e4b --items-per-dataset 30
+#   -> results/generations_<gpu>.jsonl, resumable: re-run the same command after a restart
+
+# Back locally: load into Postgres
+psql ... -f db/schema.sql
+python data/ingest.py --input-file data/preprocessed/combined.csv
+python data/ingest.py --results-file results/generations_<gpu>.jsonl
+```
 
 ### Current interface (inherited from GreenServ)
 
