@@ -76,6 +76,8 @@ def main():
     if not torch.cuda.is_available():
         sys.exit("No CUDA device found: energy can only be measured on a GPU.")
     hardware = torch.cuda.get_device_name(args.device)
+    # RunPod data center (e.g. "US-TX-3"); with the timestamp it picks the Electricity Maps zone and hour
+    datacenter = os.environ.get("RUNPOD_DC_ID")
     output_path = args.output or os.path.join(
         "results", f"generations_{re.sub(r'[^A-Za-z0-9]+', '-', hardware).strip('-')}.jsonl"
     )
@@ -92,7 +94,7 @@ def main():
     queries = load_queries(args.input, args.datasets, args.languages, args.items_per_dataset)
     done = completed_pairs(output_path)
     logger.info(
-        f"{len(queries)} queries x {len(model_ids)} models on {hardware}; "
+        f"{len(queries)} queries x {len(model_ids)} models on {hardware} in {datacenter or 'unknown data center'}; "
         f"{len(done)} pairs already in {output_path}"
     )
 
@@ -148,8 +150,9 @@ def main():
                     "input_tokens": metrics["input_tokens"],
                     "output_tokens": metrics["output_tokens"],
                     "hardware": hardware,
+                    "datacenter": datacenter,
                     "energy_method": args.energy_method,
-                    "timestamp": datetime.now(timezone.utc).isoformat(),
+                    "timestamp": datetime.now(timezone.utc).isoformat(),  # UTC, end of generation
                 }
                 out.write(json.dumps(row, ensure_ascii=False) + "\n")
                 out.flush()
