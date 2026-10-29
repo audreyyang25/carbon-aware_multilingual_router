@@ -18,6 +18,7 @@ import json
 import logging
 import os
 import re
+import subprocess
 import sys
 import time
 from datetime import datetime, timezone
@@ -69,13 +70,25 @@ def main():
     parser.add_argument("--datasets", nargs="*")
     parser.add_argument("--languages", nargs="*")
     parser.add_argument("--items-per-dataset", type=int, help="Pilot: first N items per dataset")
-    parser.add_argument("--energy-method", default="zeus", choices=["zeus", "pynvml"])
+    parser.add_argument(
+        "--energy-method",
+        choices=["zeus", "pynvml", "apple"],
+        help="Default: zeus on CUDA, apple (on-chip GPU energy) on Apple silicon",
+    )
     parser.add_argument("--device", type=int, default=0)
     args = parser.parse_args()
 
-    if not torch.cuda.is_available():
-        sys.exit("No CUDA device found: energy can only be measured on a GPU.")
-    hardware = torch.cuda.get_device_name(args.device)
+    if torch.cuda.is_available():
+        hardware = torch.cuda.get_device_name(args.device)
+        args.energy_method = args.energy_method or "zeus"
+    elif torch.backends.mps.is_available():
+        # Local pilot on a Mac; energy is not comparable with the RunPod GPU runs
+        hardware = subprocess.run(
+            ["sysctl", "-n", "machdep.cpu.brand_string"], capture_output=True, text=True
+        ).stdout.strip() or "Apple silicon"
+        args.energy_method = args.energy_method or "apple"
+    else:
+        sys.exit("No CUDA or MPS device found: energy can only be measured on a GPU.")
     # RunPod data center (e.g. "US-TX-3"); with the timestamp it picks the Electricity Maps zone and hour
     datacenter = os.environ.get("RUNPOD_DC_ID")
     output_path = args.output or os.path.join(
@@ -124,8 +137,8 @@ def main():
                 }
                 try:
                     result = service.run_inference(q.processed_input, model_id, generation_parameters)
-                except torch.cuda.OutOfMemoryError:
-                    torch.cuda.empty_cache()
+                except torch.cuda.OutOfMemoryError:  # same class as torch.OutOfMemoryError, also raised on MPS
+                    service.empty_cache()
                     logger.error(f"{model_id} OOM on {q.id}; skipped (re-run to retry)")
                     continue
 

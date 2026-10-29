@@ -65,7 +65,12 @@ class InferenceService:
         self.redis_client = redis_client
         self.general_configs = general_configs
         self.model_configs = model_configs
-        self.device = f"cuda:{device_id}" if torch.cuda.is_available() else "cpu"
+        if torch.cuda.is_available():
+            self.device = f"cuda:{device_id}"
+        elif torch.backends.mps.is_available():
+            self.device = "mps"  # Apple silicon GPU (local pilot runs)
+        else:
+            self.device = "cpu"
         self.energy_measurement = EnergyMeasurement.create(
             method=energy_method, device_id=device_id
         )
@@ -81,7 +86,7 @@ class InferenceService:
             logger.info(f"Unloading model {self.loaded_model_id}")
             self.loaded_model = None
             self.tokenizer = None
-            torch.cuda.empty_cache()
+            self.empty_cache()
 
         logger.info(f"Loading model {model_id}")
         model_config = self.model_configs[model_id]
@@ -110,12 +115,25 @@ class InferenceService:
 
         return self.loaded_model, self.tokenizer
 
+    def empty_cache(self):
+        """Release cached accelerator memory on whichever backend is in use."""
+        if self.device.startswith("cuda"):
+            torch.cuda.empty_cache()
+        elif self.device == "mps":
+            torch.mps.empty_cache()
+
+    def _synchronize(self):
+        """On MPS, wait for queued GPU work so the energy window covers all of it."""
+        if self.device == "mps":
+            torch.mps.synchronize()
+
     def run_inference(self, query_text, model_id, generation_parameters=None):
         """Run inference on a query"""
         model, tokenizer = self._load_model(model_id)
         inputs, input_tokens, gen_params = self._prepare_generation_params(
             query_text, tokenizer, generation_parameters
         )
+        self._synchronize()
         self.energy_measurement.start()
         start_time = time.time()
 
@@ -126,6 +144,7 @@ class InferenceService:
             outputs = model.generate(
                 inputs.input_ids, attention_mask=inputs.attention_mask, **gen_params
             )
+        self._synchronize()
         latency = time.time() - start_time
         energy = self.energy_measurement.stop()
         output_tokens = outputs.shape[1] - input_tokens
