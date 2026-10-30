@@ -90,11 +90,16 @@ Router profiles (cost term, feature blocks, embedding model) will be defined in 
 python data/process.py                      # all languages, 250 items per benchmark
 python data/process.py --languages en sw --samples 30   # pilot
 
-# On the Pod (PyTorch template; copy data/preprocessed/combined.csv over)
-pip install -r requirements-gpu.txt
-export HF_TOKEN=...                          # accept the Tiny Aya license on HF first
-python data/generate.py --models qwen3.5-2b qwen3.5-9b gemma-4-e4b --items-per-dataset 30
+# Pod: PyTorch template, one 80 GB GPU (same type for every model), >=250 GB volume at /workspace
+cd /workspace && git clone <this repo> && cd carbon-aware_multilingual_router_fork
+export HF_TOKEN=...                          # accept the Tiny Aya and Gemma 4 licenses on HF first
+bash scripts/runpod_setup.sh                 # model cache on the volume, deps, tmux, GPU check
+python data/generate.py --models qwen3.5-2b gemma-4-31b --languages en sw \
+    --items-per-dataset 10 --output results/pilot.jsonl     # pilot: check outputs, accuracy, energy
+tmux new -s gen
+python data/generate.py 2>&1 | tee -a gen.log                # full sweep: 6,000 queries x 6 models
 #   -> results/generations_<gpu>.jsonl, resumable: re-run the same command after a restart
+#   Parallel: one Pod per model group (--models ...), same GPU type, distinct --output files
 
 # Back locally: load into Postgres
 psql ... -f db/schema.sql

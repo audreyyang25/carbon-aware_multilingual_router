@@ -92,6 +92,8 @@ def load_results(conn, results_path, run_id=0):
     """
     load_models(conn)
     results = pd.read_json(results_path, lines=True, dtype={"source_id": str})
+    if "datacenter" not in results:  # files written before the field was added; NaN when not on RunPod
+        results["datacenter"] = None
     cursor = conn.cursor()
     cursor.execute("SELECT source_id, query_id FROM queries WHERE source_id IS NOT NULL")
     query_ids = dict(cursor.fetchall())
@@ -103,20 +105,21 @@ def load_results(conn, results_path, run_id=0):
     rows = [
         (query_ids[r.source_id], r.model_id, run_id, r.generated_output, float(r.accuracy),
          float(r.energy_consumption), float(r.latency), int(r.input_tokens), int(r.output_tokens),
-         r.hardware, r.energy_method, r.timestamp)
+         r.hardware, r.datacenter if isinstance(r.datacenter, str) else None, r.energy_method, r.timestamp)
         for r in results.itertuples() if r.source_id in query_ids
     ]
     execute_values(
         cursor,
         """INSERT INTO pregenerated_results
            (query_id, model_id, run_id, generated_output, accuracy, energy_consumption,
-            latency, input_tokens, output_tokens, hardware, energy_method, timestamp)
+            latency, input_tokens, output_tokens, hardware, datacenter, energy_method, timestamp)
            VALUES %s
            ON CONFLICT (query_id, model_id, run_id) DO UPDATE
            SET generated_output = EXCLUDED.generated_output, accuracy = EXCLUDED.accuracy,
                energy_consumption = EXCLUDED.energy_consumption, latency = EXCLUDED.latency,
                input_tokens = EXCLUDED.input_tokens, output_tokens = EXCLUDED.output_tokens,
-               hardware = EXCLUDED.hardware, energy_method = EXCLUDED.energy_method,
+               hardware = EXCLUDED.hardware, datacenter = EXCLUDED.datacenter,
+               energy_method = EXCLUDED.energy_method,
                timestamp = EXCLUDED.timestamp""",
         rows,
     )

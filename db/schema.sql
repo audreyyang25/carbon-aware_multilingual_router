@@ -56,6 +56,7 @@ CREATE TABLE IF NOT EXISTS pregenerated_results (
     input_tokens INTEGER,
     output_tokens INTEGER,
     hardware TEXT,                 -- GPU the energy was measured on
+    datacenter TEXT,               -- RunPod data center (RUNPOD_DC_ID)
     energy_method TEXT,            -- zeus / pynvml
     timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     UNIQUE(query_id, model_id, run_id)

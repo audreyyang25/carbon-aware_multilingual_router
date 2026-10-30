@@ -18,6 +18,7 @@ import json
 import logging
 import os
 import re
+import subprocess
 import sys
 import time
 from datetime import datetime, timezone
@@ -69,13 +70,27 @@ def main():
     parser.add_argument("--datasets", nargs="*")
     parser.add_argument("--languages", nargs="*")
     parser.add_argument("--items-per-dataset", type=int, help="Pilot: first N items per dataset")
-    parser.add_argument("--energy-method", default="zeus", choices=["zeus", "pynvml"])
+    parser.add_argument(
+        "--energy-method",
+        choices=["zeus", "pynvml", "apple"],
+        help="Default: zeus on CUDA, apple (on-chip GPU energy) on Apple silicon",
+    )
     parser.add_argument("--device", type=int, default=0)
     args = parser.parse_args()
 
-    if not torch.cuda.is_available():
-        sys.exit("No CUDA device found: energy can only be measured on a GPU.")
-    hardware = torch.cuda.get_device_name(args.device)
+    if torch.cuda.is_available():
+        hardware = torch.cuda.get_device_name(args.device)
+        args.energy_method = args.energy_method or "zeus"
+    elif torch.backends.mps.is_available():
+        # Local pilot on a Mac; energy is not comparable with the RunPod GPU runs
+        hardware = subprocess.run(
+            ["sysctl", "-n", "machdep.cpu.brand_string"], capture_output=True, text=True
+        ).stdout.strip() or "Apple silicon"
+        args.energy_method = args.energy_method or "apple"
+    else:
+        sys.exit("No CUDA or MPS device found: energy can only be measured on a GPU.")
+    # RunPod data center (e.g. "US-TX-3"); with the timestamp it picks the Electricity Maps zone and hour
+    datacenter = os.environ.get("RUNPOD_DC_ID")
     output_path = args.output or os.path.join(
         "results", f"generations_{re.sub(r'[^A-Za-z0-9]+', '-', hardware).strip('-')}.jsonl"
     )
@@ -92,7 +107,7 @@ def main():
     queries = load_queries(args.input, args.datasets, args.languages, args.items_per_dataset)
     done = completed_pairs(output_path)
     logger.info(
-        f"{len(queries)} queries x {len(model_ids)} models on {hardware}; "
+        f"{len(queries)} queries x {len(model_ids)} models on {hardware} in {datacenter or 'unknown data center'}; "
         f"{len(done)} pairs already in {output_path}"
     )
 
@@ -122,8 +137,8 @@ def main():
                 }
                 try:
                     result = service.run_inference(q.processed_input, model_id, generation_parameters)
-                except torch.cuda.OutOfMemoryError:
-                    torch.cuda.empty_cache()
+                except torch.cuda.OutOfMemoryError:  # same class as torch.OutOfMemoryError, also raised on MPS
+                    service.empty_cache()
                     logger.error(f"{model_id} OOM on {q.id}; skipped (re-run to retry)")
                     continue
 
@@ -148,8 +163,9 @@ def main():
                     "input_tokens": metrics["input_tokens"],
                     "output_tokens": metrics["output_tokens"],
                     "hardware": hardware,
+                    "datacenter": datacenter,
                     "energy_method": args.energy_method,
-                    "timestamp": datetime.now(timezone.utc).isoformat(),
+                    "timestamp": datetime.now(timezone.utc).isoformat(),  # UTC, end of generation
                 }
                 out.write(json.dumps(row, ensure_ascii=False) + "\n")
                 out.flush()

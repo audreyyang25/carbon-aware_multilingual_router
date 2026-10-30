@@ -135,12 +135,45 @@ class ZeusMeasurement(BasePowerMeasurement):
             raise RuntimeError(f"Zeus energy measurement failed during stop: {e}")
 
 
+class AppleSiliconMeasurement(BasePowerMeasurement):
+    """On-chip GPU energy on Apple silicon via zeus-apple-silicon (IOReport, no sudo).
+
+    Returns GPU energy only, to match what NVML reports on a discrete GPU. The CPU and
+    DRAM counters read 0 on some chip/macOS combinations, so they are not included.
+    """
+
+    def __init__(self, device_id=0):
+        from zeus_apple_silicon import AppleEnergyMonitor
+
+        self.monitor = AppleEnergyMonitor()
+        self.start_mj = None
+
+    def start(self):
+        """Record the cumulative GPU energy counter."""
+        # Cumulative-counter deltas instead of begin/end_window: a pilot run saw one
+        # window return 0 J for a 26 s generation, which we could not reproduce.
+        self.start_mj = self.monitor.get_cumulative_energy().gpu_mj
+        return True
+
+    def stop(self):
+        """Stop measurement and return on-chip GPU energy used (joules)."""
+        if self.start_mj is None:
+            raise RuntimeError("Apple energy measurement stopped before it was started")
+        end_mj = self.monitor.get_cumulative_energy().gpu_mj
+        energy = (end_mj - self.start_mj) / 1000.0
+        self.start_mj = None
+        return energy
+
+
 class EnergyMeasurement:
     """Factory class to create the appropriate energy measurement tool."""
 
     @staticmethod
     def create(method="zeus", device_id=0, **kwargs):
         """Create energy measurement instance based on method."""
+        if method == "apple":
+            print("Create energy measurement instance Apple silicon.")
+            return AppleSiliconMeasurement(device_id=device_id)
         if method == "zeus" and ZEUS_AVAILABLE:
             print("Create energy measurement instance Zeus.")
             return ZeusMeasurement(device_id=device_id, **kwargs)
