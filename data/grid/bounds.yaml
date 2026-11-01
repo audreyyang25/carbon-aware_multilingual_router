@@ -1,0 +1,31 @@
+ci_min: 11.0
+ci_max: 908.0
+emission_factor: lifecycle
+period:
+  start: '2025-01-01T00:00:00Z'
+  end: '2026-01-01T00:00:00Z'
+zones:
+  FR:
+    min: 13.0
+    mean: 30.104337899543378
+    max: 87.0
+  SE-SE3:
+    min: 11.0
+    mean: 19.198972602739726
+    max: 43.0
+  DE:
+    min: 100.0
+    mean: 337.4406392694064
+    max: 643.0
+  US-CAL-CISO:
+    min: 43.0
+    mean: 206.23881278538812
+    max: 399.0
+  US-NE-ISNE:
+    min: 133.0
+    mean: 303.3502283105023
+    max: 524.0
+  PL:
+    min: 308.0
+    mean: 651.153196347032
+    max: 908.0

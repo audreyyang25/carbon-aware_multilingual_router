@@ -41,7 +41,7 @@ from experiments.shared.simulation_data import (
     hardware_slug,
     load_results,
 )
-from experiments.X2_feature_ablation.utils import create_bandit_instance
+from src.bandit.factory import create_bandit_instance
 from src.metrics.carbon import CarbonNormalizer, carbon_g
 from src.metrics.grid import IntensitySeries
 
@@ -214,7 +214,7 @@ def summarize(steps):
 
 
 def main():
-    router_config = yaml.safe_load(open("experiments/config/routers.yaml"))
+    router_config = load_config("routers")
     grid_config = load_config("grid")
     args = parse_args(router_config, grid_config)
     feature_config = load_config("feature_extraction")["feature_extraction"]
@@ -242,7 +242,7 @@ def main():
     table["energy_norm"] = [bounds.normalize("energy_consumption", e, d) for e, d in zip(table["energy"], table["dataset"])]
     table["ept_norm"] = [bounds.normalize("energy_per_token", e / n, d)
                          for e, n, d in zip(table["energy"], table["tokens"], table["dataset"])]
-    ctx = {"carbon_normalizer": CarbonNormalizer(*ci_bounds, pue=args.pue, metric_normalizer=bounds)}
+    ctx = {"carbon_normalizer": CarbonNormalizer(*ci_bounds, bounds, pue=args.pue)}
     encoder_energy = load_encoder_energy(router_config, hardware)
 
     logger.info(f"{len(table)} queries ({(table['split'] == 'train').sum()} train) x {len(model_ids)} models "

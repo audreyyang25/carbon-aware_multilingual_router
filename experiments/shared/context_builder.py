@@ -1,4 +1,4 @@
-"""Build each router's context vectors from its feature list (experiments/config/routers.yaml).
+"""Build each router's context vectors from its feature list (config/routers.yaml).
 
 Everything learned from data (PCA, k-means, scaling) is fit on training queries only, so test
 queries and a held-out language never shape the features.

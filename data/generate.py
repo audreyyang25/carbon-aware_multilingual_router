@@ -112,7 +112,6 @@ def main():
     )
 
     service = InferenceService(
-        redis_client=None,
         general_configs=load_config("general"),
         model_configs=model_configs,
         device_id=args.device,

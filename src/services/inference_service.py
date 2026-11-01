@@ -1,5 +1,4 @@
-# src/worker.py
-import argparse
+# src/services/inference_service.py
 import logging
 import os
 import re
@@ -15,11 +14,10 @@ from transformers import (
     StoppingCriteriaList,
 )
 
-from config.manager import load_config
 from src.metrics.energy import EnergyMeasurement
 
 logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger("worker")
+logger = logging.getLogger(__name__)
 
 
 def _multimodal_auto_class():
@@ -58,17 +56,15 @@ class KeywordsStoppingCriteria(StoppingCriteria):
 
 
 class InferenceService:
-    """Worker that pulls tasks from Redis and runs inference"""
+    """Loads models and runs one generation at a time with energy measurement (used by data/generate.py)."""
 
     def __init__(
         self,
-        redis_client,
         general_configs,
         model_configs,
         device_id=0,
         energy_method="pynvml",
     ):
-        self.redis_client = redis_client
         self.general_configs = general_configs
         self.model_configs = model_configs
         if torch.cuda.is_available():
@@ -259,83 +255,3 @@ class InferenceService:
                     gen_params[key] = value
 
         return inputs, input_tokens, gen_params
-
-    def run(self):
-        """Main worker loop"""
-        logger.info(f"Worker started on {self.device}")
-
-        while True:
-            task = self.redis_client.get_next_task(timeout=1)
-            if not task:
-                time.sleep(0.1)
-                continue
-
-            logger.info(
-                f"Processing task {task['id']} with model {task['selected_model']}"
-            )
-
-            try:
-                result = self.run_inference(
-                    task["query_text"],
-                    task["selected_model"],
-                    task.get("generation_parameters"),
-                )
-                self.redis_client.set_result(
-                    task["id"],
-                    {
-                        **result,
-                        "status": "completed",
-                        "selected_model": task["selected_model"],
-                        "extraction_method": task.get("extraction_method"),
-                        "evaluation_metric": task.get("evaluation_metric"),
-                    },
-                )
-
-                logger.info(f"Completed task {task['id']}")
-            except Exception as e:
-                logger.error(f"Error processing task {task['id']}: {e}")
-                self.redis_client.set_result(
-                    task["id"],
-                    {
-                        "error": str(e),
-                        "status": "failed",
-                        "selected_model": task["selected_model"],
-                    },
-                )
-
-
-def main():
-    parser = argparse.ArgumentParser(description="LLM Inference Worker")
-    parser.add_argument("--redis-host", default="localhost")
-    parser.add_argument("--redis-port", type=int, default=6380)
-    parser.add_argument(
-        "--redis-password", default=None, help="Redis password (if required)"
-    )
-    parser.add_argument("--device", type=int, default=0)
-    parser.add_argument(
-        "--energy-method",
-        default="zeus",
-        choices=["pynvml", "zeus"],
-        help="Energy measurement method",
-    )
-    args = parser.parse_args()
-    from src.queue.redis_client import RedisClient  # only the queue worker needs redis
-
-    redis_client = RedisClient(
-        host=args.redis_host, port=args.redis_port, password=args.redis_password
-    )
-
-    model_configs = load_config("models")
-    general_configs = load_config("general")
-    worker = InferenceService(
-        redis_client,
-        general_configs,
-        model_configs,
-        device_id=args.device,
-        energy_method=args.energy_method,
-    )
-    worker.run()
-
-
-if __name__ == "__main__":
-    main()

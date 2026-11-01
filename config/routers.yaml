@@ -1,4 +1,4 @@
-# experiments/config/routers.yaml
+# config/routers.yaml
 # Router profiles for experiments/run.py. A router = a cost term + the features it can see.
 # Every router replays the same results and the same grid-intensity stream within a run, so
 # differences come only from the profile. Add an ablation by adding a profile here.

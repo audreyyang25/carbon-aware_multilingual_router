@@ -6,7 +6,7 @@ Contextual multi-armed bandit routing for LLM inference that trades off **multil
 
 ## Acknowledgement
 
-This project builds on the code for **GreenServ** ([TZData1/llm-inference-router](https://github.com/TZData1/llm-inference-router)), a contextual-bandit router that balances accuracy against energy. The bandit implementations, feature-extraction pipeline, and simulation framework come from that repository. Its commit history was squashed on import to remove a credential that appears in the upstream history. If you use this code, please cite:
+This project builds on the code for **GreenServ** ([TZData1/llm-inference-router](https://github.com/TZData1/llm-inference-router)), a contextual-bandit router that balances accuracy against energy. The bandit algorithms, reward, complexity and semantic-cluster features, energy measurement and inference service come from that repository. GreenServ's code that this project does not use was removed (see [Removed GreenServ code](#removed-greenserv-code)). Its commit history was squashed on import to remove a credential that appears in the upstream history. If you use this code, please cite:
 
 ```bibtex
 @article{ziller2026greenserv,
@@ -36,7 +36,7 @@ reward = (1 − λ) · accuracy + λ · (1 − cost_norm)
 
 ## Routers compared
 
-Profiles live in `experiments/config/routers.yaml`; each is a cost term plus a feature list.
+Profiles live in `config/routers.yaml`; each is a cost term plus a feature list.
 
 | Router | Cost | Context |
 |---|---|---|
@@ -145,12 +145,24 @@ python data/ingest.py --input-file data/preprocessed/combined.csv
 python data/ingest.py --results-file results/generations_<gpu>.jsonl
 ```
 
-The GreenServ runner (`make exp01-full`, `experiments/X1_algorithm_comparison/`) still reads from Postgres and uses GreenServ's energy-only reward; it is kept for reference.
+## Removed GreenServ code
+
+GreenServ ran a live routing API and replayed results from Postgres; this project collects results once on RunPod and simulates routing locally, so the following were removed. They remain in [the upstream repository](https://github.com/TZData1/llm-inference-router) for reference.
+
+| Removed | Why | Replaced by |
+|---|---|---|
+| `experiments/X1_algorithm_comparison/`, `X2_feature_ablation/`, `experiments/config/` (`experiments.yaml`, `baselines.yaml`, `mab.yaml`, copies of `config/`) | GreenServ's experiment runners and their config: English datasets, GreenServ's model pool, energy-only reward, Postgres input | `experiments/run.py` with `config/routers.yaml`; the bandit factory moved to `src/bandit/factory.py` |
+| `experiments/shared/` data loader, baseline selectors, results handler, plot utils, config loader | Used only by those runners | `experiments/shared/simulation_data.py`, baselines inside `experiments/run.py` |
+| `src/api/`, `src/services/orchestrator.py`, `router_service.py`, `feature_service.py`, `src/models/registry.py`, `src/queue/` and the Redis worker loop in `inference_service.py` | Live routing API and Redis task queue | `data/generate.py` calls `InferenceService` directly |
+| `src/feature_extractor/task_type.py` and the `task_classification` config | Classifier over GreenServ's five English task types, needing a pickled model | The `dataset` one-hot, read from the query's benchmark |
+| `src/feature_extractor/semantic_cluster.py` and the `semantic_clustering` config | Online k-means on live queries | k-means fit on training items in `experiments/shared/context_builder.py` |
+| `src/metrics/normalizer.py`, `config/metrics.yaml` | Fixed energy bounds measured on GreenServ's datasets and hardware | Bounds from the training items of the results being simulated (`TrainBounds`) |
+| `config/explore_dataset.py`, the Makefile's `exp01-*` targets, the API/Redis requirements | Exploration script and entry points for the removed code | |
 
 ## Repository structure
 
 ```
-config/                  # datasets, models, features, grid zones, metrics, infrastructure
+config/                  # datasets, models, features, router profiles, grid zones, Postgres
 data/
 ├── process.py           # item selection and prompt formatting
 ├── split.py             # item-level train/test split
@@ -163,16 +175,14 @@ data/
 └── grid/                # intensity series and global bounds
 experiments/
 ├── run.py               # routing simulation (--router, --zone, ...)
-├── config/routers.yaml  # router profiles, baselines, bandit hyperparameters
-├── shared/              # results loading, context builder, reward functions
-└── X1_algorithm_comparison/   # GreenServ's original runner (reference)
+└── shared/              # results loading, context builder, reward functions
 results/                 # generation results and encoder energy from RunPod
 scripts/                 # RunPod setup, encoder energy, pilot summary
 src/
-├── bandit/              # LinUCB, Thompson Sampling, ε-greedy
-├── feature_extractor/   # complexity, semantic cluster, task type, language one-hot, multilingual embedding
+├── bandit/              # LinUCB, Thompson Sampling, ε-greedy, factory
+├── feature_extractor/   # complexity, language one-hot, sentence-embedding encoder
 ├── metrics/             # accuracy extraction, energy, carbon, grid intensity
-└── services/            # inference (generation), evaluation, routing services
+└── services/            # inference (generation) and answer evaluation
 ```
 
 ## Setup

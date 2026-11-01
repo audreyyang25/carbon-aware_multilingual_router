@@ -88,8 +88,7 @@ def build_query_table(results, model_ids, queries_path, splits_path):
 class TrainBounds:
     """Per-dataset min/max of energy metrics over training queries.
 
-    Has the same `bounds` shape as MetricNormalizer ({dataset: {metric: {min, max}}}), so it can
-    be passed to CarbonNormalizer. Test queries outside the range are clamped to [0, 1].
+    `bounds` is {dataset: {metric: {min, max}}}, the shape CarbonNormalizer expects. Test queries outside the range are clamped to [0, 1].
     """
 
     def __init__(self, table):

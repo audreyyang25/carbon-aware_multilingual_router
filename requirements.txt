@@ -30,16 +30,9 @@ scipy==1.18.1
 nvidia-ml-py==13.615.71
 zeus-apple-silicon==1.1.0; sys_platform == "darwin"
 
-# Optional: Postgres (data/ingest.py, GreenServ's X1 runner)
+# Optional: Postgres (data/ingest.py)
 psycopg2-binary==2.9.13
 
-# Optional: GreenServ's X1 runner and plots
+# Optional: plotting simulation results
 matplotlib==3.11.2
 seaborn==0.13.2
-statsmodels==0.15.0
-
-# Optional: live routing API and Redis queue worker (src/api, src/queue)
-fastapi==0.143.3
-uvicorn==0.54.0
-pydantic==2.14.1
-redis==8.1.0
