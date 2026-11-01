@@ -60,12 +60,17 @@ def canonical_number(text):
 
 
 class NumericAnswerExtractor(BaseAnswerExtractor):
-    """Extract numeric answers, first from 'Answer: X' format, then last number in text."""
+    """Extract numeric answers, first from 'Answer: X' format, then last number in text.
+
+    Set extraction_params={"allow_fallback": False} for truncated outputs: without an
+    "Answer:" line the last number is just an intermediate step, so nothing is extracted.
+    """
 
     def extract(self, response, extraction_params=None):
         """Extract numeric answer from response."""
         if not response:
             return ""
+        allow_fallback = (extraction_params or {}).get("allow_fallback", True)
 
         try:
             answer_match = re.search(
@@ -73,6 +78,8 @@ class NumericAnswerExtractor(BaseAnswerExtractor):
             )
             if answer_match:
                 return canonical_number(answer_match.group(1))
+            if not allow_fallback:
+                return ""
             numbers = re.findall(NUMBER_PATTERN, response)
             return canonical_number(numbers[-1]) if numbers else ""
         except Exception:

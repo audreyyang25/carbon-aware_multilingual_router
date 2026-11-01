@@ -13,12 +13,22 @@ def energy_cost(row, ci, ctx):
     return row["energy_per_token_norm"]
 
 
+def energy_per_query_cost(row, ci, ctx):
+    """Normalized energy per query (ignores grid intensity)."""
+    return row["energy_consumption_norm"]
+
+
 def carbon_cost(row, ci, ctx):
     """Normalized carbon per query; ctx["carbon_normalizer"] is a CarbonNormalizer."""
     return ctx["carbon_normalizer"].cost(row["energy_consumption"], ci, row["dataset"])
 
 
-COST_FUNCTIONS = {"energy": energy_cost, "carbon": carbon_cost}
+# Keys match `cost:` in experiments/config/routers.yaml
+COST_FUNCTIONS = {
+    "energy_per_token": energy_cost,
+    "energy": energy_per_query_cost,
+    "carbon": carbon_cost,
+}
 
 
 def calculate_reward(

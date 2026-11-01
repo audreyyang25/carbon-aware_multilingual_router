@@ -26,6 +26,24 @@ feature_extraction:
       - 67
     use_binned: true
     
+  # Language-aware routers (lang_carbon and its ablations)
+  language:
+    languages: ["en", "de", "es", "fr", "ru", "zh", "th", "sw"]   # one-hot order; an unseen language is all zeros
+
+  multilingual_embedding:
+    encoder: "intfloat/multilingual-e5-small"   # 118M params, 384-dim, ~100 languages
+    prefix: "query: "                           # e5 models expect this prefix on inputs
+    embeddings_path: "data/features/embeddings_multilingual-e5-small.npz"
+    pca_dim: 16                                 # fit on training items only, at simulation time
+
+  # GreenServ's English encoder, cached the same way: semantic clusters are fit on it, and the
+  # carbon_en_emb control router uses it so encoders can be compared with everything else equal
+  english_embedding:
+    encoder: "sentence-transformers/all-MiniLM-L6-v2"
+    prefix: ""
+    embeddings_path: "data/features/embeddings_all-MiniLM-L6-v2.npz"
+    pca_dim: 16
+
   context_vector:
     one_hot_encode: true
     include_raw_embeddings: false

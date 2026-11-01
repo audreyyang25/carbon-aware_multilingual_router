@@ -22,11 +22,17 @@ class EvaluationService:
         task_type="default",
         extraction_method="raw",
         evaluation_metric="exact_match",
+        truncated=False,
     ):
-        """Evaluate response against reference for a specific task type."""
+        """Evaluate response against reference for a specific task type.
+
+        truncated: the output hit max_new_tokens, so only an explicit answer counts.
+        """
 
         extractor = get_extractor(extraction_method)
-        extracted_response = extractor.extract(response)
+        extracted_response = extractor.extract(
+            response, {"allow_fallback": not truncated}
+        )
         skip_normalization = extraction_method == "numeric" or (
             extraction_method.startswith("regex_") and "(?!.*\\d)" in extraction_method
         )

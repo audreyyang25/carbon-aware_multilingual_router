@@ -1,5 +1,5 @@
 """Summarize a generate.py JSONL: accuracy/energy/latency by dataset x language,
-zero-energy rows, MGSM rows that hit the 512-token cap, and sample wrong answers.
+zero-energy rows, MGSM rows that hit the token cap, and sample wrong answers.
 
     python scripts/summarize_pilot.py results/pilot_m4.jsonl
 """
@@ -26,8 +26,10 @@ print("\nJ per output token (mgsm):", (df[df.dataset == "mgsm"].energy_consumpti
 
 zero = df[(df.energy_consumption <= 0) & (df.latency > 2)]
 print("\nzero-energy long rows:", len(zero), zero.source_id.tolist())
-hit = df[(df.dataset == "mgsm") & (df.output_tokens >= 512)]
-print("mgsm hit 512-token cap:", len(hit), hit.source_id.tolist())
+# Newer runs record "truncated"; the first M4 pilot predates it and used a 512 cap
+capped = df["truncated"].fillna(False).astype(bool) if "truncated" in df else df.output_tokens >= 512
+hit = df[(df.dataset == "mgsm") & capped]
+print("mgsm hit token cap:", len(hit), hit.source_id.tolist())
 nostop = df[(df.dataset == "mgsm") & (~df.generated_output.str.contains("####"))]
 print("mgsm without '####':", len(nostop), "of", (df.dataset == "mgsm").sum())
 

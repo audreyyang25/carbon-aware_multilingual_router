@@ -2,6 +2,7 @@
 import argparse
 import logging
 import os
+import re
 import time
 
 # os.environ['TORCH_USE_CUDA_DSA'] = '1'
@@ -34,12 +35,15 @@ class KeywordsStoppingCriteria(StoppingCriteria):
 
     Matches on decoded text rather than token ids, because a stop string like "####"
     tokenizes differently mid-sentence than on its own. Leading whitespace is ignored
-    so a "\n" stop doesn't fire before the model has answered.
+    so a "\n" stop doesn't fire before the model has answered. Entries starting with
+    "re:" are regular expressions (e.g. stop once a complete "Answer: 126" line is written).
     """
 
     def __init__(self, tokenizer, stop_words, prompt_length):
         self.tokenizer = tokenizer
-        self.stop_words = [word for word in stop_words if word]
+        words = [word for word in stop_words if word]
+        self.stop_words = [w for w in words if not w.startswith("re:")]
+        self.stop_patterns = [re.compile(w[3:]) for w in words if w.startswith("re:")]
         self.prompt_length = prompt_length
 
     def __call__(
@@ -48,7 +52,9 @@ class KeywordsStoppingCriteria(StoppingCriteria):
         generated = self.tokenizer.decode(
             input_ids[0, self.prompt_length :], skip_special_tokens=True
         ).lstrip()
-        return any(word in generated for word in self.stop_words)
+        return any(word in generated for word in self.stop_words) or any(
+            pattern.search(generated) for pattern in self.stop_patterns
+        )
 
 
 class InferenceService:

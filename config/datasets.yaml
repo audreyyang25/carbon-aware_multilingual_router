@@ -10,6 +10,10 @@
 
 pivot_language: "en"
 
+# Train/test split by item, so every language version of an item lands on the same side
+# (data/split.py -> data/preprocessed/splits.csv). Fixed before looking at any results.
+split: {test_fraction: 0.3}
+
 datasets:
   xnli:
     load_params: {path: "facebook/xnli"}
@@ -55,4 +59,6 @@ datasets:
       input1_prefix: "Solve this step by step. Provide your final answer in the format 'Answer: <answer> ####'.\nQuestion:\n"
     extraction: {method: "numeric"}
     evaluation_metric: "exact_match"
-    generation: {max_new_tokens: 512, stop_sequence: ["####"]}
+    # 1024: at 512, 21/60 pilot answers were cut off (14 of them Swahili). Stop once a full
+    # "Answer: <number>" line is written; models rarely add the "####" the prompt asks for.
+    generation: {max_new_tokens: 1024, stop_sequence: ["####", 're:Answer:\W*\d[\d,.]*\W*\n']}

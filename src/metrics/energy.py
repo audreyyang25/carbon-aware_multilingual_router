@@ -12,7 +12,7 @@ try:
 
 
 except ImportError:
-    print("Zeus is not available. Install with: pip install zeus-ml")
+    print("Zeus is not available. Install with: pip install zeus")
     ZEUS_AVAILABLE = False
 
 
@@ -103,7 +103,7 @@ class ZeusMeasurement(BasePowerMeasurement):
         self.start_time = None
 
         if not ZEUS_AVAILABLE:
-            print("Zeus is not available. Install with: pip install zeus-ml")
+            print("Zeus is not available. Install with: pip install zeus")
 
     def start(self):
         """Start Zeus power measurement for GPU."""

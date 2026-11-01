@@ -1,0 +1,68 @@
+# experiments/config/routers.yaml
+# Router profiles for experiments/run.py. A router = a cost term + the features it can see.
+# Every router replays the same results and the same grid-intensity stream within a run, so
+# differences come only from the profile. Add an ablation by adding a profile here.
+#
+# cost:
+#   energy_per_token  GreenServ: per-dataset normalized energy per token (ignores the grid)
+#   energy            normalized energy per query (ignores the grid)
+#   carbon            energy x grid intensity x PUE, normalized with global intensity bounds
+# features (a bias term is always added):
+#   dataset           one-hot benchmark (GreenServ's task type, known from the query source)
+#   complexity        GreenServ's Flesch reading-ease bin (an English formula, kept as-is)
+#   semantic_cluster  k-means clusters of GreenServ's English embedding (fit on training items)
+#   embedding         PCA of a cached embedding; needs `encoder: english_embedding | multilingual_embedding`
+#   language          language one-hot (from query metadata; language ID in deployment)
+#   carbon_intensity  current grid intensity, scaled to [0, 1] with the global bounds
+
+defaults:
+  algorithm: linucb
+  lambda: 0.5          # weight on cost: R = (1 - lambda) * accuracy + lambda * (1 - cost)
+  pue: 1.0             # constant PUE cancels in the normalized cost; it only scales reported grams
+  runs: 5              # each run: new query order and new start hour in the intensity series
+  semantic_clusters: 3 # GreenServ default
+
+routers:
+  greenserv:
+    cost: energy_per_token
+    features: [dataset, complexity, semantic_cluster]
+  energy_pq:
+    cost: energy
+    features: [dataset, complexity, semantic_cluster]
+  carbon:
+    cost: carbon
+    features: [dataset, complexity, semantic_cluster, carbon_intensity]
+
+  # Ablations between carbon and lang_carbon: what does each language signal add?
+  carbon_en_emb:       # encoder control: GreenServ's English encoder as a PCA vector
+    cost: carbon
+    features: [dataset, complexity, embedding, carbon_intensity]
+    encoder: english_embedding
+  carbon_onehot:       # language label only
+    cost: carbon
+    features: [dataset, complexity, semantic_cluster, language, carbon_intensity]
+  carbon_ml_emb:       # multilingual encoder only
+    cost: carbon
+    features: [dataset, complexity, embedding, carbon_intensity]
+    encoder: multilingual_embedding
+
+  lang_carbon:
+    cost: carbon
+    features: [dataset, complexity, embedding, language, carbon_intensity]
+    encoder: multilingual_embedding
+
+# Baselines run alongside every router on the same stream. The oracle picks the best model for
+# every query in hindsight and defines regret.
+baselines: [random, smallest, largest, best_fixed]
+
+# Bandit hyperparameters (same values as the GreenServ X1 bakeoff)
+algorithms:
+  linucb: {alpha: 0.1, regularization: 0.05}
+  thompson_sampling: {sigma: 0.25, prior_variance: 2}
+  linear_epsilon_greedy: {initial_epsilon: 1.0, decay_factor: 0.985, min_epsilon: 0.01, lambda_: 0.25}
+  epsilon_greedy: {initial_epsilon: 1.0, decay_factor: 0.98, min_epsilon: 0.01}
+
+# Encoder energy per query, charged to every router whose features need an encoder
+# (semantic_cluster or embedding). Written by scripts/measure_encoder_energy.py on the same GPU
+# as the LLM results; {hardware} is filled in from the results file.
+encoder_energy_file: "results/encoder_energy_{hardware}.json"

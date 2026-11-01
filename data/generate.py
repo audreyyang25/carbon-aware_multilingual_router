@@ -143,11 +143,14 @@ def main():
                     continue
 
                 metrics = result["metrics"]
+                # Hit the token cap: the model was cut off before (or while) answering
+                truncated = metrics["output_tokens"] >= int(q.max_new_tokens)
                 accuracy = evaluator.evaluate(
                     result["response"],
                     q.reference,
                     extraction_method=q.extraction_method,
                     evaluation_metric=q.evaluation_metric,
+                    truncated=truncated,
                 )
                 row = {
                     "source_id": q.id,
@@ -162,6 +165,7 @@ def main():
                     "latency": metrics["latency"],
                     "input_tokens": metrics["input_tokens"],
                     "output_tokens": metrics["output_tokens"],
+                    "truncated": truncated,
                     "hardware": hardware,
                     "datacenter": datacenter,
                     "energy_method": args.energy_method,

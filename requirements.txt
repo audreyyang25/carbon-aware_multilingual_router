@@ -1,48 +1,45 @@
-# General 
-pyyaml==6.0.0
-pydantic==2.7.3
-openpyxl==3.1.5
+# Local environment: data prep, router features, grid data, routing simulation.
+# The RunPod GPU environment uses requirements-gpu.txt; shared packages are pinned identically.
+# Python 3.10+; on Apple silicon use a native arm64 Python (an Intel/Rosetta build caps torch at 2.2).
 
-# HuggingFace
-datasets==2.14.0
-pyarrow==12.0.0
+# General
+pyyaml==6.0.3
+numpy==2.5.4
+pandas==3.0.6
+requests==2.34.2          # Electricity Maps API (data/fetch_grid.py)
+tqdm==4.70.1
 
-# Feature Extraction
-sentence-transformers==3.4.0
-textstat==0.7.8
+# Benchmarks (data/process.py)
+datasets==5.1.0
+pyarrow==26.0.0
 
-# Inference
-transformers==5.19.0      # Qwen3.5 and Gemma 4 need transformers 5.x
-torch==2.6.0
+# Models and router encoders (same versions as requirements-gpu.txt)
+torch==2.14.1
+transformers==5.19.0
 accelerate==1.15.0
+sentence-transformers==6.1.0
 sentencepiece==0.2.0
 protobuf==6.30.2
 
-# Data Connectors
-psycopg2-binary==2.9.6      
-redis==4.6.0
+# Features and simulation
+scikit-learn==1.9.1       # PCA, k-means
+textstat==0.7.13          # GreenServ's complexity feature
+scipy==1.18.1
 
-# Data Processing
-numpy==1.24.3
-pandas==2.0.0
+# Energy measurement (src/metrics/energy.py imports pynvml; Apple silicon uses zeus-apple-silicon)
+nvidia-ml-py==13.615.71
+zeus-apple-silicon==1.1.0; sys_platform == "darwin"
 
-# Measurements
-pynvml==12.0.0
-zeus-ml==0.10.0
+# Optional: Postgres (data/ingest.py, GreenServ's X1 runner)
+psycopg2-binary==2.9.13
 
-# API
-uvicorn==0.34.0
-fastapi==0.115.11
+# Optional: GreenServ's X1 runner and plots
+matplotlib==3.11.2
+seaborn==0.13.2
+statsmodels==0.15.0
 
-# Visualization
-plotly==5.14.0
-seaborn==0.12.2
-matplotlib==3.7.1
-
-# Analysis
-scipy==1.11.1
-scikit-learn==1.5.2
-statsmodels==0.14.1
-
-# Logging
-loguru==0.7.3
+# Optional: live routing API and Redis queue worker (src/api, src/queue)
+fastapi==0.143.3
+uvicorn==0.54.0
+pydantic==2.14.1
+redis==8.1.0
