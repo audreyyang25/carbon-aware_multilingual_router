@@ -50,8 +50,22 @@ def load_queries(path, datasets=None, languages=None, items_per_dataset=None):
     return df.reset_index(drop=True)
 
 
+def repair_partial_line(output_path):
+    """Drop a half-written last line (Pod killed mid-write), so resumed rows start on a clean line."""
+    if not os.path.exists(output_path) or os.path.getsize(output_path) == 0:
+        return
+    with open(output_path, "rb+") as f:
+        data = f.read()
+        if data.endswith(b"\n"):
+            return
+        keep = data.rfind(b"\n") + 1
+        f.truncate(keep)
+    logger.warning(f"Removed a half-written last line from {output_path} ({len(data) - keep} bytes)")
+
+
 def completed_pairs(output_path):
     """(source_id, model_id) pairs already written to the output file."""
+    repair_partial_line(output_path)
     done = set()
     if os.path.exists(output_path):
         with open(output_path) as f:

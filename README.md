@@ -105,8 +105,10 @@ The selection is deterministic: re-running `process.py` gives the same items. `-
 cd /workspace && git clone <this repo> && cd carbon-aware_multilingual_router_fork
 export HF_TOKEN=...                          # accept the Tiny Aya and Gemma 4 licenses on HF first
 bash scripts/runpod_setup.sh                 # model cache on the volume, deps, tmux, GPU check
-python data/generate.py --models qwen3.5-2b gemma-4-31b --languages en sw \
-    --items-per-dataset 10 --output results/pilot.jsonl     # pilot: check outputs, accuracy, energy
+python scripts/preflight.py --download       # GPU exclusive, energy counter, HF access, disk; downloads weights
+python data/generate.py --items-per-dataset 5 \
+    --output results/pilot_runpod.jsonl      # pilot: all 6 models x 8 languages, 720 generations
+python scripts/summarize_pilot.py results/pilot_runpod.jsonl   # check outputs, accuracy, energy, speed
 tmux new -s gen
 python data/generate.py 2>&1 | tee -a gen.log                # full sweep: 6,000 queries x 6 models
 #   -> results/generations_<gpu>.jsonl; resumable: re-run the same command after a restart

@@ -38,4 +38,5 @@ import torch
 print(f"torch {torch.__version__}, transformers {version('transformers')}, zeus {version('zeus')}, "
       f"CUDA available: {torch.cuda.is_available()}")
 EOF
-echo "Setup done. Pilot: python data/generate.py --models qwen3.5-2b gemma-4-31b --languages en sw --items-per-dataset 10 --output results/pilot.jsonl"
+echo "Setup done. Next: python scripts/preflight.py --download, then the pilot:"
+echo "  python data/generate.py --items-per-dataset 5 --output results/pilot_runpod.jsonl"

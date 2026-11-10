@@ -1,4 +1,5 @@
 # src/services/inference_service.py
+import gc
 import logging
 import os
 import re
@@ -88,6 +89,7 @@ class InferenceService:
             logger.info(f"Unloading model {self.loaded_model_id}")
             self.loaded_model = None
             self.tokenizer = None
+            gc.collect()  # free the old weights before loading the next model (27B then 31B won't both fit)
             self.empty_cache()
 
         logger.info(f"Loading model {model_id}")
