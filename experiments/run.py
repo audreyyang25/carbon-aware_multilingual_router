@@ -2,7 +2,7 @@
 
 Each run replays the training items (all languages) as a shuffled stream: the router picks a
 model, gets that model's stored accuracy and energy back as a reward, and learns online. The
-policy is then frozen and evaluated on the held-out test items. Grid intensity comes from an
+policy is then frozen (no updates, no exploration) and evaluated on the held-out test items. Grid intensity comes from an
 hourly series for the chosen zone, starting at a different hour each run. Baselines and the
 oracle see exactly the same stream and intensities, so every comparison is paired.
 
@@ -65,6 +65,11 @@ def parse_args(router_config, grid_config):
     parser.add_argument("--hardware", help="GPU to use if the results mix several")
     parser.add_argument("--models", nargs="*", help="Restrict the model pool (default: all in the results)")
     parser.add_argument("--holdout-language", help="Leave this language out of training entirely")
+    parser.add_argument("--pca-dim", type=int,
+                        help="Embedding PCA size (default: pca_dim in config/feature_extraction.yaml)")
+    parser.add_argument("--queries-per-hour", type=int, default=grid_config["queries_per_hour"],
+                        help="Simulation clock: decisions per hour of grid time (250 = one day for "
+                             "the whole stream, 25 = ten days)")
     parser.add_argument("--queries", default="data/preprocessed/combined.csv")
     parser.add_argument("--splits", default="data/preprocessed/splits.csv")
     parser.add_argument("--grid-dir", default="data/grid", help="Zone CSVs and bounds.yaml from data/fetch_grid.py")
@@ -109,6 +114,16 @@ def step_rewards(table, order, ci, cost_name, lambda_weight, ctx, n_models):
             }
             rewards[t, m] = calculate_reward(q["accuracy"][m], cost_fn(row, ci[t], ctx), lambda_weight)
     return rewards
+
+
+def freeze_exploration(bandit):
+    """Test phase: pick the model with the best current reward estimate, with no exploration."""
+    if hasattr(bandit, "alpha"):
+        bandit.alpha = 0.0  # LinUCB: drop the uncertainty bonus
+    if hasattr(bandit, "epsilon"):
+        bandit.epsilon = 0.0  # epsilon-greedy variants: never pick at random
+    if hasattr(bandit, "greedy"):
+        bandit.greedy = True  # Thompson sampling: use the posterior mean instead of a sample
 
 
 def simulate_run(router_name, profile, builder, table, model_ids, series, run, seed, args,
@@ -156,6 +171,8 @@ def simulate_run(router_name, profile, builder, table, model_ids, series, run, s
     for strategy, kind in strategies.items():
         for t, sid in enumerate(order):
             if kind == "bandit":
+                if t == len(train_ids):
+                    freeze_exploration(bandit)
                 context = builder.context(sid, ci[t])
                 m = bandit.select_model(context=context)
                 if phase[t] == "train":
@@ -246,17 +263,18 @@ def main():
     encoder_energy = load_encoder_energy(router_config, hardware)
 
     logger.info(f"{len(table)} queries ({(table['split'] == 'train').sum()} train) x {len(model_ids)} models "
-                f"on {hardware}; routers {routers}; zones {zones}; {args.algorithm}, lambda={args.lambda_weight}")
+                f"on {hardware}; routers {routers}; zones {zones}; {args.algorithm}, lambda={args.lambda_weight}, "
+                f"{args.queries_per_hour} queries/hour")
 
     out_dir = Path(args.output_dir) / datetime.now().strftime("%Y%m%d_%H%M%S")
     out_dir.mkdir(parents=True, exist_ok=True)
     all_steps = []
     for zone in zones:
-        series = IntensitySeries(zone_csv[zone], grid_config["queries_per_hour"])
+        series = IntensitySeries(zone_csv[zone], args.queries_per_hour)
         for router_name in routers:
             profile = router_config["routers"][router_name]
             builder = ContextBuilder(profile, table, feature_config, ci_bounds, args.holdout_language,
-                                     router_config["defaults"]["semantic_clusters"])
+                                     router_config["defaults"]["semantic_clusters"], args.pca_dim)
             overhead_j = encoder_overhead_j(profile, encoder_energy)
             for run in range(args.runs):
                 rows = simulate_run(router_name, profile, builder, table, model_ids, series, run,
@@ -279,6 +297,8 @@ def main():
             "model_ids": model_ids, "hardware": hardware, "ci_bounds": ci_bounds,
             "energy_bounds": bounds.bounds, "encoder_energy_j": encoder_energy,
             "algorithm_params": router_config["algorithms"][args.algorithm],
+            "embedding_pca_dim": {s: args.pca_dim or feature_config[s]["pca_dim"]
+                                  for s in ("multilingual_embedding", "english_embedding")},
         }, f, indent=2, default=str)
 
     test = summary[summary["phase"] == "test"]

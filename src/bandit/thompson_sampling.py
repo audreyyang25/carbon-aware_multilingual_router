@@ -34,6 +34,7 @@ class ThompsonSampling(BaseBandit):
         self.sigma = sigma
         self.prior_variance = prior_variance
         self.lambda_reg = (self.sigma**2) / self.prior_variance
+        self.greedy = False  # True: choose by posterior mean (frozen evaluation)
         logger.info(
             f"Thompson Sampling initialized with sigma={sigma}, prior_variance={prior_variance}, lambda_reg={self.lambda_reg}"
         )
@@ -90,6 +91,8 @@ class ThompsonSampling(BaseBandit):
                         f"Posterior mean or cov is None for {model_id} even after update attempt. Using fallback."
                     )
                     weights = np.zeros(self.context_dimension)
+                elif self.greedy:
+                    weights = self.mu[model_id]
                 else:
                     weights = np.random.multivariate_normal(
                         self.mu[model_id], self.cov[model_id]
@@ -204,6 +207,7 @@ class ThompsonSampling(BaseBandit):
         if not hasattr(self, "rewards"):
             self.rewards = {}
         self.rewards = {mid: [] for mid in self.model_ids}
+        self.greedy = False
         logger.info("ThompsonSampling reset complete.")
 
     def get_state(self):

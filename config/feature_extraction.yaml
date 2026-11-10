@@ -17,7 +17,10 @@ feature_extraction:
     encoder: "intfloat/multilingual-e5-small"   # 118M params, 384-dim, ~100 languages
     prefix: "query: "                           # e5 models expect this prefix on inputs
     embeddings_path: "data/features/embeddings_multilingual-e5-small.npz"
-    pca_dim: 16                                 # fit on training items only, at simulation time
+    pca_dim: 32                                 # fit on training items only, at simulation time (--pca-dim)
+                                                # A translation's nearest neighbour is the same item for
+                                                # 26% of queries at 16 dims, 68% at 32, 84% at 64, 97% full;
+                                                # at 16 the kept directions mostly encode benchmark and language
 
   # GreenServ's English encoder, cached the same way: semantic clusters are fit on it (k is
   # semantic_clusters in config/routers.yaml), and the carbon_en_emb control router uses it so
@@ -26,4 +29,4 @@ feature_extraction:
     encoder: "sentence-transformers/all-MiniLM-L6-v2"
     prefix: ""
     embeddings_path: "data/features/embeddings_all-MiniLM-L6-v2.npz"
-    pca_dim: 16
+    pca_dim: 32                                 # same size as the multilingual encoder, for a fair comparison

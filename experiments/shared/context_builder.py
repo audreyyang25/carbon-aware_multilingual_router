@@ -20,7 +20,8 @@ ENCODER_FEATURES = {"semantic_cluster", "embedding"}
 class ContextBuilder:
     """Static per-query blocks are built once; carbon intensity is appended per step."""
 
-    def __init__(self, profile, table, feature_config, ci_bounds, holdout_language=None, n_clusters=3):
+    def __init__(self, profile, table, feature_config, ci_bounds, holdout_language=None, n_clusters=3,
+                 pca_dim=None):
         self.features = profile["features"]
         self.uses_ci = "carbon_intensity" in self.features
         self.ci_min, self.ci_max = ci_bounds
@@ -44,10 +45,11 @@ class ContextBuilder:
             elif feature == "embedding":
                 section = profile["encoder"]
                 X = cached_embeddings(feature_config[section], table.index)
-                pca = PCA(n_components=feature_config[section]["pca_dim"], random_state=0).fit(X[train])
+                n_components = pca_dim or feature_config[section]["pca_dim"]
+                pca = PCA(n_components=n_components, random_state=0).fit(X[train])
                 Z = pca.transform(X)
                 Z /= Z[train].std(axis=0)  # unit scale, like the one-hot blocks
-                logger.info(f"{section}: PCA keeps {pca.explained_variance_ratio_.sum():.0%} of variance")
+                logger.info(f"{section}: PCA to {n_components} dims keeps {pca.explained_variance_ratio_.sum():.0%} of variance")
                 blocks.append(Z)
             elif feature == "language":
                 languages = list(feature_config["language"]["languages"])

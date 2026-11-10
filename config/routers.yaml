@@ -9,7 +9,9 @@
 #   carbon            energy x grid intensity x PUE, normalized with global intensity bounds
 # features (a bias term is always added):
 #   dataset           one-hot benchmark (GreenServ's task type, known from the query source)
-#   complexity        GreenServ's Flesch reading-ease bin (an English formula, kept as-is)
+#   complexity        GreenServ's Flesch reading-ease bin. An English formula: it can't count
+#                     syllables in Cyrillic or words in zh/th, so the same item lands in a different
+#                     bin depending on its language. Kept only in the GreenServ-faithful routers.
 #   semantic_cluster  k-means clusters of GreenServ's English embedding (fit on training items)
 #   embedding         PCA of a cached embedding; needs `encoder: english_embedding | multilingual_embedding`
 #   language          language one-hot (from query metadata; language ID in deployment)
@@ -33,22 +35,27 @@ routers:
     cost: carbon
     features: [dataset, complexity, semantic_cluster, carbon_intensity]
 
-  # Ablations between carbon and lang_carbon: what does each language signal add?
+  # Our routers drop Flesch complexity; this control measures what removing it alone does
+  carbon_no_flesch:
+    cost: carbon
+    features: [dataset, semantic_cluster, carbon_intensity]
+
+  # Ablations between carbon_no_flesch and lang_carbon: what does each language signal add?
   carbon_en_emb:       # encoder control: GreenServ's English encoder as a PCA vector
     cost: carbon
-    features: [dataset, complexity, embedding, carbon_intensity]
+    features: [dataset, embedding, carbon_intensity]
     encoder: english_embedding
   carbon_onehot:       # language label only
     cost: carbon
-    features: [dataset, complexity, semantic_cluster, language, carbon_intensity]
+    features: [dataset, semantic_cluster, language, carbon_intensity]
   carbon_ml_emb:       # multilingual encoder only
     cost: carbon
-    features: [dataset, complexity, embedding, carbon_intensity]
+    features: [dataset, embedding, carbon_intensity]
     encoder: multilingual_embedding
 
   lang_carbon:
     cost: carbon
-    features: [dataset, complexity, embedding, language, carbon_intensity]
+    features: [dataset, embedding, language, carbon_intensity]
     encoder: multilingual_embedding
 
 # Baselines run alongside every router on the same stream. The oracle picks the best model for

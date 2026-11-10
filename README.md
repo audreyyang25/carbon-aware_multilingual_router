@@ -1,6 +1,6 @@
 # Carbon-Aware Multilingual LLM Router
 
-Contextual multi-armed bandit routing for LLM inference that trades off **multilingual accuracy** against **carbon emissions**. For each query, the router picks one model from a pool of open-weight LLMs, using the query's language, task, and complexity along with the current grid carbon intensity.
+Contextual multi-armed bandit routing for LLM inference that trades off **multilingual accuracy** against **carbon emissions**. For each query, the router picks one model from a pool of open-weight LLMs, using the query's language, task, and content along with the current grid carbon intensity.
 
 > **Status:** work in progress. The data pipeline, router features, grid data download and routing simulation are implemented; the full RunPod data collection is next.
 
@@ -43,12 +43,15 @@ Profiles live in `config/routers.yaml`; each is a cost term plus a feature list.
 | `greenserv` | energy per token | benchmark, complexity, semantic cluster (English MiniLM) |
 | `energy_pq` | energy per query | same as greenserv |
 | `carbon` | carbon | same + carbon intensity |
-| `carbon_en_emb` | carbon | benchmark, complexity, English embedding (PCA), carbon intensity |
-| `carbon_onehot` | carbon | `carbon` + language one-hot |
-| `carbon_ml_emb` | carbon | benchmark, complexity, multilingual embedding (PCA), carbon intensity |
-| `lang_carbon` | carbon | benchmark, complexity, multilingual embedding, language one-hot, carbon intensity |
+| `carbon_no_flesch` | carbon | `carbon` without complexity |
+| `carbon_en_emb` | carbon | benchmark, English embedding (PCA), carbon intensity |
+| `carbon_onehot` | carbon | `carbon_no_flesch` + language one-hot |
+| `carbon_ml_emb` | carbon | benchmark, multilingual embedding (PCA), carbon intensity |
+| `lang_carbon` | carbon | benchmark, multilingual embedding, language one-hot, carbon intensity |
 
-`greenserv → energy_pq → carbon` isolates per-query cost and then carbon awareness. The three ablations separate what `lang_carbon` adds: the language label alone, the multilingual encoder alone (against an English-encoder control), and both.
+`greenserv → energy_pq → carbon` isolates per-query cost and then carbon awareness. The three ablations separate what `lang_carbon` adds: the language label alone, the multilingual encoder alone (against an English-encoder control), and both. Each is compared with `carbon_no_flesch`.
+
+**Why our routers drop complexity:** GreenServ's complexity feature is a Flesch reading-ease bin, an English formula. On our queries, the same item lands in a different bin depending on its language. Only 46% of Russian queries share their English version's bin, because the formula can't count syllables in Cyrillic, and 94% of Russian queries fall in the easiest bin. Chinese and Thai, written without spaces, also look easy. The feature mostly separates benchmarks (already a one-hot) and leaks a rough language signal. There is no multilingual Flesch: textstat's per-language formulas don't cover zh, th or sw and aren't on a common scale. It stays in the three GreenServ-faithful routers; `carbon` vs `carbon_no_flesch` measures its effect. Multilingual embeddings describe an item nearly identically across languages, so whatever difficulty they capture transfers between languages.
 
 **Baselines**, run on the same stream as every router: `random`, `smallest`, `largest`, `best_fixed` (the best single model on the training stream, in hindsight). The **oracle** picks the best model for every query and defines regret.
 
@@ -123,7 +126,7 @@ python -m experiments.run --router all --zone all --results results/generations_
 python -m experiments.run --router lang_carbon carbon_onehot --holdout-language th --results results/generations_*.jsonl
 ```
 
-Options: `--algorithm`, `--lambda`, `--pue`, `--runs`, `--models`, `--hardware`, `--seed`. Results go to `experiments/results/<timestamp>/`:
+Options: `--algorithm`, `--lambda`, `--pue`, `--runs`, `--models`, `--hardware`, `--seed`, `--pca-dim`, `--queries-per-hour`. Results go to `experiments/results/<timestamp>/`:
 
 | File | Contents |
 |---|---|
@@ -131,6 +134,10 @@ Options: `--algorithm`, `--lambda`, `--pue`, `--runs`, `--models`, `--hardware`,
 | `choices.csv` | share of each model per language |
 | `steps.csv.gz` | every decision (skip with `--no-steps`) |
 | `config.json` | everything needed to reproduce the run |
+
+`--queries-per-hour` sets the simulation clock: at the default 250, training spans about 17 hours of grid data and test the 7 hours after; at 25, a week of training and 3 days of test, so the router sees full day/night and weekday cycles. Reporting both shows whether conclusions depend on how much grid variation the router saw.
+
+`--pca-dim` sets the embedding size (default 32 in `config/feature_extraction.yaml`). At 16 dimensions only 26% of translated queries still have their English version as nearest neighbour under multilingual-e5 (97% with the full embedding), so the router would mostly see benchmark and language, which it already gets from the one-hots; 32 recovers 68%. Sweep it (e.g. 8, 16, 32, 64), choosing by training-phase reward.
 
 `--holdout-language` removes a language from training entirely (its one-hot becomes all zeros and it never shapes PCA or clusters), to test whether embeddings generalize to an unseen language.
 

@@ -43,7 +43,7 @@ class MultilingualEmbeddingExtractor(BaseFeatureExtractor):
         super().__init__(config)
         self.encoder_name = self.config.get("encoder", "intfloat/multilingual-e5-small")
         self.prefix = self.config.get("prefix", "")
-        self.pca_dim = self.config.get("pca_dim", 16)
+        self.pca_dim = self.config.get("pca_dim", 32)
         self.encoder = None
         self.mean = None
         self.components = None

@@ -19,7 +19,8 @@ zones:
   PL: "Poland: coal, high"
 
 # Simulation clock: step t is hour start_hour + t // queries_per_hour of the series.
-# 6000 queries at 250/hour span 24 hours; each run draws its own start_hour from its seed.
+# 6000 queries at 250/hour span 24 hours (training ~17 h, test ~7 h); at 25/hour, 10 days.
+# Each run draws its own start_hour from its seed. Override with experiments/run.py --queries-per-hour.
 queries_per_hour: 250
 
 api:
