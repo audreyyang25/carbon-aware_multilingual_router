@@ -65,6 +65,15 @@ Profiles live in `config/routers.yaml`; each is a cost term plus a feature list.
 
 Languages: **en, de, es, fr, ru, zh, th, sw** (the overlap of all three benchmarks). 250 items per benchmark, chosen once on English with balanced difficulty buckets (answer label and length) and used in every language: 750 items × 8 languages = 6,000 queries. Instructions are in English; the content is in the target language. Items are split 70/30 into train/test **by item**, so all language versions of an item fall on the same side (`data/preprocessed/splits.csv`).
 
+**Full run (A100, `results/generations_NVIDIA-A100-SXM4-80GB.jsonl`):** all 250 XNLI and 250 Belebele items, but only the first 100 MGSM items (`mgsm_0000`–`mgsm_0099`): 600 items × 8 languages = **4,800 queries** per model, 28,800 generations. The simulation uses exactly the queries in the results file, so this is the setup every experiment runs on. The selection in `data/preprocessed/` still lists all 250 MGSM items; leave it as is so item IDs keep matching the results.
+
+| Benchmark | Items | Train | Test |
+|---|---|---|---|
+| XNLI | 250 | 175 | 75 |
+| Belebele | 250 | 175 | 75 |
+| MGSM | 100 | 68 | 32 |
+| **Total** | **600** (4,800 queries) | 418 (3,344) | 182 (1,456) |
+
 ## Model pool
 
 | Family | Models |
@@ -111,6 +120,7 @@ python data/generate.py --items-per-dataset 5 \
 python scripts/summarize_pilot.py results/pilot_runpod.jsonl   # check outputs, accuracy, energy, speed
 tmux new -s gen
 python data/generate.py 2>&1 | tee -a gen.log                # full sweep: 6,000 queries x 6 models
+#   The A100 full run stopped MGSM at 100 items (4,800 queries x 6 models); see "Benchmarks and languages"
 #   -> results/generations_<gpu>.jsonl; resumable: re-run the same command after a restart
 #   Subsets: --models, --datasets, --languages (all append to the same file)
 #   Parallel: one Pod per model group, same GPU type, distinct --output files
@@ -137,7 +147,7 @@ Options: `--algorithm`, `--lambda`, `--pue`, `--runs`, `--models`, `--hardware`,
 | `steps.csv.gz` | every decision (skip with `--no-steps`) |
 | `config.json` | everything needed to reproduce the run |
 
-`--queries-per-hour` sets the simulation clock: at the default 250, training spans about 17 hours of grid data and test the 7 hours after; at 25, a week of training and 3 days of test, so the router sees full day/night and weekday cycles. Reporting both shows whether conclusions depend on how much grid variation the router saw.
+`--queries-per-hour` sets the simulation clock: on the A100 full run (3,344 training and 1,456 test queries) the default 250 gives about 13 hours of training and the 6 hours after for test; 25 gives about 5.5 days of training and 2.5 days of test, so the router sees several full day/night cycles and most of a week. Reporting both shows whether conclusions depend on how much grid variation the router saw.
 
 `--pca-dim` sets the embedding size (default 32 in `config/feature_extraction.yaml`). At 16 dimensions only 26% of translated queries still have their English version as nearest neighbour under multilingual-e5 (97% with the full embedding), so the router would mostly see benchmark and language, which it already gets from the one-hots; 32 recovers 68%. Sweep it (e.g. 8, 16, 32, 64), choosing by training-phase reward.
 
