@@ -74,6 +74,8 @@ Languages: **en, de, es, fr, ru, zh, th, sw** (the overlap of all three benchmar
 | MGSM | 100 | 68 | 32 |
 | **Total** | **600** (4,800 queries) | 418 (3,344) | 182 (1,456) |
 
+**Low-resource extension (Belebele only, `results/generations_lowres_NVIDIA-A100-SXM4-80GB.jsonl.gz`):** the 8 languages above are the overlap of all three benchmarks, which leaves out most low-resource languages. Belebele alone covers 122 language variants (XNLI 15, MGSM 11), so a separate run adds 12 low-resource languages on Belebele: Yoruba, Hausa, Igbo, Amharic, Zulu, Wolof, Nepali, Sinhala, Khmer, Lao, Burmese and Guarani (`config/lowres_languages.yaml`), plus en and sw re-run as anchors. It uses the same 250 Belebele items (same `item_id`, so `splits.csv` applies), prompts and models: 14 languages × 250 items × 6 models = 21,000 generations. It is kept in its own file so the main 4,800-query setup is unchanged. The anchors reproduce the main run's answers exactly; energy on that Pod reads 2–18% higher, so scale by the anchors before comparing energy across files. Accuracy per language and model, and caveats: `results/lowres_summary.md`. Rebuild the queries with `python data/process_lowres.py` (needs Hugging Face access), then `python data/generate.py --input data/preprocessed/belebele_lowres.csv --output results/generations_lowres_<gpu>.jsonl` on the Pod.
+
 ## Model pool
 
 | Family | Models |
@@ -206,6 +208,7 @@ GreenServ ran a live routing API and replayed results from Postgres; this projec
 config/                  # datasets, models, features, router profiles, grid zones, Postgres
 data/
 ├── process.py           # item selection and prompt formatting
+├── process_lowres.py    # Belebele queries for the extra low-resource languages
 ├── split.py             # item-level train/test split
 ├── embed.py             # cached router embeddings
 ├── fetch_grid.py        # Electricity Maps hourly intensity

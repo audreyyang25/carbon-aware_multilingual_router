@@ -1,0 +1,37 @@
+# config/lowres_languages.yaml
+# Extra low-resource languages, run on Belebele only (TA feedback: the main run uses the
+# 8 languages that XNLI, Belebele and MGSM all share). Belebele covers 122 language variants
+# (FLORES-200 passages); XNLI has 15 languages and MGSM 11, so only Belebele can add more.
+#
+# data/process_lowres.py takes the same 250 Belebele items as the main run (chosen on English
+# with the seed in config/general.yaml), so item_id and the train/test split in
+# data/preprocessed/splits.csv carry over unchanged. Results go to their own file,
+# results/generations_lowres_<gpu>.jsonl.gz, never into the main generations_<gpu>.jsonl.
+#
+# key   = short code used in the `language` column (ISO 639-1 where one exists, else 639-3)
+# value = Belebele / FLORES-200 config name on Hugging Face (facebook/belebele)
+
+dataset: belebele
+
+languages:
+  # Africa
+  yo: yor_Latn    # Yoruba (Niger-Congo)
+  ha: hau_Latn    # Hausa (Afro-Asiatic, Chadic)
+  ig: ibo_Latn    # Igbo (Niger-Congo)
+  am: amh_Ethi    # Amharic (Afro-Asiatic, Semitic; Ge'ez script)
+  zu: zul_Latn    # Zulu (Bantu)
+  wo: wol_Latn    # Wolof (Niger-Congo; very low-resource)
+  # South and Southeast Asia
+  ne: npi_Deva    # Nepali (Indo-Aryan; Devanagari)
+  si: sin_Sinh    # Sinhala (Indo-Aryan; Sinhala script)
+  km: khm_Khmr    # Khmer (Austroasiatic; Khmer script)
+  lo: lao_Laoo    # Lao (Kra-Dai; Lao script)
+  my: mya_Mymr    # Burmese (Sino-Tibetan; Myanmar script)
+  # Americas
+  gn: grn_Latn    # Guarani (Tupian)
+
+# Re-run these main-run languages in the same file as anchors: same items, same models,
+# a different Pod/day, so you can check that accuracy and energy line up with the main run.
+anchor_languages:
+  en: eng_Latn
+  sw: swh_Latn
