@@ -143,6 +143,28 @@ Options: `--algorithm`, `--lambda`, `--pue`, `--runs`, `--models`, `--hardware`,
 
 `--holdout-language` removes a language from training entirely (its one-hot becomes all zeros and it never shapes PCA or clusters), to test whether embeddings generalize to an unseen language.
 
+### 4. Analyze
+
+```bash
+python -m experiments.analyze experiments/results/<timestamp>
+```
+
+Writes `analysis/` inside the run folder (needs `steps.csv.gz`, so don't use `--no-steps`):
+
+| File | Contents |
+|---|---|
+| `report.md` | the tables below in markdown, for slides |
+| `headline.csv` | test phase per zone and averaged over zones: accuracy, worst-language accuracy, gCO₂ per 1,000 queries, J per query (mean and std over runs) |
+| `by_language.csv` | test accuracy per strategy × language |
+| `comparisons.csv` | paired differences (e.g. `lang_carbon` vs `largest`, vs each ablation): accuracy in points and carbon in %, with 95% bootstrap CIs over test items, per zone and pooled |
+| `tradeoff.png` | accuracy vs carbon per zone, routers against baselines and the oracle |
+| `language_accuracy.png` | accuracy heatmap, strategy × language |
+| `model_share.png` | which model each router picks for each language |
+| `carbon_awareness.png` | energy of the chosen model vs grid intensity |
+| `learning_curve.png` | regret during training |
+
+The bootstrap resamples items (one question in all 8 languages), not single queries, because the translations of one item and repeated runs over the same items aren't independent.
+
 ### Optional: Postgres
 
 The simulation reads JSONL directly. To keep results in Postgres as well:
