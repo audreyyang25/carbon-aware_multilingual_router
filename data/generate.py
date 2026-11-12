@@ -18,6 +18,7 @@ import json
 import logging
 import os
 import re
+import subprocess
 import sys
 import time
 from datetime import datetime, timezone
@@ -49,8 +50,22 @@ def load_queries(path, datasets=None, languages=None, items_per_dataset=None):
     return df.reset_index(drop=True)
 
 
+def repair_partial_line(output_path):
+    """Drop a half-written last line (Pod killed mid-write), so resumed rows start on a clean line."""
+    if not os.path.exists(output_path) or os.path.getsize(output_path) == 0:
+        return
+    with open(output_path, "rb+") as f:
+        data = f.read()
+        if data.endswith(b"\n"):
+            return
+        keep = data.rfind(b"\n") + 1
+        f.truncate(keep)
+    logger.warning(f"Removed a half-written last line from {output_path} ({len(data) - keep} bytes)")
+
+
 def completed_pairs(output_path):
     """(source_id, model_id) pairs already written to the output file."""
+    repair_partial_line(output_path)
     done = set()
     if os.path.exists(output_path):
         with open(output_path) as f:
@@ -69,13 +84,25 @@ def main():
     parser.add_argument("--datasets", nargs="*")
     parser.add_argument("--languages", nargs="*")
     parser.add_argument("--items-per-dataset", type=int, help="Pilot: first N items per dataset")
-    parser.add_argument("--energy-method", default="zeus", choices=["zeus", "pynvml"])
+    parser.add_argument(
+        "--energy-method",
+        choices=["zeus", "pynvml", "apple"],
+        help="Default: zeus on CUDA, apple (on-chip GPU energy) on Apple silicon",
+    )
     parser.add_argument("--device", type=int, default=0)
     args = parser.parse_args()
 
-    if not torch.cuda.is_available():
-        sys.exit("No CUDA device found: energy can only be measured on a GPU.")
-    hardware = torch.cuda.get_device_name(args.device)
+    if torch.cuda.is_available():
+        hardware = torch.cuda.get_device_name(args.device)
+        args.energy_method = args.energy_method or "zeus"
+    elif torch.backends.mps.is_available():
+        # Local pilot on a Mac; energy is not comparable with the RunPod GPU runs
+        hardware = subprocess.run(
+            ["sysctl", "-n", "machdep.cpu.brand_string"], capture_output=True, text=True
+        ).stdout.strip() or "Apple silicon"
+        args.energy_method = args.energy_method or "apple"
+    else:
+        sys.exit("No CUDA or MPS device found: energy can only be measured on a GPU.")
     # RunPod data center (e.g. "US-TX-3"); with the timestamp it picks the Electricity Maps zone and hour
     datacenter = os.environ.get("RUNPOD_DC_ID")
     output_path = args.output or os.path.join(
@@ -99,7 +126,6 @@ def main():
     )
 
     service = InferenceService(
-        redis_client=None,
         general_configs=load_config("general"),
         model_configs=model_configs,
         device_id=args.device,
@@ -124,17 +150,20 @@ def main():
                 }
                 try:
                     result = service.run_inference(q.processed_input, model_id, generation_parameters)
-                except torch.cuda.OutOfMemoryError:
-                    torch.cuda.empty_cache()
+                except torch.cuda.OutOfMemoryError:  # same class as torch.OutOfMemoryError, also raised on MPS
+                    service.empty_cache()
                     logger.error(f"{model_id} OOM on {q.id}; skipped (re-run to retry)")
                     continue
 
                 metrics = result["metrics"]
+                # Hit the token cap: the model was cut off before (or while) answering
+                truncated = metrics["output_tokens"] >= int(q.max_new_tokens)
                 accuracy = evaluator.evaluate(
                     result["response"],
                     q.reference,
                     extraction_method=q.extraction_method,
                     evaluation_metric=q.evaluation_metric,
+                    truncated=truncated,
                 )
                 row = {
                     "source_id": q.id,
@@ -149,6 +178,7 @@ def main():
                     "latency": metrics["latency"],
                     "input_tokens": metrics["input_tokens"],
                     "output_tokens": metrics["output_tokens"],
+                    "truncated": truncated,
                     "hardware": hardware,
                     "datacenter": datacenter,
                     "energy_method": args.energy_method,

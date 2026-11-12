@@ -1,0 +1,28 @@
+# config/grid.yaml
+# Grid carbon intensity used at simulation time (data/fetch_grid.py downloads it).
+# Energy per query comes from the GPU run; these hourly series say how clean that energy
+# would be if the router were deployed in each zone over this period.
+
+emission_factor: "lifecycle"          # Electricity Maps default; "direct" for a sensitivity check
+period:                               # fixed past year, so re-downloading gives the same data
+  start: "2025-01-01T00:00:00Z"
+  end: "2026-01-01T00:00:00Z"         # exclusive
+
+# Zone ids from app.electricitymaps.com (shown in the URL when you click a zone).
+# Chosen to span clean/flat, clean/variable, mid and dirty grids.
+zones:
+  FR: "France: nuclear, low and flat"
+  SE-SE3: "Sweden (Stockholm): hydro + nuclear, very low"
+  DE: "Germany: wind/solar swings, mid"
+  US-CAL-CISO: "California: strong solar day/night cycle"
+  US-NE-ISNE: "New England (incl. Massachusetts): gas-heavy, mid"
+  PL: "Poland: coal, high"
+
+# Simulation clock: step t is hour start_hour + t // queries_per_hour of the series.
+# 6000 queries at 250/hour span 24 hours (training ~17 h, test ~7 h); at 25/hour, 10 days.
+# Each run draws its own start_hour from its seed. Override with experiments/run.py --queries-per-hour.
+queries_per_hour: 250
+
+api:
+  chunk_days: 10                      # past-range allows at most 10 days of hourly data per request
+  token_env: "ELECTRICITYMAPS_TOKEN"  # never put the token in this file

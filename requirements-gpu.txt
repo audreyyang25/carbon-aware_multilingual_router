@@ -10,3 +10,4 @@ protobuf==6.30.2
 pandas
 numpy
 pyyaml
+sentence-transformers==6.1.0   # scripts/measure_encoder_energy.py (router encoders)

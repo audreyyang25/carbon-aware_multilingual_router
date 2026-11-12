@@ -16,11 +16,7 @@ greenserve/
 docs/
 thesis_text/
 tmp/
+project_update.pptx
 
-experiments/X3_lambda_sweep/results/*_detailed_results_*.csv
-experiments/X3_lambda_sweep/results/X3_lambda_sweep_detailed_results.csv
-
-experiments/*/results/*_summary_stats_*.csv
-experiments/*/results/*_metadata_*.yaml
-experiments/*/results/*_run_means_*.csv
-experiments/*/results/*_significance_tests_*.csv
+# Per-decision simulation logs are large; summary.csv, choices.csv and config.json are small
+experiments/results/*/steps.csv.gz
