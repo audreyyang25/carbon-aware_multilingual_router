@@ -1,0 +1,30 @@
+{
+  "hardware": "NVIDIA A100-SXM4-80GB",
+  "energy_method": "zeus",
+  "device": "cuda:0",
+  "queries_per_measurement": 500,
+  "repeats": 3,
+  "timestamp": "2026-11-12T15:27:20.778725+00:00",
+  "encoders": {
+    "multilingual_embedding": {
+      "encoder": "intfloat/multilingual-e5-small",
+      "j_per_query": 0.8255166666905085,
+      "ms_per_query": 8.535378774007162,
+      "j_per_repeat": [
+        418.80000001192093,
+        400.34500002861023,
+        419.1299999952316
+      ]
+    },
+    "english_embedding": {
+      "encoder": "sentence-transformers/all-MiniLM-L6-v2",
+      "j_per_query": 0.5010626666545868,
+      "ms_per_query": 5.223498662312825,
+      "j_per_repeat": [
+        268.9409999847412,
+        241.11799997091293,
+        241.53500002622604
+      ]
+    }
+  }
+}
