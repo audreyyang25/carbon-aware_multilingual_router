@@ -20,3 +20,6 @@ project_update.pptx
 
 # Per-decision simulation logs are large; summary.csv, choices.csv and config.json are small
 experiments/results/*/steps.csv.gz
+
+# macOS Finder metadata
+.DS_Store
