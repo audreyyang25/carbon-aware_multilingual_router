@@ -42,7 +42,44 @@ def load_results(paths, hardware=None, models=None):
 
     # A re-run of the same pair replaces the earlier row
     df = df.drop_duplicates(["source_id", "model_id"], keep="last")
+    df = impute_missing_energy(df)
     logger.info(f"Loaded {len(df)} results from {len(files)} file(s) on {df['hardware'].iloc[0]}")
+    return df
+
+
+def impute_missing_energy(df):
+    """Replace energy readings of 0 J with the median of the same model, dataset and language.
+
+    On the A100 full run, 105 tiny-aya-global answers (about 90 ms, 3 output tokens) read 0 J
+    while answers just as fast read 15–22 J: the energy counter missed them. Left at 0, the
+    model looks free on those queries and the per-dataset energy minimum used for normalization
+    drops to 0. The median of the model's other answers to that benchmark in that language is
+    the best estimate (about 5% error on comparable answers; scaling by latency did worse). The
+    original value is kept in `energy_measured`, and `energy_imputed` flags the replaced rows.
+    """
+    df = df.copy()
+    df["energy_measured"] = df["energy_consumption"]
+    missing = df["energy_consumption"] <= 0
+    df["energy_imputed"] = missing
+    if not missing.any():
+        return df
+
+    valid = df[~missing]
+    fine = valid.groupby(["model_id", "dataset", "language"])["energy_consumption"].median()
+    coarse = valid.groupby(["model_id", "dataset"])["energy_consumption"].median()
+    keys = df.loc[missing, ["model_id", "dataset", "language"]]
+    fill = pd.Series(
+        [fine.get(tuple(k), coarse.get(tuple(k[:2]), np.nan)) for k in keys.to_numpy()],
+        index=keys.index,
+    )
+    if fill.isna().any():
+        raise ValueError(f"Can't impute energy for {int(fill.isna().sum())} rows: no valid reading "
+                         f"for that model and dataset")
+    df.loc[missing, "energy_consumption"] = fill
+
+    counts = keys.groupby(["model_id", "dataset"]).size()
+    detail = ", ".join(f"{m}/{d}: {n}" for (m, d), n in counts.items())
+    logger.warning(f"Imputed energy for {int(missing.sum())} results that read 0 J ({detail})")
     return df
 
 
