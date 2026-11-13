@@ -166,6 +166,7 @@ Writes `analysis/` inside the run folder (needs `steps.csv.gz`, so don't use `--
 | `report.md` | the tables below in markdown, for slides |
 | `headline.csv` | test phase per zone and averaged over zones: accuracy, worst-language accuracy, gCO₂ per 1,000 queries, J per query (mean and std over runs) |
 | `by_language.csv` | test accuracy per strategy × language |
+| `by_benchmark.csv` | test accuracy, gCO₂ per 1,000 queries and J per query per strategy × benchmark, plus carbon as % of always using the largest model and each benchmark's share of total carbon. Pooled carbon in `headline.csv` is almost entirely MGSM (an MGSM answer uses about 100× the energy of an XNLI or Belebele one), so read this table for XNLI and Belebele |
 | `comparisons.csv` | paired differences (e.g. `lang_carbon` vs `largest`, vs each ablation): accuracy in points and carbon in %, with 95% bootstrap CIs over test items, per zone and pooled |
 | `tradeoff.png` | accuracy vs carbon per zone, routers against baselines and the oracle |
 | `language_accuracy.png` | accuracy heatmap, strategy × language |

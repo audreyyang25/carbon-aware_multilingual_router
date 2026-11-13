@@ -6,6 +6,8 @@ Writes <folder>/analysis/:
     headline.csv      test phase, per zone and pooled over zones (each zone weighted equally):
                       accuracy, worst-language accuracy, gCO2 per 1k queries, J per query
     by_language.csv   test accuracy per strategy x language, pooled over zones
+    by_benchmark.csv  test accuracy, gCO2 per 1k, J per query, carbon as % of always-largest and
+                      share of total carbon, per strategy x benchmark, pooled over zones
     comparisons.csv   paired router-vs-reference differences with 95% bootstrap CIs over test items
     report.md         the tables above as markdown, for slides
     tradeoff.png, language_accuracy.png, model_share.png, carbon_awareness.png, learning_curve.png
@@ -95,6 +97,32 @@ def headline(test):
     numeric = pd.concat([numeric, pooled])
     table = numeric.groupby(["zone", "strategy"]).agg(["mean", "std"])
     table.columns = [c if s == "mean" else f"{c}_std" for c, s in table.columns]
+    return table.reset_index()
+
+
+def by_benchmark(test):
+    """Per strategy x benchmark, test phase, zones weighted equally (mean over zones and runs).
+
+    The pooled carbon in headline() is a mean over all test queries, and an MGSM answer uses about
+    100x the energy of an XNLI or Belebele one, so pooled carbon is almost entirely MGSM. This
+    splits accuracy and carbon by benchmark, and puts carbon on a common scale as a percentage of
+    always using the largest model on that benchmark. `carbon_share` is the fraction of the
+    strategy's total carbon spent on that benchmark.
+    """
+    per_run = test.groupby(["zone", "strategy", "run", "dataset"]).agg(
+        accuracy=("accuracy", "mean"),
+        carbon_g_per_1k=("carbon_g", lambda c: c.mean() * 1000),
+        carbon_total=("carbon_g", "sum"),
+        energy_j=("energy_j", "mean"),
+    )
+    totals = per_run.groupby(["zone", "strategy", "run"])["carbon_total"].transform("sum")
+    per_run["carbon_share"] = per_run["carbon_total"] / totals
+    table = per_run.drop(columns="carbon_total").groupby(["strategy", "dataset"]).mean()
+    if "largest" in table.index.get_level_values("strategy"):
+        largest = table.loc["largest", "carbon_g_per_1k"]
+        table["carbon_vs_largest_pct"] = (
+            table["carbon_g_per_1k"] / table.index.get_level_values("dataset").map(largest) * 100
+        )
     return table.reset_index()
 
 
@@ -281,7 +309,23 @@ def fmt_ci(value, lo, hi, unit):
     return f"{value:+.1f}{unit} [{lo:+.1f}, {hi:+.1f}]{flag}"
 
 
-def write_report(out_dir, config, table, by_language, comp, zones):
+def benchmark_report(bench, order):
+    """Markdown for the per-benchmark section: accuracy, gCO2 per 1k and % of largest, side by side."""
+    datasets = sorted(bench["dataset"].unique())
+    wide = bench.pivot(index="strategy", columns="dataset")
+    wide = wide.reindex([s for s in order if s in wide.index])
+    acc = wide["accuracy"][datasets].add_prefix("acc ")
+    co2 = wide["carbon_g_per_1k"][datasets].add_prefix("gCO2/1k ")
+    parts = [acc, co2]
+    if "carbon_vs_largest_pct" in wide:
+        rel = wide["carbon_vs_largest_pct"][datasets]
+        parts.append(rel.add_prefix("% of largest "))
+        parts.append(rel.mean(axis=1).rename("% of largest, benchmarks averaged").to_frame())
+    share = wide["carbon_share"][datasets].add_prefix("share of carbon ")
+    return markdown_table(pd.concat(parts, axis=1), index=True), markdown_table(share, index=True)
+
+
+def write_report(out_dir, config, table, by_language, comp, zones, bench_md=None):
     show = ["strategy", "accuracy", "worst_language_acc", "carbon_g_per_1k", "energy_j"]
     lines = [
         f"# Routing results: {Path(out_dir).parent.name}",
@@ -310,6 +354,23 @@ def write_report(out_dir, config, table, by_language, comp, zones):
             "carbon (%)": [fmt_ci(r.carbon_change_pct, r.carbon_lo, r.carbon_hi, "%") for r in pooled.itertuples()],
         })
         lines += [markdown_table(pretty), ""]
+    if bench_md:
+        main_table, share_table = bench_md
+        lines += [
+            "## Test results by benchmark (all zones)",
+            "",
+            "Pooled carbon above is a mean over all test queries, so it is almost entirely MGSM "
+            "(an MGSM answer uses about 100x the energy of an XNLI or Belebele one). Here each "
+            "benchmark is on its own; `% of largest` puts carbon on a common scale (always using "
+            "the largest model = 100), and its benchmark average weights the three equally.",
+            "",
+            main_table,
+            "",
+            "Share of each strategy's total carbon spent on each benchmark:",
+            "",
+            share_table,
+            "",
+        ]
     lines += ["## Test accuracy by language (all zones)", "", markdown_table(by_language, index=True), ""]
     for zone in zones:
         lines += [f"## {zone}", "", markdown_table(table[table["zone"] == zone][show]), ""]
@@ -347,6 +408,11 @@ def main():
     by_language["worst"] = by_language.min(axis=1)
     by_language.to_csv(out_dir / "by_language.csv")
 
+    bench = by_benchmark(test)
+    bench["strategy"] = pd.Categorical(bench["strategy"], order)
+    bench = bench.sort_values(["strategy", "dataset"])
+    bench.to_csv(out_dir / "by_benchmark.csv", index=False)
+
     comp = comparisons(test, item_of, zones)
     comp.to_csv(out_dir / "comparisons.csv", index=False)
 
@@ -355,7 +421,8 @@ def main():
     plot_model_share(test, routers, model_ids, out_dir / "model_share.png")
     plot_carbon_awareness(test, routers, out_dir / "carbon_awareness.png")
     plot_learning_curve(curves, routers, out_dir / "learning_curve.png")
-    write_report(out_dir, config, table, by_language, comp, zones)
+    write_report(out_dir, config, table, by_language, comp, zones,
+                 benchmark_report(bench.astype({"strategy": str}), order))
 
     print((out_dir / "report.md").read_text())
     print(f"\nSaved to {out_dir}")

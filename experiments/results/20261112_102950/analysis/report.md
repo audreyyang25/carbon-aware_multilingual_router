@@ -39,6 +39,44 @@ Router minus reference on the same queries. Accuracy in points, carbon in % of t
 | carbon vs carbon_no_flesch | Does Flesch complexity help? | -2.2 [-2.9, -1.4] * | -14.6% [-16.0, -13.2] * |
 | carbon vs greenserv | Carbon cost vs GreenServ's energy-per-token cost | +8.7 [+4.8, +13.1] * | +181.0% [+164.6, +197.5] * |
 
+## Test results by benchmark (all zones)
+
+Pooled carbon above is a mean over all test queries, so it is almost entirely MGSM (an MGSM answer uses about 100x the energy of an XNLI or Belebele one). Here each benchmark is on its own; `% of largest` puts carbon on a common scale (always using the largest model = 100), and its benchmark average weights the three equally.
+
+| strategy | acc belebele | acc mgsm | acc xnli | gCO2/1k belebele | gCO2/1k mgsm | gCO2/1k xnli | % of largest belebele | % of largest mgsm | % of largest xnli | % of largest, benchmarks averaged |
+|---|---|---|---|---|---|---|---|---|---|---|
+| greenserv | 0.822 | 0.757 | 0.693 | 1.652 | 97.133 | 1.665 | 38.568 | 28.496 | 56.460 | 41.174 |
+| energy_pq | 0.889 | 0.935 | 0.690 | 1.926 | 258.197 | 1.382 | 44.971 | 75.747 | 46.839 | 55.852 |
+| carbon | 0.919 | 0.919 | 0.738 | 2.750 | 284.025 | 1.858 | 64.231 | 83.324 | 62.977 | 70.177 |
+| carbon_no_flesch | 0.932 | 0.935 | 0.771 | 3.146 | 332.279 | 2.379 | 73.459 | 97.480 | 80.651 | 83.864 |
+| carbon_en_emb | 0.918 | 0.924 | 0.767 | 2.783 | 274.083 | 1.923 | 64.997 | 80.407 | 65.183 | 70.196 |
+| carbon_onehot | 0.924 | 0.923 | 0.757 | 2.820 | 295.871 | 1.936 | 65.843 | 86.800 | 65.631 | 72.758 |
+| carbon_ml_emb | 0.914 | 0.926 | 0.760 | 2.928 | 303.986 | 1.906 | 68.376 | 89.180 | 64.604 | 74.053 |
+| lang_carbon | 0.917 | 0.920 | 0.774 | 3.041 | 288.489 | 2.003 | 71.004 | 84.634 | 67.892 | 74.510 |
+| random | 0.860 | 0.825 | 0.700 | 2.437 | 218.092 | 1.908 | 56.918 | 63.982 | 64.697 | 61.865 |
+| smallest | 0.730 | 0.609 | 0.593 | 0.951 | 87.642 | 0.813 | 22.211 | 25.712 | 27.565 | 25.162 |
+| largest | 0.945 | 0.945 | 0.765 | 4.282 | 340.867 | 2.950 | 100.000 | 100.000 | 100.000 | 100.000 |
+| best_fixed | 0.919 | 0.909 | 0.785 | 2.237 | 193.439 | 1.863 | 52.244 | 56.749 | 63.165 | 57.386 |
+| oracle | 0.973 | 0.977 | 0.977 | 0.997 | 77.904 | 0.903 | 23.294 | 22.855 | 30.609 | 25.586 |
+
+Share of each strategy's total carbon spent on each benchmark:
+
+| strategy | share of carbon belebele | share of carbon mgsm | share of carbon xnli |
+|---|---|---|---|
+| greenserv | 0.046 | 0.910 | 0.045 |
+| energy_pq | 0.019 | 0.968 | 0.014 |
+| carbon | 0.022 | 0.964 | 0.014 |
+| carbon_no_flesch | 0.025 | 0.958 | 0.017 |
+| carbon_en_emb | 0.024 | 0.960 | 0.017 |
+| carbon_onehot | 0.024 | 0.960 | 0.016 |
+| carbon_ml_emb | 0.023 | 0.962 | 0.016 |
+| lang_carbon | 0.024 | 0.960 | 0.017 |
+| random | 0.025 | 0.955 | 0.020 |
+| smallest | 0.024 | 0.955 | 0.021 |
+| largest | 0.028 | 0.953 | 0.019 |
+| best_fixed | 0.026 | 0.953 | 0.021 |
+| oracle | 0.028 | 0.946 | 0.026 |
+
 ## Test accuracy by language (all zones)
 
 | strategy | en | de | es | fr | ru | zh | th | sw | worst |
