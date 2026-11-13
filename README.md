@@ -188,6 +188,15 @@ Writes `analysis/` inside the run folder (needs `steps.csv.gz`, so don't use `--
 
 The bootstrap resamples items (one question in all 8 languages), not single queries, because the translations of one item and repeated runs over the same items aren't independent.
 
+Routers that land at different carbon levels can't be compared fairly at a single λ. To compare them at matched carbon, run the simulation at several λ (`--lambda`, each with its own `--output-dir`), analyze each run, then:
+
+```bash
+python -m experiments.lambda_compare experiments/results/lambda_sweep/comparison \
+    0.3=<run_dir> 0.5=<run_dir> 0.7=<run_dir> 0.9=<run_dir>
+```
+
+Each λ gives every router one (carbon, accuracy) point; `matched_carbon.csv` reads each router's curve at common carbon levels by linear interpolation between neighbouring λ runs, and `lambda_tradeoff.png` plots the curves. The main-run sweep (λ = 0.3, 0.5, 0.7, 0.9) is in `experiments/results/lambda_sweep/`.
+
 ### Optional: Postgres
 
 The simulation reads JSONL directly. To keep results in Postgres as well:
