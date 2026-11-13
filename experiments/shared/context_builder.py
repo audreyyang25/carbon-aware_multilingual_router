@@ -52,7 +52,11 @@ class ContextBuilder:
                 logger.info(f"{section}: PCA to {n_components} dims keeps {pca.explained_variance_ratio_.sum():.0%} of variance")
                 blocks.append(Z)
             elif feature == "language":
+                # Configured order first, then any other language the training queries contain
+                # (e.g. the low-resource Belebele set). Main-run one-hots are unchanged.
                 languages = list(feature_config["language"]["languages"])
+                seen = sorted(set(table["language"][train]) - set(languages))
+                languages += seen
                 if holdout_language in languages:
                     languages.remove(holdout_language)  # unseen language -> all zeros
                 extractor = LanguageOneHotExtractor({"languages": languages})

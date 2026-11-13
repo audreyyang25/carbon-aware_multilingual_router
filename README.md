@@ -76,6 +76,16 @@ Languages: **en, de, es, fr, ru, zh, th, sw** (the overlap of all three benchmar
 
 **Low-resource extension (Belebele only, `results/generations_lowres_NVIDIA-A100-SXM4-80GB.jsonl.gz`):** the 8 languages above are the overlap of all three benchmarks, which leaves out most low-resource languages. Belebele alone covers 122 language variants (XNLI 15, MGSM 11), so a separate run adds 12 low-resource languages on Belebele: Yoruba, Hausa, Igbo, Amharic, Zulu, Wolof, Nepali, Sinhala, Khmer, Lao, Burmese and Guarani (`config/lowres_languages.yaml`), plus en and sw re-run as anchors. It uses the same 250 Belebele items (same `item_id`, so `splits.csv` applies), prompts and models: 14 languages × 250 items × 6 models = 21,000 generations. It is kept in its own file so the main 4,800-query setup is unchanged. The anchors reproduce the main run's answers exactly; energy on that Pod reads 2–18% higher, so scale by the anchors before comparing energy across files. Accuracy per language and model, and caveats: `results/lowres_summary.md`. Rebuild the queries with `python data/process_lowres.py` (needs Hugging Face access), then `python data/generate.py --input data/preprocessed/belebele_lowres.csv --output results/generations_lowres_<gpu>.jsonl` on the Pod.
 
+To simulate routing on the low-resource set (its queries are already embedded in `data/features/`; `data/embed.py --input data/preprocessed/belebele_lowres.csv --append` re-adds them):
+
+```bash
+python -m experiments.run --router all --zone all \
+    --results results/generations_lowres_NVIDIA-A100-SXM4-80GB.jsonl.gz \
+    --queries data/preprocessed/belebele_lowres.csv --output-dir experiments/results/lowres
+```
+
+The language one-hot extends to every language in the training queries (the 8 main languages keep their order), so the low-resource languages get their own columns.
+
 ## Model pool
 
 | Family | Models |
