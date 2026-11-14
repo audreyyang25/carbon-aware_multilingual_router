@@ -36,6 +36,12 @@ from config.manager import load_config  # noqa: E402
 
 BASELINES = ["random", "smallest", "largest", "best_fixed", "oracle"]
 LANGUAGES = ["en", "de", "es", "fr", "ru", "zh", "th", "sw"]
+
+
+def language_order(present):
+    """Main-run languages in their usual order, then any others (e.g. low-resource) alphabetically."""
+    present = set(present)
+    return [l for l in LANGUAGES if l in present] + sorted(present - set(LANGUAGES))
 CURVE_BUCKET = 250  # training steps per learning-curve point (one grid hour at the default clock)
 
 # (router, reference, question). Rows whose strategies aren't in the results are skipped.
@@ -216,7 +222,7 @@ def plot_tradeoff(table, zones, routers, out):
 
 
 def plot_language_accuracy(by_language, out):
-    fig, ax = plt.subplots(figsize=(8, 0.45 * len(by_language) + 1.5))
+    fig, ax = plt.subplots(figsize=(max(8, 0.65 * len(by_language.columns) + 2), 0.45 * len(by_language) + 1.5))
     im = ax.imshow(by_language.to_numpy(), cmap="viridis", vmin=0, vmax=1, aspect="auto")
     ax.set_xticks(range(len(by_language.columns)), by_language.columns)
     ax.set_yticks(range(len(by_language)), by_language.index)
@@ -238,7 +244,7 @@ def plot_model_share(test, routers, model_ids, out):
     for ax, router in zip(axes.flat, routers):
         share = (test[test["strategy"] == router].groupby("language")["model"]
                  .value_counts(normalize=True).unstack(fill_value=0))
-        share = share.reindex(index=[l for l in LANGUAGES if l in share.index], columns=model_ids, fill_value=0)
+        share = share.reindex(index=language_order(share.index), columns=model_ids, fill_value=0)
         bottom = np.zeros(len(share))
         for m in model_ids:
             ax.bar(share.index, share[m], bottom=bottom, color=colors[m], label=m)
@@ -404,7 +410,7 @@ def main():
     table.to_csv(out_dir / "headline.csv", index=False)
 
     by_language = test.groupby(["strategy", "language"])["accuracy"].mean().unstack()
-    by_language = by_language.reindex(index=order, columns=[l for l in LANGUAGES if l in by_language.columns])
+    by_language = by_language.reindex(index=order, columns=language_order(by_language.columns))
     by_language["worst"] = by_language.min(axis=1)
     by_language.to_csv(out_dir / "by_language.csv")
 

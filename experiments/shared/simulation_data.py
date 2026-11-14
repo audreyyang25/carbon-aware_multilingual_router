@@ -4,6 +4,7 @@ Reads the JSONL files written by data/generate.py, joins them with the preproces
 and the item-level train/test split, and computes normalization bounds from training items.
 """
 import glob
+import gzip
 import json
 import logging
 import re
@@ -26,7 +27,7 @@ def load_results(paths, hardware=None, models=None):
         raise FileNotFoundError(f"No results files match {paths}")
     rows = []
     for path in files:
-        with open(path) as f:
+        with (gzip.open(path, "rt") if path.endswith(".gz") else open(path)) as f:
             rows.extend(json.loads(line) for line in f if line.strip())
     df = pd.DataFrame(rows)
 
