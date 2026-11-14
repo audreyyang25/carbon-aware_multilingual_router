@@ -85,15 +85,6 @@ class NumericAnswerExtractor(BaseAnswerExtractor):
         except Exception:
             return ""
 
-    @staticmethod
-    def is_numeric_method(extraction_method):
-        """Check if the extraction method is numeric-based."""
-        return extraction_method == "numeric" or (
-            extraction_method
-            and extraction_method.startswith("regex_")
-            and "(?!.*\\d)" in extraction_method
-        )
-
 
 class MultipleChoiceExtractor(BaseAnswerExtractor):
     """Extract multiple choice answers (A, B, C, D)."""

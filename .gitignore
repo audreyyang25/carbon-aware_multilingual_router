@@ -23,3 +23,9 @@ experiments/results/**/steps.csv.gz
 
 # macOS Finder metadata
 .DS_Store
+
+# Shell configs and env files hold API tokens: keep them out of git
+.zshrc
+.bashrc
+.env
+.env.*

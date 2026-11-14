@@ -299,29 +299,6 @@ class ThompsonSampling(BaseBandit):
                 avg_rewards[model_id] = None
         return avg_rewards
 
-    def _get_uncertainty_evolution(self):
-        uncertainty = {}
-        for model_id in self.model_ids:
-            if (
-                hasattr(self, "cov")
-                and model_id in self.cov
-                and (self.mu.get(model_id) is None or self.cov.get(model_id) is None)
-            ):
-                try:
-                    self._update_posterior(model_id)
-                except Exception as e:
-                    logger.error(f"Failed updating posterior: {e}")
-                    continue
-            if (
-                hasattr(self, "cov")
-                and model_id in self.cov
-                and self.cov.get(model_id) is not None
-            ):
-                uncertainty[model_id] = float(np.trace(self.cov[model_id]))
-            else:
-                uncertainty[model_id] = None
-        return uncertainty
-
     def add_model(self, model_id):
         """Adds a new model arm to the Thompson Sampling bandit."""
         if model_id in self.model_ids:

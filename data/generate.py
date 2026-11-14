@@ -1,10 +1,8 @@
 """Run every model on every preprocessed query and record accuracy + GPU energy.
 
-Runs directly on a GPU (no Redis/Postgres needed) and appends one JSON line per
-(query, model) to --output. Re-running skips pairs that are already done, so it is
-safe to resume after a crash or a Pod restart. Load the file locally afterwards with:
-
-    python data/ingest.py --results-file results/generations_<gpu>.jsonl
+Runs directly on a GPU and appends one JSON line per (query, model) to --output.
+Re-running skips pairs that are already done, so it is safe to resume after a crash or
+a Pod restart. experiments/run.py reads the file directly (--results).
 
 Carbon is not computed here: energy (J) is stored and turned into gCO2 offline with
 grid intensity at simulation time, so one GPU run serves every grid zone.

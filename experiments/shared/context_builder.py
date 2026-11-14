@@ -14,7 +14,6 @@ from src.feature_extractor.language import LanguageOneHotExtractor, load_embeddi
 
 logger = logging.getLogger(__name__)
 
-ENCODER_FEATURES = {"semantic_cluster", "embedding"}
 
 
 class ContextBuilder:
@@ -69,10 +68,6 @@ class ContextBuilder:
         self.static = np.hstack(blocks).astype(np.float64)
         self.row = {sid: i for i, sid in enumerate(table.index)}
         self.dim = self.static.shape[1] + int(self.uses_ci)
-
-    @property
-    def uses_encoder(self):
-        return bool(ENCODER_FEATURES & set(self.features))
 
     def context(self, source_id, ci):
         """Context vector for one query at grid intensity ci (gCO2eq/kWh)."""

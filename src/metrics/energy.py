@@ -180,15 +180,3 @@ class EnergyMeasurement:
         else:
             print("Create energy measurement instance PyNVML.")
             return PynvmlMeasurement(device_id=device_id)
-
-
-class EnergyMetrics:
-    """Calculate energy-related metrics."""
-
-    def calculate_per_token(self, total_energy, input_tokens, output_tokens):
-        """Calculate energy per token."""
-        total_tokens = input_tokens + output_tokens
-        if total_tokens == 0:
-            return 0.0
-
-        return total_energy / total_tokens

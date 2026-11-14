@@ -1,1 +1,0 @@
-export ELECTRICITYMAPS_TOKEN="em_Phgcsx5weJ8QJsWtE2MN8jFwq2tpH7mY"

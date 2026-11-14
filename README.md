@@ -2,7 +2,7 @@
 
 Contextual multi-armed bandit routing for LLM inference that trades off **multilingual accuracy** against **carbon emissions**. For each query, the router picks one model from a pool of open-weight LLMs, using the query's language, task, and content along with the current grid carbon intensity.
 
-> **Status:** work in progress. The data pipeline, router features, grid data download and routing simulation are implemented; the full RunPod data collection is next.
+> **Status:** work in progress. Data collection is done (A100 runs for the main 8 languages and for 12 extra low-resource languages on Belebele), and the routing simulation and analysis run on both. See [Results so far](#results-so-far).
 
 ## Acknowledgement
 
@@ -197,16 +197,21 @@ python -m experiments.lambda_compare experiments/results/lambda_sweep/comparison
 
 Each λ gives every router one (carbon, accuracy) point; `matched_carbon.csv` reads each router's curve at common carbon levels by linear interpolation between neighbouring λ runs, and `lambda_tradeoff.png` plots the curves. The main-run sweep (λ = 0.3, 0.5, 0.7, 0.9) is in `experiments/results/lambda_sweep/`.
 
-### Optional: Postgres
+## Results so far
 
-The simulation reads JSONL directly. To keep results in Postgres as well:
+All runs use LinUCB, 5 runs per zone, 6 grid zones; numbers are test-phase averages over zones. Full tables and figures are in each run's `analysis/report.md`.
 
-```bash
-docker-compose -f db/docker-compose-db.yaml up -d
-psql ... -f db/schema.sql
-python data/ingest.py --input-file data/preprocessed/combined.csv
-python data/ingest.py --results-file results/generations_<gpu>.jsonl
-```
+| Run | Folder |
+|---|---|
+| Main 8 languages, λ = 0.5 | `experiments/results/20261112_102950/` |
+| Main 8 languages, λ = 0.3, 0.7, 0.9, and the matched-carbon comparison | `experiments/results/lambda_sweep/` |
+| 12 low-resource languages + en/sw on Belebele, λ = 0.5 | `experiments/results/lowres/20261112_231828/` |
+
+- **vs always using the largest model:** `lang_carbon` uses 16% less carbon for 1.2 points of accuracy on the main set. On the low-resource set it saves 14% but loses 4.4 points.
+- **At matched carbon** (`lambda_sweep/comparison/`), language features add about 1.5 accuracy points and 2 points on the weakest language over `carbon_no_flesch`, and carbon awareness adds about 3.5 points over `energy_pq`. GreenServ is about as accurate as `lang_carbon` at the same carbon.
+- **The best single model chosen on training data (`best_fixed`) beats every router at every carbon level.** On the low-resource set it is simply the largest model. The language features don't help there, and the one-hot router does worst on Wolof (0.46 vs 0.60).
+- **Pooled carbon is about 96% MGSM**, so `by_benchmark.csv` is the table to read for XNLI and Belebele.
+- Offline checks suggest which model gets a question right depends mostly on the specific question, not its language. When the two small models agree, qwen3.5-2b is right 92% of the time vs 56% when they disagree, a stronger routing signal than anything in the question text.
 
 ## Removed GreenServ code
 
@@ -221,27 +226,31 @@ GreenServ ran a live routing API and replayed results from Postgres; this projec
 | `src/feature_extractor/semantic_cluster.py` and the `semantic_clustering` config | Online k-means on live queries | k-means fit on training items in `experiments/shared/context_builder.py` |
 | `src/metrics/normalizer.py`, `config/metrics.yaml` | Fixed energy bounds measured on GreenServ's datasets and hardware | Bounds from the training items of the results being simulated (`TrainBounds`) |
 | `config/explore_dataset.py`, the Makefile's `exp01-*` targets, the API/Redis requirements | Exploration script and entry points for the removed code | |
+| `db/` (Postgres schema, connection, Docker Compose), `data/ingest.py`, `config/infrastructure.yaml`, the Makefile's database targets | Optional Postgres copy of queries and results; nothing in the pipeline read it | `experiments/run.py` reads the results JSONL directly |
 
 ## Repository structure
 
 ```
-config/                  # datasets, models, features, router profiles, grid zones, Postgres
+config/                  # datasets, models, features, router profiles, grid zones, low-resource languages
 data/
-├── process.py           # item selection and prompt formatting
+├── process.py           # item selection and prompt formatting (main 8 languages)
 ├── process_lowres.py    # Belebele queries for the extra low-resource languages
 ├── split.py             # item-level train/test split
-├── embed.py             # cached router embeddings
+├── embed.py             # cached router embeddings (--append adds new queries)
 ├── fetch_grid.py        # Electricity Maps hourly intensity
 ├── generate.py          # GPU data generation (accuracy + energy per query x model)
-├── ingest.py            # optional Postgres loading
+├── helper.py, load.py   # benchmark loading and preprocessing used by process*.py
 ├── preprocessed/        # selected queries and splits (committed)
-├── features/            # cached embeddings (committed)
-└── grid/                # intensity series and global bounds
+├── features/            # cached embeddings for all 9,000 queries (committed)
+└── grid/                # hourly intensity per zone and global bounds
 experiments/
-├── run.py               # routing simulation (--router, --zone, ...)
-└── shared/              # results loading, context builder, reward functions
-results/                 # generation results and encoder energy from RunPod
-scripts/                 # RunPod setup, encoder energy, pilot summary
+├── run.py               # routing simulation (--router, --zone, --lambda, ...)
+├── analyze.py           # tables, paired comparisons and figures for one run
+├── lambda_compare.py    # accuracy-vs-carbon curves and matched-carbon comparison across λ
+├── shared/              # results loading, context builder, reward functions
+└── results/             # simulation runs: <timestamp>/, lambda_sweep/, lowres/
+results/                 # RunPod outputs: generations (main + low-resource), encoder energy
+scripts/                 # RunPod setup, preflight checks, encoder energy, results summary
 src/
 ├── bandit/              # LinUCB, Thompson Sampling, ε-greedy, factory
 ├── feature_extractor/   # complexity, language one-hot, sentence-embedding encoder
@@ -256,7 +265,6 @@ src/
 - A GPU for data generation (RunPod; ~80 GB VRAM for the 27B/31B models in bf16)
 - Hugging Face account and token (Tiny Aya is gated)
 - Electricity Maps API token, or its downloadable hourly datasets
-- Docker, only for the optional Postgres database
 
 ### Installation
 
@@ -268,4 +276,4 @@ export HF_TOKEN=...
 export ELECTRICITYMAPS_TOKEN=...
 ```
 
-Keep tokens and API keys in environment variables, not in config files.
+Keep tokens and API keys in environment variables set from your home-directory shell profile (`~/.zshrc`), not in files inside the repo. `.gitignore` excludes `.zshrc`, `.bashrc` and `.env` files as a safety net.
