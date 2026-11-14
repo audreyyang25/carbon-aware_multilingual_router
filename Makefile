@@ -1,10 +1,9 @@
-# Makefile: local environment and optional Postgres
+# Makefile: local Python environment
 
-.PHONY: setup clean-docker setup-venv install-deps start-db stop-db clean
+.PHONY: setup setup-venv install-deps clean
 
-# Setup targets
-setup: clean-docker setup-venv install-deps start-db
-	@echo "Setup complete!"
+setup: setup-venv install-deps
+	@echo "Setup complete! Activate with: source venv/bin/activate"
 
 setup-venv:
 	@echo "Creating virtual environment..."
@@ -15,22 +14,7 @@ install-deps:
 	./venv/bin/pip install --upgrade pip
 	./venv/bin/pip install -r requirements.txt
 
-start-db:
-	@echo "Starting database containers..."
-	docker-compose -f db/docker-compose-db.yaml up -d
-	@echo "Waiting for database to be ready..."
-	@sleep 25
-
-stop-db:
-	@echo "Stopping database containers..."
-	docker-compose -f db/docker-compose-db.yaml down
-
-clean-docker:
-	@echo "Cleaning up Docker containers..."
-	-docker-compose -f db/docker-compose-db.yaml down
-
-clean: stop-db
+clean:
 	@echo "Cleaning up..."
 	rm -rf venv
-	rm -rf __pycache__
-	find . -type d -name "__pycache__" -exec rm -rf {} +
+	find . -type d -name "__pycache__" -not -path "./venv/*" -exec rm -rf {} +

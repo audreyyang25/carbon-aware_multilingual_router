@@ -28,7 +28,3 @@ class IntensitySeries:
         if h >= len(self.ci):
             raise IndexError(f"Step {t} needs hour {h}, but series has {len(self.ci)} hours")
         return self.ci[h]
-    
-def global_ci_bounds(series_list):
-    """Min/max intensity across every zone being compared."""
-    return min(s.ci.min() for s in series_list), max(s.ci.max() for s in series_list)

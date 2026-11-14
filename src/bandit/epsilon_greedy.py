@@ -355,24 +355,6 @@ class ContextualEpsilonGreedy(BaseBandit):
         else:
             logger.info(f"Model {model_id} already exists in ContextualEpsilonGreedy.")
 
-    def get_context_decisions(self):
-        """Returns the dictionary mapping context keys to lists of chosen models."""
-
-        return dict(self.choices_per_context)
-
-    def get_context_average_rewards(self):
-        """Calculates and returns the average reward per model for each learned context."""
-        context_avg_rewards = defaultdict(dict)
-        for context_key, counts_dict in self.context_counts.items():
-            for model_id, count in counts_dict.items():
-                if count > 0:
-                    total_reward = self.context_reward_sums.get(context_key, {}).get(
-                        model_id, 0.0
-                    )
-                    context_avg_rewards[context_key][model_id] = total_reward / count
-                else:
-                    context_avg_rewards[context_key][model_id] = None
-        return dict(context_avg_rewards)
 
 
 class LinearEpsilonGreedy(BaseBandit):
