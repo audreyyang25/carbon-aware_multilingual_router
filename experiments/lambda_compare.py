@@ -11,7 +11,7 @@ different carbon levels can be compared fairly. Run experiments.analyze on each 
 Writes OUT_DIR/: lambda_headline.csv, by_lambda_<metric>.csv, matched_carbon.csv,
 lambda_tradeoff.png.
 """
-import sys
+import argparse
 from pathlib import Path
 
 import matplotlib
@@ -20,10 +20,18 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
-out = Path(sys.argv[1])
+parser = argparse.ArgumentParser(description="Compare routers across lambda at matched carbon")
+parser.add_argument("out_dir", type=Path)
+parser.add_argument("runs", nargs="+", help="LAMBDA=RUN_DIR, one per lambda")
+parser.add_argument("--levels", type=float, nargs="+",
+                    help="gCO2 per 1k queries to compare at (default: 5 round levels inside "
+                         "the routers' carbon range)")
+args = parser.parse_args()
+
+out = args.out_dir
 out.mkdir(parents=True, exist_ok=True)
 frames = []
-for arg in sys.argv[2:]:
+for arg in args.runs:
     lam, path = arg.split("=", 1)
     h = pd.read_csv(Path(path) / "analysis" / "headline.csv")
     h = h[h["zone"] == "all"].copy()
@@ -58,8 +66,18 @@ def at_carbon(strategy, c, y="accuracy"):
     return float(np.interp(c, x, v))
 
 
+def round_levels(lo, hi, n=5):
+    """About n evenly spaced round numbers (step 1, 2 or 5 x 10^k) strictly inside (lo, hi)."""
+    raw = (hi - lo) / (n + 1)
+    magnitude = 10 ** np.floor(np.log10(raw))
+    step = min((m * magnitude for m in (1, 2, 5, 10)), key=lambda s: abs(s - raw))
+    first = np.floor(lo / step) * step + step
+    return [round(float(c), 6) for c in np.arange(first, hi, step)]
+
+
 # Matched carbon: accuracy of every router at a few common carbon levels
-levels = sorted({round(c, 1) for c in [20, 30, 40, 50, 60]})
+router_carbon = df[df["strategy"].isin(routers)]["carbon_g_per_1k"]
+levels = sorted(args.levels) if args.levels else round_levels(router_carbon.min(), router_carbon.max())
 rows = []
 for c in levels:
     row = {"carbon_g_per_1k": c}
@@ -100,7 +118,7 @@ ax.set_title("Accuracy vs carbon as λ goes 0.3 → 0.9 (more weight on carbon)"
 ax.grid(color="#e8e7e2", lw=0.8)
 for side in ["top", "right"]:
     ax.spines[side].set_visible(False)
-ax.legend(frameon=False, fontsize=8, loc="lower right", title="lower-left point = λ 0.9",
+ax.legend(frameon=False, fontsize=8, loc="lower right", title="one point per λ run",
           title_fontsize=7)
 fig.tight_layout()
 fig.savefig(out / "lambda_tradeoff.png")
