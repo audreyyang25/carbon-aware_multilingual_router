@@ -195,7 +195,7 @@ python -m experiments.lambda_compare experiments/results/lambda_sweep/comparison
     0.3=<run_dir> 0.5=<run_dir> 0.7=<run_dir> 0.9=<run_dir>
 ```
 
-Each λ gives every router one (carbon, accuracy) point; `matched_carbon.csv` reads each router's curve at common carbon levels by linear interpolation between neighbouring λ runs, and `lambda_tradeoff.png` plots the curves. The main-run sweep (λ = 0.3, 0.5, 0.7, 0.9) is in `experiments/results/lambda_sweep/`.
+Each λ gives every router one (carbon, accuracy) point; `matched_carbon.csv` reads each router's curve at common carbon levels by linear interpolation between neighbouring λ runs, and `lambda_tradeoff.png` plots the curves. Comparison levels default to five round numbers inside the routers' carbon range; `--levels 20 30 40 50 60` reproduces the main-run table. The main-run sweep (λ = 0.3, 0.5, 0.7, 0.9) is in `experiments/results/lambda_sweep/`, the low-resource one in `experiments/results/lowres/lambda_sweep/`.
 
 ## Results so far
 
@@ -206,10 +206,11 @@ All runs use LinUCB, 5 runs per zone, 6 grid zones; numbers are test-phase avera
 | Main 8 languages, λ = 0.5 | `experiments/results/20261112_102950/` |
 | Main 8 languages, λ = 0.3, 0.7, 0.9, and the matched-carbon comparison | `experiments/results/lambda_sweep/` |
 | 12 low-resource languages + en/sw on Belebele, λ = 0.5 | `experiments/results/lowres/20261112_231828/` |
+| Low-resource set, λ = 0.3, 0.7, 0.9, and the matched-carbon comparison | `experiments/results/lowres/lambda_sweep/` |
 
 - **vs always using the largest model:** `lang_carbon` uses 16% less carbon for 1.2 points of accuracy on the main set. On the low-resource set it saves 14% but loses 4.4 points.
 - **At matched carbon** (`lambda_sweep/comparison/`), language features add about 1.5 accuracy points and 2 points on the weakest language over `carbon_no_flesch`, and carbon awareness adds about 3.5 points over `energy_pq`. GreenServ is about as accurate as `lang_carbon` at the same carbon.
-- **The best single model chosen on training data (`best_fixed`) beats every router at every carbon level.** On the low-resource set it is simply the largest model. The language features don't help there, and the one-hot router does worst on Wolof (0.46 vs 0.60).
+- **The best single model chosen on training data (`best_fixed`) beats every router at every carbon level.** On the low-resource set at λ = 0.5 it is simply the largest model. The language features don't help there even at matched carbon (`lang_carbon` is 0.9 points below `carbon_no_flesch` at 5 and 6 g per 1k), and the one-hot router does worst on Wolof (0.46 vs 0.60 at λ = 0.5).
 - **Pooled carbon is about 96% MGSM**, so `by_benchmark.csv` is the table to read for XNLI and Belebele.
 - Offline checks suggest which model gets a question right depends mostly on the specific question, not its language. When the two small models agree, qwen3.5-2b is right 92% of the time vs 56% when they disagree, a stronger routing signal than anything in the question text.
 
