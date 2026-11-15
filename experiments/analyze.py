@@ -56,6 +56,8 @@ COMPARISONS = [
     ("carbon", "energy_pq", "Does seeing the grid help? (carbon vs energy cost)"),
     ("carbon", "carbon_no_flesch", "Does Flesch complexity help?"),
     ("carbon", "greenserv", "Carbon cost vs GreenServ's energy-per-token cost"),
+    ("carbon_pt", "greenserv", "Does seeing the grid help GreenServ? (same per-token cost unit)"),
+    ("carbon_pt", "carbon", "Carbon per token vs carbon per answer"),
 ]
 
 
@@ -174,7 +176,9 @@ def comparisons(test, item_of, zones):
         for zone in ["all"] + zones:
             result = paired_bootstrap(test, item_of, a, b, None if zone == "all" else zone)
             rows.append({"router": a, "reference": b, "zone": zone, "question": question, **result})
-    return pd.DataFrame(rows)
+    # Keep the columns when no pair applies (e.g. a run with a single router)
+    return pd.DataFrame(rows, columns=["router", "reference", "zone", "question", "acc_diff_pp", "acc_lo",
+                                       "acc_hi", "carbon_change_pct", "carbon_lo", "carbon_hi", "items"])
 
 
 def strategy_order(strategies):

@@ -111,6 +111,7 @@ def step_rewards(table, order, ci, cost_name, lambda_weight, ctx, n_models):
                 "energy_consumption": q["energy"][m],
                 "energy_consumption_norm": q["energy_norm"][m],
                 "energy_per_token_norm": q["ept_norm"][m],
+                "energy_per_token": q["energy"][m] / q["tokens"][m],
             }
             rewards[t, m] = calculate_reward(q["accuracy"][m], cost_fn(row, ci[t], ctx), lambda_weight)
     return rewards
@@ -152,31 +153,74 @@ def simulate_run(router_name, profile, builder, table, model_ids, series, run, s
     by_size = sorted(range(n_models), key=lambda m: float(sizes[model_ids[m]]["parameter_count"]))
 
     strategies = {router_name: "bandit", "oracle": "oracle", **{b: "baseline" for b in router_config["baselines"]}}
-    bandit = create_bandit_instance(
-        algo_name=args.algorithm,
-        algo_params=router_config["algorithms"][args.algorithm],
-        model_ids=list(range(n_models)),
-        context_dimension=builder.dim,
-        reg_lambda=router_config["algorithms"][args.algorithm].get(
-            "lambda_", router_config["algorithms"][args.algorithm].get("regularization")),
-        seed=seed,
-    )
-    if bandit is None:
-        raise RuntimeError(f"Could not create bandit '{args.algorithm}'")
-    if hasattr(bandit, "reset"):
-        bandit.reset()
-    random_choice = random.Random(seed + 1)
 
+    def new_bandit():
+        b = create_bandit_instance(
+            algo_name=args.algorithm,
+            algo_params=router_config["algorithms"][args.algorithm],
+            model_ids=list(range(n_models)),
+            context_dimension=builder.dim,
+            reg_lambda=router_config["algorithms"][args.algorithm].get(
+                "lambda_", router_config["algorithms"][args.algorithm].get("regularization")),
+            seed=seed,
+        )
+        if b is None:
+            raise RuntimeError(f"Could not create bandit '{args.algorithm}'")
+        if hasattr(b, "reset"):
+            b.reset()
+        return b
+
+    random_choice = random.Random(seed + 1)
+    n_train = len(train_ids)
+    contexts = [builder.context(sid, ci[t]) for t, sid in enumerate(order)]
+
+    # Per-language accuracy floors (profile `floor`), tuned by dual ascent on the training stream
+    # only. Language l gets a multiplier mu_l and the bandit learns from
+    #     reward + mu_l * (1 - lambda) * accuracy.
+    # Each pass trains a fresh bandit with mu fixed, scores its frozen policy on the training
+    # items, and raises mu_l by step * (floor_l - accuracy_l). Keeping mu fixed within a pass
+    # matters: a multiplier that drifts during one pass gets averaged away by LinUCB. The floor is
+    # ratio x the best single model's training accuracy in that language. Reported rewards stay
+    # unaugmented.
+    floor_cfg = profile.get("floor")
+    bonus = np.zeros_like(rewards)
+    if floor_cfg:
+        step_lang = np.array([table.at[sid, "language"] for sid in order])
+        step_acc = np.stack([table.at[sid, "accuracy"] for sid in order])
+        train_lang, train_acc = step_lang[:n_train], step_acc[:n_train]
+        floors = {l: floor_cfg["ratio"] * float(train_acc[train_lang == l].mean(axis=0).max())
+                  for l in np.unique(train_lang)}
+        mu = dict.fromkeys(floors, 0.0)
+
+        def bonus_for(mu):
+            w = np.array([mu[l] for l in step_lang])[:, None]
+            return w * (1 - args.lambda_weight) * step_acc
+
+        for _ in range(floor_cfg["passes"]):
+            bonus = bonus_for(mu)
+            b = new_bandit()
+            for t in range(n_train):
+                m = b.select_model(context=contexts[t])
+                b.update(m, rewards[t, m] + bonus[t, m], context=contexts[t])
+            freeze_exploration(b)
+            picks = np.array([b.select_model(context=contexts[t]) for t in range(n_train)])
+            got = train_acc[np.arange(n_train), picks]
+            for l in mu:
+                mu[l] = min(floor_cfg["max"], max(0.0, mu[l] + floor_cfg["step"] * (floors[l] - got[train_lang == l].mean())))
+        bonus = bonus_for(mu)
+        logger.info("floor multipliers: " + ", ".join(f"{l} {mu[l]:.2f} (floor {floors[l]:.2f})" for l in sorted(mu)))
+
+    bandit = new_bandit()
     rows = []
     for strategy, kind in strategies.items():
         for t, sid in enumerate(order):
             if kind == "bandit":
-                if t == len(train_ids):
+                if t == n_train:
                     freeze_exploration(bandit)
-                context = builder.context(sid, ci[t])
+                context = contexts[t]
                 m = bandit.select_model(context=context)
                 if phase[t] == "train":
-                    bandit.update(m, rewards[t, m], context=context)
+                    bandit.update(m, rewards[t, m] + bonus[t, m], context=context)
             elif kind == "oracle":
                 m = int(np.argmax(rewards[t]))
             elif strategy == "random":

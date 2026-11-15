@@ -18,15 +18,21 @@ class CarbonNormalizer:
         self.pue = pue
         self.energy = energy_bounds
 
-    def normalize(self, carbon, dataset):
-        """Scale gCO2eq to [0, 1] using this dataset's energy range and the global CI range."""
+    def normalize(self, carbon, dataset, metric="energy_consumption"):
+        """Scale gCO2eq to [0, 1] using this dataset's energy range and the global CI range.
+
+        metric="energy_per_token" scales carbon per token with the per-token energy range.
+        """
         if dataset not in self.energy.bounds:
             raise KeyError(f"No energy bounds for dataset '{dataset}' in the training results")
-        b = self.energy.bounds[dataset]["energy_consumption"]
+        b = self.energy.bounds[dataset][metric]
         lo = carbon_g(b["min"], self.ci_min, self.pue)
         hi = carbon_g(b["max"], self.ci_max, self.pue)
         return min(1.0, max(0.0, (carbon - lo) / (hi - lo)))
 
-    def cost(self, energy_j, intensity_g_per_kwh, dataset):
-        """Normalized carbon cost for one query (0 = cleanest, 1 = dirtiest)."""
-        return self.normalize(carbon_g(energy_j, intensity_g_per_kwh, self.pue), dataset)
+    def cost(self, energy_j, intensity_g_per_kwh, dataset, metric="energy_consumption"):
+        """Normalized carbon cost for one query (0 = cleanest, 1 = dirtiest).
+
+        With metric="energy_per_token", pass energy per token as energy_j.
+        """
+        return self.normalize(carbon_g(energy_j, intensity_g_per_kwh, self.pue), dataset, metric)
