@@ -7,6 +7,7 @@
 #   energy_per_token  GreenServ: per-dataset normalized energy per token (ignores the grid)
 #   energy            normalized energy per query (ignores the grid)
 #   carbon            energy x grid intensity x PUE, normalized with global intensity bounds
+#   carbon_per_token  energy per token x grid intensity x PUE, same normalization
 # features (a bias term is always added):
 #   dataset           one-hot benchmark (GreenServ's task type, known from the query source)
 #   complexity        GreenServ's Flesch reading-ease bin. An English formula: it can't count
@@ -34,6 +35,21 @@ routers:
   carbon:
     cost: carbon
     features: [dataset, complexity, semantic_cluster, carbon_intensity]
+  # GreenServ with only the grid added: same per-token cost unit and features, priced in carbon
+  carbon_pt:
+    cost: carbon_per_token
+    features: [dataset, complexity, semantic_cluster, carbon_intensity]
+  # Per-language accuracy floors on top of carbon_pt. The language one-hot lets the bandit act on
+  # each language's multiplier; carbon_pt_lang is the same router without floors (control).
+  carbon_pt_lang:
+    cost: carbon_per_token
+    features: [dataset, complexity, semantic_cluster, language, carbon_intensity]
+  carbon_pt_floor:
+    cost: carbon_per_token
+    features: [dataset, complexity, semantic_cluster, language, carbon_intensity]
+    # floor = ratio x best single model's training accuracy in that language. `passes` rounds of
+    # dual ascent on the training stream: mu += step x (floor - accuracy), clipped to [0, max]
+    floor: {ratio: 0.95, step: 10.0, max: 5.0, passes: 6}
 
   # Our routers drop Flesch complexity; this control measures what removing it alone does
   carbon_no_flesch:

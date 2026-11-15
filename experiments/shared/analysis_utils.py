@@ -18,11 +18,17 @@ def carbon_cost(row, ci, ctx):
     return ctx["carbon_normalizer"].cost(row["energy_consumption"], ci, row["dataset"])
 
 
+def carbon_per_token_cost(row, ci, ctx):
+    """Normalized carbon per token: GreenServ's per-token cost unit, priced at the current grid."""
+    return ctx["carbon_normalizer"].cost(row["energy_per_token"], ci, row["dataset"], "energy_per_token")
+
+
 # Keys match `cost:` in config/routers.yaml
 COST_FUNCTIONS = {
     "energy_per_token": energy_cost,
     "energy": energy_per_query_cost,
     "carbon": carbon_cost,
+    "carbon_per_token": carbon_per_token_cost,
 }
 
 

@@ -32,7 +32,7 @@ This project builds on the code for **GreenServ** ([TZData1/llm-inference-router
 reward = (1 − λ) · accuracy + λ · (1 − cost_norm)
 ```
 
-`cost_norm` is energy per token (GreenServ), energy per query, or carbon, scaled to [0, 1]. Energy bounds are per benchmark, taken from the training items of the results being simulated; carbon additionally uses **global** intensity bounds shared by all zones (`data/grid/bounds.yaml`), so a dirty hour costs more than a clean one in every zone. The reward is identical for every router being compared; routers differ only in what they can see.
+`cost_norm` is energy per token (GreenServ), energy per query, carbon per query, or carbon per token, scaled to [0, 1]. Energy bounds are per benchmark, taken from the training items of the results being simulated; carbon additionally uses **global** intensity bounds shared by all zones (`data/grid/bounds.yaml`), so a dirty hour costs more than a clean one in every zone. Routers with the same cost term get the same reward and differ only in what they can see.
 
 ## Routers compared
 
@@ -41,6 +41,9 @@ Profiles live in `config/routers.yaml`; each is a cost term plus a feature list.
 | Router | Cost | Context |
 |---|---|---|
 | `greenserv` | energy per token | benchmark, complexity, semantic cluster (English MiniLM) |
+| `carbon_pt` | carbon per token | same + carbon intensity |
+| `carbon_pt_lang` | carbon per token | `carbon_pt` + language one-hot (control for floors) |
+| `carbon_pt_floor` | carbon per token | `carbon_pt_lang` + per-language accuracy floors |
 | `energy_pq` | energy per query | same as greenserv |
 | `carbon` | carbon | same + carbon intensity |
 | `carbon_no_flesch` | carbon | `carbon` without complexity |
@@ -49,7 +52,9 @@ Profiles live in `config/routers.yaml`; each is a cost term plus a feature list.
 | `carbon_ml_emb` | carbon | benchmark, multilingual embedding (PCA), carbon intensity |
 | `lang_carbon` | carbon | benchmark, multilingual embedding, language one-hot, carbon intensity |
 
-`greenserv → energy_pq → carbon` isolates per-query cost and then carbon awareness. The three ablations separate what `lang_carbon` adds: the language label alone, the multilingual encoder alone (against an English-encoder control), and both. Each is compared with `carbon_no_flesch`.
+**Per-language floors** (`floor:` in a profile): the router learns from reward + μ_l · (1 − λ) · accuracy, where each language's multiplier μ_l is tuned on the training stream by dual ascent. Each pass trains a fresh bandit with μ fixed, scores its frozen policy on the training items, and raises μ_l by `step` × (floor_l − accuracy_l). The floor is `ratio` × the best single model's training accuracy in that language. μ is fixed within a pass because LinUCB averages away a multiplier that drifts during training. The run log prints the final multipliers.
+
+`greenserv → carbon_pt` adds only the grid: same per-token cost unit and features, priced in carbon. `greenserv → energy_pq → carbon` isolates per-query cost and then carbon awareness. The three ablations separate what `lang_carbon` adds: the language label alone, the multilingual encoder alone (against an English-encoder control), and both. Each is compared with `carbon_no_flesch`.
 
 **Why our routers drop complexity:** GreenServ's complexity feature is a Flesch reading-ease bin, an English formula. On our queries, the same item lands in a different bin depending on its language. Only 46% of Russian queries share their English version's bin, because the formula can't count syllables in Cyrillic, and 94% of Russian queries fall in the easiest bin. Chinese and Thai, written without spaces, also look easy. The feature mostly separates benchmarks (already a one-hot) and leaks a rough language signal. There is no multilingual Flesch: textstat's per-language formulas don't cover zh, th or sw and aren't on a common scale. It stays in the three GreenServ-faithful routers; `carbon` vs `carbon_no_flesch` measures its effect. Multilingual embeddings describe an item nearly identically across languages, so whatever difficulty they capture transfers between languages.
 
@@ -195,7 +200,7 @@ python -m experiments.lambda_compare experiments/results/lambda_sweep/comparison
     0.3=<run_dir> 0.5=<run_dir> 0.7=<run_dir> 0.9=<run_dir>
 ```
 
-Each λ gives every router one (carbon, accuracy) point; `matched_carbon.csv` reads each router's curve at common carbon levels by linear interpolation between neighbouring λ runs, and `lambda_tradeoff.png` plots the curves. Comparison levels default to five round numbers inside the routers' carbon range; `--levels 20 30 40 50 60` reproduces the main-run table. The main-run sweep (λ = 0.3, 0.5, 0.7, 0.9) is in `experiments/results/lambda_sweep/`, the low-resource one in `experiments/results/lowres/lambda_sweep/`.
+Each λ gives every router one (carbon, accuracy) point; `matched_carbon.csv` reads each router's curve at common carbon levels by linear interpolation between neighbouring λ runs, and `lambda_tradeoff.png` plots the curves. The same λ can be given more than once to add a later run of one router (e.g. `0.5=<sweep_run> 0.5=<carbon_pt_run>`); each strategy is taken from the first run listed for that λ, so baselines come from the original sweep. `ablation.csv` lists the feature ablation chain (greenserv → carbon_pt, greenserv → energy_pq → carbon → carbon_no_flesch → carbon_en_emb → carbon_ml_emb → lang_carbon, plus carbon_onehot) at those levels, one change per step, with worst-language accuracy. `model_mix.csv` and `model_mix_by_zone.csv` give each router's test-phase share of queries per model at every λ. Comparison levels default to five round numbers inside the routers' carbon range; `--levels 20 30 40 50 60` reproduces the main-run table. The main-run sweep (λ = 0.3, 0.5, 0.7, 0.9) is in `experiments/results/lambda_sweep/`, the low-resource one in `experiments/results/lowres/lambda_sweep/`.
 
 ## Results so far
 
@@ -207,9 +212,15 @@ All runs use LinUCB, 5 runs per zone, 6 grid zones; numbers are test-phase avera
 | Main 8 languages, λ = 0.3, 0.7, 0.9, and the matched-carbon comparison | `experiments/results/lambda_sweep/` |
 | 12 low-resource languages + en/sw on Belebele, λ = 0.5 | `experiments/results/lowres/20261112_231828/` |
 | Low-resource set, λ = 0.3, 0.7, 0.9, and the matched-carbon comparison | `experiments/results/lowres/lambda_sweep/` |
+| `carbon_pt` alone at λ = 0.3, 0.5, 0.7, 0.9 (added later; merged into both comparisons) | `lambda_sweep/carbon_pt/`, `lowres/lambda_sweep/carbon_pt/` |
+| `carbon_pt_lang` and `carbon_pt_floor` at λ = 0.3, 0.5, 0.7, 0.9 (merged into both comparisons) | `lambda_sweep/floor/`, `lowres/lambda_sweep/floor/` |
+| Agreement cascade on stored answers, paired with the λ = 0.5 test streams | `experiments/results/cascade/`, `experiments/results/lowres/cascade/` |
 
 - **vs always using the largest model:** `lang_carbon` uses 16% less carbon for 1.2 points of accuracy on the main set. On the low-resource set it saves 14% but loses 4.4 points.
-- **At matched carbon** (`lambda_sweep/comparison/`), language features add about 1.5 accuracy points and 2 points on the weakest language over `carbon_no_flesch`, and carbon awareness adds about 3.5 points over `energy_pq`. GreenServ is about as accurate as `lang_carbon` at the same carbon.
+- **Grid awareness beats GreenServ at matched carbon once the cost unit is held fixed.** `carbon_pt` (GreenServ + grid, carbon per token) beats `greenserv` by 3.2 points at 20 g per 1k and 2.0 at 30 g on the main set (weakest language +3.9 and +2.4), and by 1.6–5.3 points at 4–7 g on the low-resource set. It sends queries to the largest model on clean grids (France, Sweden) and to small models on dirty ones; GreenServ's mix is identical in every zone. At 30 g it is also 1.6 points above `best_fixed`, the only router above it at any compared level. On the main set the per-token cost unit beats per query (`carbon_pt` over `carbon` by 2–4 points, `greenserv` over `energy_pq` by about 7); on the low-resource set per query is slightly better (`carbon` 0.777 vs `carbon_pt` 0.765 at 5 g).
+- **Per-language floors help a little on the main set and hurt on the low-resource set.** On the main set `carbon_pt_floor` is 0.5–0.7 points above `carbon_pt` at 40–50 g per 1k, and has the best weakest-language accuracy of any strategy at 40 g (0.799, vs 0.783 for `best_fixed`). Floors also stop accuracy collapsing at high λ (0.836 at λ = 0.9 vs 0.776). On the low-resource set it is below `carbon_pt` at 6 g (0.780 vs 0.789; weakest language 0.494 vs 0.544). The language one-hot it needs to act per language overfits with 175 training queries per language: the control without floors (`carbon_pt_lang`) loses about 7 points on the weakest language. Only 75 test items per low-resource language, so weakest-language differences under about 5 points are within noise.
+- **The agreement cascade loses on both sets** (`experiments/cascade.py`). Two cheap models answer; if they agree, keep the answer, otherwise escalate. When qwen3.5-2b and tiny-aya agree on the main set they are right 87% of the time (gemma-e4b + tiny-aya: 93%), but pairs disagree on 37–39% of main-set queries and 38–53% of low-resource ones, and running two models costs too much: on MGSM, which is about 96% of carbon, the pair uses 2,300 J against 3,160 J for qwen3.5-9b. Every cascade is below `carbon_pt` at the same carbon (best: 0.841 at 46 g vs 0.855), and on the low-resource set every cascade uses more carbon than always using the largest model. Sending clean-grid queries straight to the largest model (`(grid)` variants) helps a little but not enough.
+- **Language features** (`ablation.csv`): on the main set the gain over `carbon_no_flesch` (about 1.5–2 points) comes from replacing the topic clusters with the full embedding; the English encoder does as well as the multilingual one and the language one-hot adds nothing on top. On the low-resource set every step lowers accuracy slightly, and the one-hot alone hurts the weakest language.
 - **The best single model chosen on training data (`best_fixed`) beats every router at every carbon level.** On the low-resource set at λ = 0.5 it is simply the largest model. The language features don't help there even at matched carbon (`lang_carbon` is 0.9 points below `carbon_no_flesch` at 5 and 6 g per 1k), and the one-hot router does worst on Wolof (0.46 vs 0.60 at λ = 0.5).
 - **Pooled carbon is about 96% MGSM**, so `by_benchmark.csv` is the table to read for XNLI and Belebele.
 - Offline checks suggest which model gets a question right depends mostly on the specific question, not its language. When the two small models agree, qwen3.5-2b is right 92% of the time vs 56% when they disagree, a stronger routing signal than anything in the question text.
@@ -248,6 +259,7 @@ experiments/
 ├── run.py               # routing simulation (--router, --zone, --lambda, ...)
 ├── analyze.py           # tables, paired comparisons and figures for one run
 ├── lambda_compare.py    # accuracy-vs-carbon curves and matched-carbon comparison across λ
+├── cascade.py           # agreement cascade evaluated offline on stored answers
 ├── shared/              # results loading, context builder, reward functions
 └── results/             # simulation runs: <timestamp>/, lambda_sweep/, lowres/
 results/                 # RunPod outputs: generations (main + low-resource), encoder energy

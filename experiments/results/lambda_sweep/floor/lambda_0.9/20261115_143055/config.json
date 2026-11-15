@@ -1,0 +1,114 @@
+{
+  "args": {
+    "router": [
+      "carbon_pt_lang",
+      "carbon_pt_floor"
+    ],
+    "zone": [
+      "all"
+    ],
+    "results": [
+      "results/generations_NVIDIA-A100-SXM4-80GB.jsonl"
+    ],
+    "algorithm": "linucb",
+    "lambda_weight": 0.9,
+    "pue": 1.0,
+    "runs": 5,
+    "seed": 40,
+    "hardware": null,
+    "models": null,
+    "holdout_language": null,
+    "pca_dim": null,
+    "queries_per_hour": 250,
+    "queries": "data/preprocessed/combined.csv",
+    "splits": "data/preprocessed/splits.csv",
+    "grid_dir": "data/grid",
+    "output_dir": "experiments/results/lambda_sweep/floor/lambda_0.9",
+    "no_steps": false
+  },
+  "routers": {
+    "carbon_pt_lang": {
+      "cost": "carbon_per_token",
+      "features": [
+        "dataset",
+        "complexity",
+        "semantic_cluster",
+        "language",
+        "carbon_intensity"
+      ]
+    },
+    "carbon_pt_floor": {
+      "cost": "carbon_per_token",
+      "features": [
+        "dataset",
+        "complexity",
+        "semantic_cluster",
+        "language",
+        "carbon_intensity"
+      ],
+      "floor": {
+        "ratio": 0.95,
+        "step": 10.0,
+        "max": 5.0,
+        "passes": 6
+      }
+    }
+  },
+  "model_ids": [
+    "gemma-4-31b",
+    "gemma-4-e4b",
+    "qwen3.5-27b",
+    "qwen3.5-2b",
+    "qwen3.5-9b",
+    "tiny-aya-global"
+  ],
+  "hardware": "NVIDIA A100-SXM4-80GB",
+  "ci_bounds": [
+    11.0,
+    908.0
+  ],
+  "energy_bounds": {
+    "belebele": {
+      "energy_consumption": {
+        "min": 9.78899997472763,
+        "max": 198.52999997138977
+      },
+      "energy_per_token": {
+        "min": 0.023681472098161727,
+        "max": 1.3786805553568735
+      }
+    },
+    "mgsm": {
+      "energy_consumption": {
+        "min": 77.92699998617172,
+        "max": 20539.236999988556
+      },
+      "energy_per_token": {
+        "min": 0.16940652170906897,
+        "max": 18.180511737093678
+      }
+    },
+    "xnli": {
+      "energy_consumption": {
+        "min": 8.710999965667725,
+        "max": 83.09799998998642
+      },
+      "energy_per_token": {
+        "min": 0.03208631578244661,
+        "max": 0.9856885241680458
+      }
+    }
+  },
+  "encoder_energy_j": {
+    "multilingual_embedding": 0.8255166666905085,
+    "english_embedding": 0.5010626666545868
+  },
+  "algorithm_params": {
+    "alpha": 0.1,
+    "regularization": 0.05
+  },
+  "embedding_pca_dim": {
+    "multilingual_embedding": 32,
+    "english_embedding": 32
+  }
+}

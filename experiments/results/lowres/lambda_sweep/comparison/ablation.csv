@@ -1,0 +1,61 @@
+router,change,carbon_g_per_1k,accuracy,worst_language_acc
+greenserv,GreenServ: energy-per-token cost,3.0,0.616,0.327
+greenserv,GreenServ: energy-per-token cost,4.0,0.671,0.436
+greenserv,GreenServ: energy-per-token cost,5.0,0.745,0.509
+greenserv,GreenServ: energy-per-token cost,6.0,0.766,0.53
+greenserv,GreenServ: energy-per-token cost,7.0,0.788,0.551
+carbon_pt,"GreenServ + grid: carbon per token, grid intensity feature",3.0,,
+carbon_pt,"GreenServ + grid: carbon per token, grid intensity feature",4.0,0.724,0.459
+carbon_pt,"GreenServ + grid: carbon per token, grid intensity feature",5.0,0.765,0.502
+carbon_pt,"GreenServ + grid: carbon per token, grid intensity feature",6.0,0.789,0.544
+carbon_pt,"GreenServ + grid: carbon per token, grid intensity feature",7.0,0.804,0.568
+carbon_pt_lang,carbon_pt + language one-hot (control for floors),3.0,,
+carbon_pt_lang,carbon_pt + language one-hot (control for floors),4.0,0.714,0.389
+carbon_pt_lang,carbon_pt + language one-hot (control for floors),5.0,0.754,0.428
+carbon_pt_lang,carbon_pt + language one-hot (control for floors),6.0,0.782,0.481
+carbon_pt_lang,carbon_pt + language one-hot (control for floors),7.0,,
+carbon_pt_floor,carbon_pt_lang + per-language accuracy floors,3.0,,
+carbon_pt_floor,carbon_pt_lang + per-language accuracy floors,4.0,,
+carbon_pt_floor,carbon_pt_lang + per-language accuracy floors,5.0,,
+carbon_pt_floor,carbon_pt_lang + per-language accuracy floors,6.0,0.78,0.494
+carbon_pt_floor,carbon_pt_lang + per-language accuracy floors,7.0,,
+energy_pq,GreenServ with energy per query,3.0,0.639,0.333
+energy_pq,GreenServ with energy per query,4.0,0.689,0.42
+energy_pq,GreenServ with energy per query,5.0,0.739,0.507
+energy_pq,GreenServ with energy per query,6.0,0.778,0.546
+energy_pq,GreenServ with energy per query,7.0,,
+carbon,carbon cost + grid intensity feature,3.0,0.718,0.441
+carbon,carbon cost + grid intensity feature,4.0,0.753,0.496
+carbon,carbon cost + grid intensity feature,5.0,0.777,0.531
+carbon,carbon cost + grid intensity feature,6.0,0.796,0.56
+carbon,carbon cost + grid intensity feature,7.0,,
+carbon_no_flesch,"carbon, drop Flesch",3.0,,
+carbon_no_flesch,"carbon, drop Flesch",4.0,,
+carbon_no_flesch,"carbon, drop Flesch",5.0,0.771,0.503
+carbon_no_flesch,"carbon, drop Flesch",6.0,0.792,0.542
+carbon_no_flesch,"carbon, drop Flesch",7.0,,
+carbon_en_emb,"no_flesch, 3 topic clusters -> full English embedding",3.0,0.705,0.421
+carbon_en_emb,"no_flesch, 3 topic clusters -> full English embedding",4.0,0.74,0.467
+carbon_en_emb,"no_flesch, 3 topic clusters -> full English embedding",5.0,0.766,0.505
+carbon_en_emb,"no_flesch, 3 topic clusters -> full English embedding",6.0,0.785,0.532
+carbon_en_emb,"no_flesch, 3 topic clusters -> full English embedding",7.0,,
+carbon_ml_emb,"en_emb, English -> multilingual encoder",3.0,0.698,0.426
+carbon_ml_emb,"en_emb, English -> multilingual encoder",4.0,0.741,0.483
+carbon_ml_emb,"en_emb, English -> multilingual encoder",5.0,0.767,0.523
+carbon_ml_emb,"en_emb, English -> multilingual encoder",6.0,0.789,0.558
+carbon_ml_emb,"en_emb, English -> multilingual encoder",7.0,,
+lang_carbon,ml_emb + language one-hot,3.0,0.692,0.411
+lang_carbon,ml_emb + language one-hot,4.0,0.735,0.461
+lang_carbon,ml_emb + language one-hot,5.0,0.762,0.499
+lang_carbon,ml_emb + language one-hot,6.0,0.783,0.529
+lang_carbon,ml_emb + language one-hot,7.0,,
+carbon_onehot,no_flesch + language one-hot (no embedding),3.0,0.716,0.408
+carbon_onehot,no_flesch + language one-hot (no embedding),4.0,0.746,0.417
+carbon_onehot,no_flesch + language one-hot (no embedding),5.0,0.771,0.437
+carbon_onehot,no_flesch + language one-hot (no embedding),6.0,0.791,0.482
+carbon_onehot,no_flesch + language one-hot (no embedding),7.0,,
+best_fixed,baseline: one model chosen on training data,3.0,0.726,0.429
+best_fixed,baseline: one model chosen on training data,4.0,0.765,0.496
+best_fixed,baseline: one model chosen on training data,5.0,0.788,0.534
+best_fixed,baseline: one model chosen on training data,6.0,0.808,0.568
+best_fixed,baseline: one model chosen on training data,7.0,,
