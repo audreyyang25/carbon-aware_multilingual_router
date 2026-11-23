@@ -1,8 +1,7 @@
 """Run every model on every preprocessed query and record accuracy + GPU energy.
 
 Runs directly on a GPU and appends one JSON line per (query, model) to --output.
-Re-running skips pairs that are already done, so it is safe to resume after a crash or
-a Pod restart. experiments/run.py reads the file directly (--results).
+Re-running skips pairs that are already done. experiments/run.py reads the file directly (--results).
 
 Carbon is not computed here: energy (J) is stored and turned into gCO2 offline with
 grid intensity at simulation time, so one GPU run serves every grid zone.
@@ -148,7 +147,7 @@ def main():
                 }
                 try:
                     result = service.run_inference(q.processed_input, model_id, generation_parameters)
-                except torch.cuda.OutOfMemoryError:  # same class as torch.OutOfMemoryError, also raised on MPS
+                except torch.cuda.OutOfMemoryError:
                     service.empty_cache()
                     logger.error(f"{model_id} OOM on {q.id}; skipped (re-run to retry)")
                     continue

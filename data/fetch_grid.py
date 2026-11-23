@@ -3,7 +3,7 @@
 Writes data/grid/<zone>.csv (datetime, carbon_intensity) and data/grid/bounds.yaml with the
 min/max across all zones, which CarbonNormalizer uses so every zone shares one scale.
 
-From the API (needs ELECTRICITYMAPS_TOKEN; history beyond recent days may need a paid plan):
+From the API:
     python data/fetch_grid.py
     python data/fetch_grid.py --zones DE FR
 
@@ -22,7 +22,7 @@ from config.manager import load_config
 from src.metrics.grid import fetch_intensity
 
 GRID_DIR = "data/grid"
-MAX_GAP_HOURS = 6  # interpolate shorter gaps; longer ones mean the download is incomplete
+MAX_GAP_HOURS = 6
 
 
 def fetch_zone(zone, start, end, token, chunk_days):

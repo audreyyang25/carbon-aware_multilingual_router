@@ -1,8 +1,7 @@
 """Embed every preprocessed query with the router's encoders and cache the vectors.
 
-The router's encoder only reads the query text, so this needs no model results and runs
-locally (CPU or Apple GPU). Embeddings are full size; PCA happens at simulation time,
-fit on training items only. Both the multilingual encoder and GreenServ's English one are
+The router's encoder reads the query text and runs locally.
+Both the multilingual encoder and GreenServ's English one are
 cached, so the simulation can compare them.
 
     python data/embed.py   ->   data/features/embeddings_<encoder>.npz (ids, embeddings)

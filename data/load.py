@@ -40,4 +40,11 @@ def load_datasets(dataset_names=None, languages=None):
 
 
 if __name__ == "__main__":
-    load_datasets(["mgsm"], languages=["en", "sw"])
+    import argparse
+
+    parser = argparse.ArgumentParser(description="Download benchmark splits from HuggingFace (defaults to everything in config/datasets.yaml)")
+    parser.add_argument("--datasets", nargs="*", help="Specific datasets to load (default: all)")
+    parser.add_argument("--languages", nargs="*", help="Specific languages to load (default: all)")
+    args = parser.parse_args()
+
+    load_datasets(args.datasets, languages=args.languages)

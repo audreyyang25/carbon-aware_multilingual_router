@@ -1,14 +1,17 @@
-# src/config/manager.py
-import yaml
+# config/manager.py
 import os
 
+import yaml
+
+CONFIG_DIR = os.path.dirname(os.path.abspath(__file__))
+
+
 def load_config(name):
-    """Load config file, return empty dict if fails"""
-    path = os.path.join('config', f'{name}.yaml')
-    print(f"Loading config from {path}")
-    try:
-        with open(path, 'r') as f:
-            return yaml.safe_load(f)
-    except Exception as e:
-        print(f"Error loading config {path}: {e}")
-        return {}
+    """Load config/<name>.yaml, resolved relative to this file so it works from any working directory.
+
+    Raises FileNotFoundError if the file doesn't exist; an empty file returns {}.
+    """
+    path = os.path.join(CONFIG_DIR, f"{name}.yaml")
+    print(f"Loading config from {os.path.relpath(path)}")
+    with open(path, "r") as f:
+        return yaml.safe_load(f) or {}
