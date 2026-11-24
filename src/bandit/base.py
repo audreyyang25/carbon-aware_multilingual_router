@@ -27,6 +27,10 @@ class BaseBandit(ABC):
         """Update algorithm state based on observed reward"""
         pass
 
+    # get_state / set_state / add_model: GreenServ leftovers, unused here. GreenServ's live routing
+    # service saved bandits between requests and added models at run time; the simulation in
+    # experiments/run.py builds a fresh bandit per run and never calls them. They stay abstract so
+    # every bandit class keeps the same interface.
     @abstractmethod
     def get_state(self):
         """Get serializable state of the algorithm"""

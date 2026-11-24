@@ -119,6 +119,8 @@ class LinUCB(BaseBandit):
         self.rewards = {}
         self.ucb_scores = {}
 
+    # get_state / set_state / add_model: GreenServ leftovers for the live routing service, unused by
+    # the simulation (see src/bandit/base.py).
     def get_state(self):
         state = super().get_state()
 

@@ -16,6 +16,7 @@ class QualityMetrics:
         """Calculate exact match score (1.0 if exact match, 0.0 otherwise)."""
         return 1.0 if prediction.strip() == reference.strip() else 0.0
 
+    # GreenServ leftover, unused here: every benchmark scores with exact_match (config/datasets.yaml).
     def f1_score(self, prediction, reference):
         """Calculate F1 score for question answering."""
         pred_tokens = set(prediction.lower().split())
@@ -33,6 +34,7 @@ class QualityMetrics:
 
         return 2 * precision * recall / (precision + recall)
 
+    # GreenServ leftover, unused here: every benchmark scores with exact_match (config/datasets.yaml).
     def rouge_score(self, prediction, reference):
         """Calculate ROUGE score for summarization (simplified)."""
 

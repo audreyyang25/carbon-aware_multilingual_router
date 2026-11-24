@@ -1,4 +1,6 @@
-# src/bandit/thompson.py
+# GreenServ leftover, not used in this project. Linear Thompson sampling from GreenServ's algorithm comparison.
+# Every reported run uses LinUCB (src/bandit/linucb.py); no stored result uses this file. It is kept
+# only because src/bandit/factory.py can still build it with `experiments.run --algorithm ...`.
 import logging
 
 import numpy as np

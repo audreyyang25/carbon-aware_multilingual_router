@@ -79,6 +79,8 @@ routers:
 baselines: [random, smallest, largest, best_fixed]
 
 # Bandit hyperparameters (same values as the GreenServ X1 bakeoff)
+# Only linucb is used in this project; the others are GreenServ leftovers (see the note at the
+# top of src/bandit/epsilon_greedy.py and thompson_sampling.py).
 algorithms:
   linucb: {alpha: 0.1, regularization: 0.05}
   thompson_sampling: {sigma: 0.25, prior_variance: 2}

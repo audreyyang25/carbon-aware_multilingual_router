@@ -9,6 +9,8 @@ class BaseAnswerExtractor:
         raise NotImplementedError("Subclasses must implement extract()")
 
 
+# GreenServ leftover, unused here: every benchmark uses the multiple_choice or numeric extractor
+# (config/datasets.yaml). get_extractor still falls back to it for "regex_<pattern>" methods.
 class RegexAnswerExtractor(BaseAnswerExtractor):
     """Extract answers using regular expressions."""
 
@@ -97,6 +99,8 @@ class MultipleChoiceExtractor(BaseAnswerExtractor):
         return match.group(1) if match else ""
 
 
+# GreenServ leftover, unused here: every benchmark uses the multiple_choice or numeric extractor;
+# this is only get_extractor's fallback for an unknown method.
 class RawTextExtractor(BaseAnswerExtractor):
     """Use the full text as the answer (e.g., for summarization)."""
 
