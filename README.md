@@ -70,7 +70,7 @@ Profiles live in `config/routers.yaml`; each is a cost term plus a feature list.
 
 Languages: **en, de, es, fr, ru, zh, th, sw** (the overlap of all three benchmarks). 250 items per benchmark, chosen once on English, balanced by answer label (XNLI) and input length, and used in every language: 750 items × 8 languages = 6,000 queries. Instructions are in English; the content is in the target language. Items are split 70/30 into train/test **by item**, so all language versions of an item fall on the same side (`data/preprocessed/splits.csv`).
 
-**Full run (A100, `results/generations_NVIDIA-A100-SXM4-80GB.jsonl`):** all 250 XNLI and 250 Belebele items, but only the first 100 MGSM items (`mgsm_0000`–`mgsm_0099`): 600 items × 8 languages = **4,800 queries** per model, 28,800 generations. The simulation uses exactly the queries in the results file, so this is the setup every experiment runs on. The selection in `data/preprocessed/` still lists all 250 MGSM items; leave it as is so item IDs keep matching the results. 105 tiny-aya-global answers (74 Belebele, 31 XNLI, each about 90 ms) read 0 J because the energy counter missed them; at load time the simulation replaces any 0 J reading with the median energy of the same model, benchmark and language and logs how many it replaced (`impute_missing_energy` in `experiments/simulation/data.py`).
+**Full run (A100, `runpod_generations/generations_NVIDIA-A100-SXM4-80GB.jsonl`):** all 250 XNLI and 250 Belebele items, but only the first 100 MGSM items (`mgsm_0000`–`mgsm_0099`): 600 items × 8 languages = **4,800 queries** per model, 28,800 generations. The simulation uses exactly the queries in the results file, so this is the setup every experiment runs on. The selection in `data/preprocessed/` still lists all 250 MGSM items; leave it as is so item IDs keep matching the results. 105 tiny-aya-global answers (74 Belebele, 31 XNLI, each about 90 ms) read 0 J because the energy counter missed them; at load time the simulation replaces any 0 J reading with the median energy of the same model, benchmark and language and logs how many it replaced (`impute_missing_energy` in `experiments/simulation/data.py`).
 
 | Benchmark | Items | Train | Test |
 |---|---|---|---|
@@ -79,13 +79,13 @@ Languages: **en, de, es, fr, ru, zh, th, sw** (the overlap of all three benchmar
 | MGSM | 100 | 68 | 32 |
 | **Total** | **600** (4,800 queries) | 418 (3,344) | 182 (1,456) |
 
-**Low-resource extension (Belebele only, `results/generations_lowres_NVIDIA-A100-SXM4-80GB.jsonl.gz`):** the 8 languages above are the overlap of all three benchmarks, which leaves out most low-resource languages. Belebele alone covers 122 language variants (XNLI 15, MGSM 11), so a separate run adds 12 low-resource languages on Belebele: Yoruba, Hausa, Igbo, Amharic, Zulu, Wolof, Nepali, Sinhala, Khmer, Lao, Burmese and Guarani (`config/lowres_languages.yaml`), plus en and sw re-run as anchors. It uses the same 250 Belebele items (same `item_id`, so `splits.csv` applies), prompts and models: 14 languages × 250 items × 6 models = 21,000 generations. It is kept in its own file so the main 4,800-query setup is unchanged. The anchors reproduce the main run's answers exactly; energy on that Pod reads 2–18% higher, so scale by the anchors before comparing energy across files. Accuracy per language and model, and caveats: `results/lowres_summary.md`. Rebuild the queries with `python data/process_lowres.py` (needs Hugging Face access), then `python data/generate.py --input data/preprocessed/belebele_lowres.csv --output results/generations_lowres_<gpu>.jsonl` on the Pod.
+**Low-resource extension (Belebele only, `runpod_generations/generations_lowres_NVIDIA-A100-SXM4-80GB.jsonl.gz`):** the 8 languages above are the overlap of all three benchmarks, which leaves out most low-resource languages. Belebele alone covers 122 language variants (XNLI 15, MGSM 11), so a separate run adds 12 low-resource languages on Belebele: Yoruba, Hausa, Igbo, Amharic, Zulu, Wolof, Nepali, Sinhala, Khmer, Lao, Burmese and Guarani (`config/lowres_languages.yaml`), plus en and sw re-run as anchors. It uses the same 250 Belebele items (same `item_id`, so `splits.csv` applies), prompts and models: 14 languages × 250 items × 6 models = 21,000 generations. It is kept in its own file so the main 4,800-query setup is unchanged. The anchors reproduce the main run's answers exactly; energy on that Pod reads 2–18% higher, so scale by the anchors before comparing energy across files. Accuracy per language and model, and caveats: `runpod_generations/lowres_summary.md`. Rebuild the queries with `python data/process_lowres.py` (needs Hugging Face access), then `python data/generate.py --input data/preprocessed/belebele_lowres.csv --output runpod_generations/generations_lowres_<gpu>.jsonl` on the Pod.
 
 To simulate routing on the low-resource set (its queries are already embedded in `data/features/`; `data/embed.py --input data/preprocessed/belebele_lowres.csv --append` re-adds them):
 
 ```bash
 python -m experiments.run --router all --zone all \
-    --results results/generations_lowres_NVIDIA-A100-SXM4-80GB.jsonl.gz \
+    --results runpod_generations/generations_lowres_NVIDIA-A100-SXM4-80GB.jsonl.gz \
     --queries data/preprocessed/belebele_lowres.csv --output-dir experiments/results/lowres/lambda_sweep/lambda_0.5
 ```
 
@@ -133,26 +133,26 @@ export HF_TOKEN=...                          # accept the Tiny Aya and Gemma 4 l
 bash scripts/runpod_setup.sh                 # model cache on the volume, deps, tmux, GPU check
 python scripts/preflight.py --download       # GPU exclusive, energy counter, HF access, disk; downloads weights
 python data/generate.py --items-per-dataset 5 \
-    --output results/pilot_runpod.jsonl      # pilot: all 6 models x 8 languages, 720 generations
-python scripts/summarize_generations.py results/pilot_runpod.jsonl --project   # check outputs, accuracy, energy; projected run time
+    --output runpod_generations/pilot_runpod.jsonl      # pilot: all 6 models x 8 languages, 720 generations
+python scripts/summarize_generations.py runpod_generations/pilot_runpod.jsonl --project   # check outputs, accuracy, energy; projected run time
 tmux new -s gen
 python data/generate.py 2>&1 | tee -a gen.log                # full sweep: 6,000 queries x 6 models
 #   The A100 full run stopped MGSM at 100 items (4,800 queries x 6 models); see "Benchmarks and languages"
-#   -> results/generations_<gpu>.jsonl; resumable: re-run the same command after a restart
+#   -> runpod_generations/generations_<gpu>.jsonl; resumable: re-run the same command after a restart
 #   Subsets: --models, --datasets, --languages (all append to the same file)
 #   Parallel: one Pod per model group, same GPU type, distinct --output files
-python scripts/measure_encoder_energy.py     # router encoder energy, same GPU -> results/encoder_energy_<gpu>.json
-python scripts/summarize_generations.py results/generations_<gpu>.jsonl   # accuracy, energy, truncation, sample errors
+python scripts/measure_encoder_energy.py     # router encoder energy, same GPU -> runpod_generations/encoder_energy_<gpu>.json
+python scripts/summarize_generations.py runpod_generations/generations_<gpu>.jsonl   # accuracy, energy, truncation, sample errors
 ```
 
-Copy `results/*.jsonl` and `results/encoder_energy_*.json` back to your machine (`scp`, or commit them).
+Copy `runpod_generations/*.jsonl` and `runpod_generations/encoder_energy_*.json` back to your machine (`scp`, or commit them).
 
 ### 3. Simulate routing (local)
 
 ```bash
-python -m experiments.run --router lang_carbon --zone DE --results results/generations_*.jsonl
-python -m experiments.run --router all --zone all --results results/generations_*.jsonl
-python -m experiments.run --router lang_carbon carbon_onehot --holdout-language th --results results/generations_*.jsonl
+python -m experiments.run --router lang_carbon --zone DE --results runpod_generations/generations_*.jsonl
+python -m experiments.run --router all --zone all --results runpod_generations/generations_*.jsonl
+python -m experiments.run --router lang_carbon carbon_onehot --holdout-language th --results runpod_generations/generations_*.jsonl
 ```
 
 Options: `--algorithm`, `--lambda`, `--pue`, `--runs`, `--models`, `--hardware`, `--seed`, `--pca-dim`, `--queries-per-hour`. Results go to `experiments/results/<timestamp>/`:
@@ -197,7 +197,7 @@ Routers that land at different carbon levels can't be compared fairly at a singl
 
 ```bash
 S=experiments/results/lambda_sweep
-DATA="--results results/generations_NVIDIA-A100-SXM4-80GB.jsonl"
+DATA="--results runpod_generations/generations_NVIDIA-A100-SXM4-80GB.jsonl"
 BASE="greenserv energy_pq carbon carbon_no_flesch carbon_en_emb carbon_onehot carbon_ml_emb lang_carbon"
 for l in 0.3 0.5 0.7 0.9; do
     python -m experiments.run --router $BASE                         --zone all --lambda $l $DATA --output-dir $S/lambda_$l
@@ -209,7 +209,7 @@ python -m experiments.lambda_compare $S/comparison \
     --levels 20 30 40 50 60
 ```
 
-For the low-resource sweep, set `S=experiments/results/lowres/lambda_sweep` and `DATA="--results results/generations_lowres_NVIDIA-A100-SXM4-80GB.jsonl.gz --queries data/preprocessed/belebele_lowres.csv"`, and drop `--levels` (it uses the default levels). Everything else (LinUCB, 5 runs, seed 40, 250 queries per hour) is the default.
+For the low-resource sweep, set `S=experiments/results/lowres/lambda_sweep` and `DATA="--results runpod_generations/generations_lowres_NVIDIA-A100-SXM4-80GB.jsonl.gz --queries data/preprocessed/belebele_lowres.csv"`, and drop `--levels` (it uses the default levels). Everything else (LinUCB, 5 runs, seed 40, 250 queries per hour) is the default.
 
 `carbon_pt` has its own folder only because it was added after the first sweep. A router's results don't depend on which other routers run alongside it, so `$BASE carbon_pt` in one run gives the same numbers in one folder (`--router all` would also add the floor extension routers). `lambda_compare` keeps the first run listed for each strategy at a λ, so list the base runs first, as above.
 
@@ -231,7 +231,7 @@ Each λ gives every router one (carbon, accuracy) point; `matched_carbon.csv` re
 Finally, the headline figures:
 
 ```bash
-python -m experiments.main_analysis          # -> results/figures/main_analysis/fig1–fig4
+python -m experiments.main_analysis          # -> experiments/results/figures/main_analysis/fig1–fig4
 ```
 
 It reads only the outputs above (`lambda_headline.csv`, `model_mix*.csv` and each run's `headline.csv`) for both sets. GreenServ and `carbon_pt` are compared at the pair of λ where their accuracy is closest, chosen from the curves (currently 0.3 vs 0.7 on the main set, 0.3 vs 0.5 on the low-resource set): model mix by zone, carbon vs accuracy, the per-zone change, and how language features change the model mix.
@@ -294,8 +294,8 @@ experiments/
 ├── main_analysis.py     # headline figures (GreenServ vs carbon_pt) from analyze + lambda_compare outputs
 ├── simulation/          # data.py (results loading), features.py (router context), rewards.py
 ├── extensions/          # side experiments, not part of the main result: cascade.py (agreement cascade)
-└── results/             # lambda_sweep/, lowres/lambda_sweep/, extensions/ (cascade, floor)
-results/                 # RunPod outputs: generations (main + low-resource), encoder energy; figures/main_analysis/
+└── results/             # lambda_sweep/, lowres/lambda_sweep/, extensions/ (cascade, floor), figures/main_analysis/
+runpod_generations/      # RunPod outputs: generations (main + low-resource), encoder energy, low-resource summary
 scripts/                 # RunPod setup, preflight checks, encoder energy, results summary
 src/
 ├── bandit/              # LinUCB, Thompson Sampling, ε-greedy, factory

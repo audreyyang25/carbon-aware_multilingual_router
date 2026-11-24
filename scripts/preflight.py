@@ -153,8 +153,8 @@ def check_data_and_resume(gpu_name):
 
     # data/generate.py names its output after the GPU, so a different GPU type starts a new file
     from experiments.simulation.data import hardware_slug
-    expected = Path("results") / f"generations_{hardware_slug(gpu_name)}.jsonl" if gpu_name else None
-    others = [p for p in Path("results").glob("generations_*.jsonl") if p != expected]
+    expected = Path("runpod_generations") / f"generations_{hardware_slug(gpu_name)}.jsonl" if gpu_name else None
+    others = [p for p in Path("runpod_generations").glob("generations_*.jsonl") if p != expected]
     if expected and expected.exists():
         with open(expected) as f:
             done = sum(1 for line in f if line.strip())

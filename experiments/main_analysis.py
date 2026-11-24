@@ -9,7 +9,7 @@ the figures show what grid awareness saves at about the same accuracy. The pair 
 lambda_headline.csv for each set (currently main: GreenServ 0.3 vs carbon_pt 0.7; low-resource:
 GreenServ 0.3 vs carbon_pt 0.5).
 
-    python -m experiments.main_analysis            # writes results/figures/main_analysis/*.png
+    python -m experiments.main_analysis            # writes experiments/results/figures/main_analysis/*.png
 
 fig1_model_mix_by_zone.png   test-phase model share: GreenServ (same in every zone) vs carbon_pt per zone
 fig2_carbon_vs_accuracy.png  carbon vs accuracy for the chosen pair, other lambdas faint
@@ -192,7 +192,7 @@ def main():
                         help="Main-set runs; its lambda_sweep/comparison is the lambda_compare output")
     parser.add_argument("--lowres-dir", type=Path, default=RESULTS / "lowres", help="Low-resource runs, same layout")
     parser.add_argument("--mix-lambda", type=float, default=0.7, help="Lambda for the language-feature model mix")
-    parser.add_argument("--out", type=Path, default=Path(__file__).resolve().parent.parent / "results" / "figures" / "main_analysis")
+    parser.add_argument("--out", type=Path, default=RESULTS / "figures" / "main_analysis")
     args = parser.parse_args()
 
     sets = {}

@@ -11,7 +11,7 @@ it never touches belebele.csv or combined.csv.
 
 Then, on the GPU Pod:
     python data/generate.py --input data/preprocessed/belebele_lowres.csv \
-        --output results/generations_lowres_<gpu>.jsonl
+        --output runpod_generations/generations_lowres_<gpu>.jsonl
 
 Needs Hugging Face access. A language that fails to load is reported and skipped.
 """

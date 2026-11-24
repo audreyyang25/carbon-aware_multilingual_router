@@ -76,7 +76,7 @@ def completed_pairs(output_path):
 def main():
     parser = argparse.ArgumentParser(description="Generate (query x model) results on a GPU")
     parser.add_argument("--input", default="data/preprocessed/combined.csv")
-    parser.add_argument("--output", help="JSONL path (default: results/generations_<gpu>.jsonl)")
+    parser.add_argument("--output", help="JSONL path (default: runpod_generations/generations_<gpu>.jsonl)")
     parser.add_argument("--models", nargs="*", help="Model ids from config/models.yaml (default: all)")
     parser.add_argument("--datasets", nargs="*")
     parser.add_argument("--languages", nargs="*")
@@ -103,7 +103,7 @@ def main():
     # RunPod data center (e.g. "US-TX-3"); with the timestamp it picks the Electricity Maps zone and hour
     datacenter = os.environ.get("RUNPOD_DC_ID")
     output_path = args.output or os.path.join(
-        "results", f"generations_{re.sub(r'[^A-Za-z0-9]+', '-', hardware).strip('-')}.jsonl"
+        "runpod_generations", f"generations_{re.sub(r'[^A-Za-z0-9]+', '-', hardware).strip('-')}.jsonl"
     )
     os.makedirs(os.path.dirname(output_path) or ".", exist_ok=True)
 

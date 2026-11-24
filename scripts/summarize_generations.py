@@ -2,8 +2,8 @@
 model, truncation, zero-energy rows and sample wrong answers. Use it on the pilot before starting
 the full run, and on the full run before simulating routing.
 
-    python scripts/summarize_generations.py results/pilot_runpod.jsonl --project
-    python scripts/summarize_generations.py results/generations_<gpu>.jsonl
+    python scripts/summarize_generations.py runpod_generations/pilot_runpod.jsonl --project
+    python scripts/summarize_generations.py runpod_generations/generations_<gpu>.jsonl
 
 --project estimates the full run's generation time from the file's mean latencies and the query
 counts in data/preprocessed/combined.csv (useful for a pilot; meaningless for a full run).

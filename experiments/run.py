@@ -6,8 +6,8 @@ policy is then frozen (no updates, no exploration) and evaluated on the held-out
 hourly series for the chosen zone, starting at a different hour each run. Baselines and the
 oracle see exactly the same stream and intensities, so every comparison is paired.
 
-    python -m experiments.run --router lang_carbon --zone DE --results results/generations_*.jsonl
-    python -m experiments.run --router all --zone all --results results/generations_*.jsonl
+    python -m experiments.run --router lang_carbon --zone DE --results runpod_generations/generations_*.jsonl
+    python -m experiments.run --router all --zone all --results runpod_generations/generations_*.jsonl
     python -m experiments.run --router lang_carbon carbon_onehot --holdout-language th --results ...
 
 Writes experiments/results/<timestamp>/ with summary.csv (one row per zone x router x strategy x
@@ -29,7 +29,7 @@ import yaml
 
 project_root = Path(__file__).resolve().parent.parent
 sys.path.append(str(project_root))
-os.chdir(project_root)  # default paths (data/..., results/...) are relative to the repo root
+os.chdir(project_root)  # default paths (data/..., runpod_generations/...) are relative to the repo root
 
 from config.manager import load_config
 from experiments.simulation.rewards import COST_FUNCTIONS, calculate_reward

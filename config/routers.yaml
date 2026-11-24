@@ -90,4 +90,4 @@ algorithms:
 # Encoder energy per query, charged to every router whose features need an encoder
 # (semantic_cluster or embedding). Written by scripts/measure_encoder_energy.py on the same GPU
 # as the LLM results; {hardware} is filled in from the results file.
-encoder_energy_file: "results/encoder_energy_{hardware}.json"
+encoder_energy_file: "runpod_generations/encoder_energy_{hardware}.json"

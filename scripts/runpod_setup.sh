@@ -39,4 +39,4 @@ print(f"torch {torch.__version__}, transformers {version('transformers')}, zeus 
       f"CUDA available: {torch.cuda.is_available()}")
 EOF
 echo "Setup done. Next: python scripts/preflight.py --download, then the pilot:"
-echo "  python data/generate.py --items-per-dataset 5 --output results/pilot_runpod.jsonl"
+echo "  python data/generate.py --items-per-dataset 5 --output runpod_generations/pilot_runpod.jsonl"

@@ -4,7 +4,7 @@ Follow-up to the TA feedback that the main run covers only the 8 languages share
 Belebele is the only one of the three with many more languages (122 variants; XNLI has 15, MGSM 11), so this run adds
 12 low-resource languages on Belebele only, plus English and Swahili re-run as anchors.
 
-- File: `results/generations_lowres_NVIDIA-A100-SXM4-80GB.jsonl.gz` (kept apart from the main `generations_NVIDIA-A100-SXM4-80GB.jsonl`)
+- File: `runpod_generations/generations_lowres_NVIDIA-A100-SXM4-80GB.jsonl.gz` (kept apart from the main `generations_NVIDIA-A100-SXM4-80GB.jsonl`)
 - 21,000 rows = 14 languages × 250 items × 6 models; every (query, model) pair present once
 - Same 250 Belebele items as the main run (same `item_id`, so `data/preprocessed/splits.csv` applies); same prompts, models and decoding
 - Pod in RunPod `US-MD-1`, run 2026-11-12T15:58–2026-11-12T17:21 UTC (about 1.4 GPU hours)

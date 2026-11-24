@@ -6,7 +6,7 @@ experiments/run.py. Queries are embedded one at a time, as they would arrive in 
 energy is read over the whole batch of queries (more precise than per-query readings).
 
     python scripts/measure_encoder_energy.py            # on the Pod, next to data/generate.py
-    -> results/encoder_energy_<gpu>.json
+    -> runpod_generations/encoder_energy_<gpu>.json
 """
 import argparse
 import json
@@ -80,8 +80,8 @@ def main():
         print(f"{config['encoder']}: {j_per_query:.4f} J/query, "
               f"{out['encoders'][section]['ms_per_query']:.1f} ms/query on {hardware}")
 
-    os.makedirs("results", exist_ok=True)
-    path = os.path.join("results", f"encoder_energy_{hardware_slug(hardware)}.json")
+    os.makedirs("runpod_generations", exist_ok=True)
+    path = os.path.join("runpod_generations", f"encoder_energy_{hardware_slug(hardware)}.json")
     with open(path, "w") as f:
         json.dump(out, f, indent=2)
     print(f"Saved {path}")

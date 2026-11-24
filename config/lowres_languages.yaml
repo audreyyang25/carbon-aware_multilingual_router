@@ -6,7 +6,7 @@
 # data/process_lowres.py takes the same 250 Belebele items as the main run (chosen on English
 # with the seed in config/general.yaml), so item_id and the train/test split in
 # data/preprocessed/splits.csv carry over unchanged. Results go to their own file,
-# results/generations_lowres_<gpu>.jsonl.gz, never into the main generations_<gpu>.jsonl.
+# runpod_generations/generations_lowres_<gpu>.jsonl.gz, never into the main generations_<gpu>.jsonl.
 #
 # key   = short code used in the `language` column (ISO 639-1 where one exists, else 639-3)
 # value = Belebele / FLORES-200 config name on Hugging Face (facebook/belebele)
