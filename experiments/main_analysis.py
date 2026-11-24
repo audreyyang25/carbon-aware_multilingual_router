@@ -1,7 +1,7 @@
 """Main-result figures: GreenServ vs carbon_pt, on the main and low-resource sets.
 
 Last step of the pipeline. Reads only outputs that already exist:
-    experiments.analyze         -> <run>/analysis/headline.csv   (per-zone numbers)
+    experiments.analyze_per_lambda -> <run>/analysis/headline.csv   (per-zone numbers)
     experiments.lambda_compare  -> <sweep>/comparison/*.csv      (curves across lambda, model mix)
 
 GreenServ and carbon_pt are compared at the pair of lambdas where their accuracy is closest, so

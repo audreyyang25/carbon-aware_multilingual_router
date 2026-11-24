@@ -1,6 +1,6 @@
 """Analyze one experiments/run.py output folder: tables, paired comparisons and figures.
 
-    python -m experiments.analyze experiments/results/<timestamp>
+    python -m experiments.analyze_per_lambda experiments/results/lambda_sweep/lambda_<λ>/<timestamp>
 
 Writes <folder>/analysis/:
     headline.csv      test phase, per zone and pooled over zones (each zone weighted equally):

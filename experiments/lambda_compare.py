@@ -4,7 +4,7 @@ Each lambda gives every router one (carbon, accuracy) point: test-phase gCO2 per
 and accuracy, averaged over zones (analysis/headline.csv, zone == "all"). Sweeping lambda traces
 each router's trade-off curve. "Accuracy at matched carbon" reads every curve at the same carbon
 level by linear interpolation between the two nearest lambda runs, so routers that landed at
-different carbon levels can be compared fairly. Run experiments.analyze on each sweep first.
+different carbon levels can be compared fairly. Run experiments.analyze_per_lambda on each run first.
 
     python -m experiments.lambda_compare OUT_DIR 0.3=<run_dir> 0.5=<run_dir> 0.7=<run_dir> 0.9=<run_dir>
 

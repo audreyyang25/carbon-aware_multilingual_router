@@ -102,7 +102,7 @@ def run_cascade(a, b, target, grid_aware):
 
 
 def summarize(s):
-    """Per zone and run, then averaged over zones and runs, as in analyze.headline."""
+    """Per zone and run, then averaged over zones and runs, as in analyze_per_lambda.headline."""
     per = s.groupby(["zone", "run"]).agg(accuracy=("accuracy", "mean"),
                                          carbon_g_per_1k=("carbon_g", lambda c: c.mean() * 1000),
                                          energy_j=("energy_j", "mean"), escalation=("escalated", "mean"))

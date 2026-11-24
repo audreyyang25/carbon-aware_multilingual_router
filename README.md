@@ -173,7 +173,7 @@ Options: `--algorithm`, `--lambda`, `--pue`, `--runs`, `--models`, `--hardware`,
 ### 4. Analyze
 
 ```bash
-python -m experiments.analyze experiments/results/<timestamp>
+python -m experiments.analyze_per_lambda experiments/results/lambda_sweep/lambda_<λ>/<timestamp>
 ```
 
 Writes `analysis/` inside the run folder (needs `steps.csv.gz`, so don't use `--no-steps`):
@@ -203,7 +203,7 @@ for l in 0.3 0.5 0.7 0.9; do
     python -m experiments.run --router $BASE                         --zone all --lambda $l $DATA --output-dir $S/lambda_$l
     python -m experiments.run --router carbon_pt --zone all --lambda $l $DATA --output-dir $S/carbon_pt/lambda_$l
 done
-for run in $S/lambda_*/*/ $S/*/lambda_*/*/; do python -m experiments.analyze $run; done
+for run in $S/lambda_*/*/ $S/*/lambda_*/*/; do python -m experiments.analyze_per_lambda $run; done
 python -m experiments.lambda_compare $S/comparison \
     $(for sub in "" carbon_pt/; do for l in 0.3 0.5 0.7 0.9; do echo $l=$(ls -d $S/${sub}lambda_$l/*/); done; done) \
     --levels 20 30 40 50 60
@@ -220,7 +220,7 @@ E=experiments/results/extensions/floor/main   # or .../floor/lowres, with the lo
 for l in 0.3 0.5 0.7 0.9; do
     python -m experiments.run --router carbon_pt_lang carbon_pt_floor --zone all --lambda $l $DATA --output-dir $E/lambda_$l
 done
-for run in $E/lambda_*/*/; do python -m experiments.analyze $run; done
+for run in $E/lambda_*/*/; do python -m experiments.analyze_per_lambda $run; done
 python -m experiments.lambda_compare $E/comparison \
     $(for d in $S $S/carbon_pt $E; do for l in 0.3 0.5 0.7 0.9; do echo $l=$(ls -d $d/lambda_$l/*/); done; done) \
     --levels 20 30 40 50 60
@@ -253,7 +253,7 @@ All runs use LinUCB, 5 runs per zone, 6 grid zones; numbers are test-phase avera
 - **Extension, not part of the main experiment: per-language floors help a little on the main set and hurt on the low-resource set.** On the main set `carbon_pt_floor` is 0.5–0.7 points above `carbon_pt` at 40–50 g per 1k, and has the best weakest-language accuracy of any strategy at 40 g (0.799, vs 0.783 for `best_fixed`). Floors also stop accuracy collapsing at high λ (0.836 at λ = 0.9 vs 0.776). On the low-resource set it is below `carbon_pt` at 6 g (0.780 vs 0.789; weakest language 0.494 vs 0.544). The language one-hot it needs to act per language overfits with 175 training queries per language: the control without floors (`carbon_pt_lang`) loses about 7 points on the weakest language. Only 75 test items per low-resource language, so weakest-language differences under about 5 points are within noise.
 - **Extension, not part of the main experiment: the agreement cascade loses on both sets** (`experiments/extensions/cascade.py`). Two cheap models answer; if they agree, keep the answer, otherwise escalate. When qwen3.5-2b and tiny-aya agree on the main set they are right 87% of the time (gemma-e4b + tiny-aya: 93%), but pairs disagree on 37–39% of main-set queries and 38–53% of low-resource ones, and running two models costs too much: on MGSM, which is about 96% of carbon, the pair uses 2,300 J against 3,160 J for qwen3.5-9b. Every cascade is below `carbon_pt` at the same carbon (best: 0.841 at 46 g vs 0.855), and on the low-resource set every cascade uses more carbon than always using the largest model. Sending clean-grid queries straight to the largest model (`(grid)` variants) helps a little but not enough.
 - **Language features** (`ablation.csv`): on the main set the gain over `carbon_no_flesch` (about 1.5–2 points) comes from replacing the topic clusters with the full embedding; the English encoder does as well as the multilingual one and the language one-hot adds nothing on top. On the low-resource set every step lowers accuracy slightly, and the one-hot alone hurts the weakest language.
-- **The best single model chosen on training data (`best_fixed`) beats every router at every carbon level.** On the low-resource set at λ = 0.5 it is simply the largest model. The language features don't help there even at matched carbon (`lang_carbon` is 0.9 points below `carbon_no_flesch` at 5 and 6 g per 1k), and the one-hot router does worst on Wolof (0.46 vs 0.60 at λ = 0.5).
+- **The best single model chosen on training data (`best_fixed`) is hard to beat.** On the low-resource set it beats every router at every compared carbon level (3–6 g per 1k); at λ = 0.5 it is simply the largest model. On the main set its curve spans only 30–40 g per 1k: at 40 g it beats every router (0.864 vs 0.851 for `carbon_pt`, the best router), and at 30 g only `carbon_pt` is above it (0.839 vs 0.823). The language features don't help there even at matched carbon (`lang_carbon` is 0.9 points below `carbon_no_flesch` at 5 and 6 g per 1k), and the one-hot router does worst on Wolof (0.46 vs 0.60 at λ = 0.5).
 - **Pooled carbon is about 96% MGSM**, so `by_benchmark.csv` is the table to read for XNLI and Belebele.
 - Offline checks suggest which model gets a question right depends mostly on the specific question, not its language. When the two small models agree, qwen3.5-2b is right 92% of the time vs 56% when they disagree, a stronger routing signal than anything in the question text.
 
@@ -289,7 +289,7 @@ data/
 └── grid/                # hourly intensity per zone and global bounds
 experiments/
 ├── run.py               # routing simulation (--router, --zone, --lambda, ...)
-├── analyze.py           # tables, paired comparisons and figures for one run
+├── analyze_per_lambda.py # tables, paired comparisons and figures for one run (one λ)
 ├── lambda_compare.py    # accuracy-vs-carbon curves and matched-carbon comparison across λ
 ├── main_analysis.py     # headline figures (GreenServ vs carbon_pt) from analyze + lambda_compare outputs
 ├── simulation/          # data.py (results loading), features.py (router context), rewards.py
