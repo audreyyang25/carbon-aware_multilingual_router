@@ -68,7 +68,7 @@ Profiles live in `config/routers.yaml`; each is a cost term plus a feature list.
 - **Belebele**: reading comprehension (4-way multiple choice)
 - **MGSM**: grade-school math (numeric answer)
 
-Languages: **en, de, es, fr, ru, zh, th, sw** (the overlap of all three benchmarks). 250 items per benchmark, chosen once on English with balanced difficulty buckets (answer label and length) and used in every language: 750 items × 8 languages = 6,000 queries. Instructions are in English; the content is in the target language. Items are split 70/30 into train/test **by item**, so all language versions of an item fall on the same side (`data/preprocessed/splits.csv`).
+Languages: **en, de, es, fr, ru, zh, th, sw** (the overlap of all three benchmarks). 250 items per benchmark, chosen once on English, balanced by answer label (XNLI) and input length, and used in every language: 750 items × 8 languages = 6,000 queries. Instructions are in English; the content is in the target language. Items are split 70/30 into train/test **by item**, so all language versions of an item fall on the same side (`data/preprocessed/splits.csv`).
 
 **Full run (A100, `results/generations_NVIDIA-A100-SXM4-80GB.jsonl`):** all 250 XNLI and 250 Belebele items, but only the first 100 MGSM items (`mgsm_0000`–`mgsm_0099`): 600 items × 8 languages = **4,800 queries** per model, 28,800 generations. The simulation uses exactly the queries in the results file, so this is the setup every experiment runs on. The selection in `data/preprocessed/` still lists all 250 MGSM items; leave it as is so item IDs keep matching the results. 105 tiny-aya-global answers (74 Belebele, 31 XNLI, each about 90 ms) read 0 J because the energy counter missed them; at load time the simulation replaces any 0 J reading with the median energy of the same model, benchmark and language and logs how many it replaced (`impute_missing_energy` in `experiments/shared/simulation_data.py`).
 
@@ -103,7 +103,7 @@ Defined in `config/models.yaml`. Greedy decoding; chat templates applied with th
 
 ## How it works
 
-1. **Data generation (GPU, once).** Every model answers every query on one RunPod GPU type (`data/generate.py`). Each result row stores the output, accuracy, GPU energy (J), tokens, a `truncated` flag, the GPU name, data center and timestamp. Energy depends on the model, query and hardware, not on when or where it ran, so no carbon is computed here.
+1. **Data generation (GPU, once).** Every model answers every query on one RunPod GPU type (`data/generate.py`). Each result row stores the output, accuracy, GPU energy (J), tokens, a `truncated` flag, the GPU name, data center and timestamp. Multiple-choice answers are scored on the first standalone letter, so an answer cut off after its letter still counts. An MGSM answer that hits `max_new_tokens` without writing an `Answer:` line scores 0: its last number is usually an intermediate step, and the energy was spent without producing an answer. Energy depends on the model, query and hardware, not on when or where it ran, so no carbon is computed here.
 2. **Router features (local, no GPU).** Query embeddings from the router's encoders are cached (`data/embed.py`); PCA and clustering are fit on training items at simulation time.
 3. **Grid data (local).** Hourly carbon intensity for a fixed past year (2025) per zone (`data/fetch_grid.py`).
 4. **Simulation (local).** For each zone, router and run: the training items are shuffled into a stream and the clock starts at a random hour of the zone's year. The router picks a model, receives that model's stored accuracy and energy (turned into carbon with the intensity at that step) as its reward, and updates. The policy is then frozen and evaluated on the test items. The router's own encoder energy is charged to it.
@@ -134,7 +134,7 @@ bash scripts/runpod_setup.sh                 # model cache on the volume, deps, 
 python scripts/preflight.py --download       # GPU exclusive, energy counter, HF access, disk; downloads weights
 python data/generate.py --items-per-dataset 5 \
     --output results/pilot_runpod.jsonl      # pilot: all 6 models x 8 languages, 720 generations
-python scripts/summarize_pilot.py results/pilot_runpod.jsonl   # check outputs, accuracy, energy, speed
+python scripts/summarize_generations.py results/pilot_runpod.jsonl --project   # check outputs, accuracy, energy; projected run time
 tmux new -s gen
 python data/generate.py 2>&1 | tee -a gen.log                # full sweep: 6,000 queries x 6 models
 #   The A100 full run stopped MGSM at 100 items (4,800 queries x 6 models); see "Benchmarks and languages"
@@ -142,7 +142,7 @@ python data/generate.py 2>&1 | tee -a gen.log                # full sweep: 6,000
 #   Subsets: --models, --datasets, --languages (all append to the same file)
 #   Parallel: one Pod per model group, same GPU type, distinct --output files
 python scripts/measure_encoder_energy.py     # router encoder energy, same GPU -> results/encoder_energy_<gpu>.json
-python scripts/summarize_pilot.py results/generations_<gpu>.jsonl   # accuracy, energy, truncation, sample errors
+python scripts/summarize_generations.py results/generations_<gpu>.jsonl   # accuracy, energy, truncation, sample errors
 ```
 
 Copy `results/*.jsonl` and `results/encoder_energy_*.json` back to your machine (`scp`, or commit them).

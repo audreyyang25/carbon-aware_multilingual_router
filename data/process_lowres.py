@@ -65,7 +65,7 @@ def main():
 
     processor = DataProcessor(name)
     if os.path.exists(MAIN_RUN_FILE):
-        # Guard: the items must be the ones the main run used, or the two runs can't be compared
+        # the items must be the ones the main run used, or the two runs can't be compared
         main_ids = set(pd.read_csv(MAIN_RUN_FILE, usecols=["item_id"])["item_id"])
         ours = {f"{name}_{i:04d}" for i in pivot_items}
         if ours != main_ids:

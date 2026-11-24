@@ -3,7 +3,7 @@
 #
 # sampling:
 #   n:        items per benchmark; the same items are used in every language
-#   stratify: difficulty proxies, computed on the pivot language
+#   stratify: columns to balance the sample on, computed on the pivot language
 #             label  = answer class (balances XNLI labels)
 #             length = short/medium/long tertile of the input text
 # align_key: columns that identify the same item across languages (default: row position)
@@ -26,7 +26,7 @@ datasets:
       input2_prefix: "Hypothesis:\n"
       output_prefix: "\nA. entailment\nB. neutral\nC. contradiction\nAnswer:\n"
       reference_mapping: "index_to_letter"
-    extraction: {method: "multiple_choice", pattern: "([A-C])"}
+    extraction: {method: "multiple_choice"}   # first standalone A–D letter (src/metrics/extractors.py)
     evaluation_metric: "exact_match"
     generation: {max_new_tokens: 8, stop_sequence: ["\n"]}   # room for "B" / "**B**"; stops at the first line break
 
@@ -45,7 +45,7 @@ datasets:
       input2_prefix: "Options:\n"
       output_prefix: "Answer:\n"
       reference_mapping: "index_to_letter"
-    extraction: {method: "multiple_choice", pattern: "([A-D])"}
+    extraction: {method: "multiple_choice"}   # first standalone A–D letter (src/metrics/extractors.py)
     evaluation_metric: "exact_match"
     generation: {max_new_tokens: 8, stop_sequence: ["\n"]}   # room for "B" / "**B**"; stops at the first line break
 

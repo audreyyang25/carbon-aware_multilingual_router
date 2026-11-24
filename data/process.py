@@ -1,4 +1,3 @@
-import re
 import os
 import sys
 import pandas as pd
@@ -11,8 +10,8 @@ from data.load import load_datasets
 from data.helper import preprocess_dataset
 
 
-def difficulty_strata(pivot_dataset, stratify):
-    """Assign each pivot item a stratum from difficulty proxies (label, length tertile)."""
+def sampling_strata(pivot_dataset, stratify):
+    """Assign each pivot item a sampling stratum from its answer label and/or length tertile."""
     keys = [[] for _ in range(len(pivot_dataset))]
     if "label" in stratify:
         for i, example in enumerate(pivot_dataset):
@@ -29,7 +28,7 @@ def difficulty_strata(pivot_dataset, stratify):
 
 
 def select_items(pivot_dataset, n, stratify, seed):
-    """Pick n pivot-language item positions, balanced across difficulty strata.
+    """Pick n pivot-language item positions, balanced across sampling strata.
 
     Draws round-robin from each stratum so every label/length bucket is equally represented.
     """
@@ -38,7 +37,7 @@ def select_items(pivot_dataset, n, stratify, seed):
 
     rng = random.Random(seed)
     groups = defaultdict(list)
-    for i, stratum in enumerate(difficulty_strata(pivot_dataset, stratify or [])):
+    for i, stratum in enumerate(sampling_strata(pivot_dataset, stratify or [])):
         groups[stratum].append(i)
     for members in groups.values():
         rng.shuffle(members)
@@ -164,26 +163,6 @@ class DataProcessor:
         df.to_csv(output_path, index=False)
         print(f"Saved {len(df)} samples to {output_path}")
         return output_path
-        
-    # def extract_answer(self, prediction):
-    #     """Extract answer from model prediction using configured method"""
-    #     extraction = self.config.get("extraction", {})
-    #     method = extraction.get("method", "raw")
-        
-    #     if method == "multiple_choice":
-    #         pattern = extraction.get("pattern", "([A-D])")
-    #         match = re.search(pattern, prediction)
-    #         return match.group(1) if match else None
-            
-    #     elif method == "regex":
-    #         pattern = extraction.get("pattern", "(.+)")
-    #         match = re.search(pattern, prediction)
-    #         return match.group(1) if match else None
-        
-    #     elif method == "raw":
-    #         return prediction.strip()
-            
-    #     return prediction.strip()
 
 
 def main():
