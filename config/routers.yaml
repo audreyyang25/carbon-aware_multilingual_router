@@ -39,7 +39,7 @@ routers:
   carbon_pt:
     cost: carbon_per_token
     features: [dataset, complexity, semantic_cluster, carbon_intensity]
-  # Per-language accuracy floors on top of carbon_pt. The language one-hot lets the bandit act on
+  # Extension (not in the main sweep): per-language accuracy floors on top of carbon_pt. The language one-hot lets the bandit act on
   # each language's multiplier; carbon_pt_lang is the same router without floors (control).
   carbon_pt_lang:
     cost: carbon_per_token

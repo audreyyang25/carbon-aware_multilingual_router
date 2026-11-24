@@ -9,16 +9,6 @@ carbon_pt,"GreenServ + grid: carbon per token, grid intensity feature",30.0,0.83
 carbon_pt,"GreenServ + grid: carbon per token, grid intensity feature",40.0,0.851,0.792
 carbon_pt,"GreenServ + grid: carbon per token, grid intensity feature",50.0,0.858,0.8
 carbon_pt,"GreenServ + grid: carbon per token, grid intensity feature",60.0,,
-carbon_pt_lang,carbon_pt + language one-hot (control for floors),20.0,0.8,0.734
-carbon_pt_lang,carbon_pt + language one-hot (control for floors),30.0,0.834,0.763
-carbon_pt_lang,carbon_pt + language one-hot (control for floors),40.0,0.853,0.789
-carbon_pt_lang,carbon_pt + language one-hot (control for floors),50.0,0.863,0.803
-carbon_pt_lang,carbon_pt + language one-hot (control for floors),60.0,,
-carbon_pt_floor,carbon_pt_lang + per-language accuracy floors,20.0,,
-carbon_pt_floor,carbon_pt_lang + per-language accuracy floors,30.0,,
-carbon_pt_floor,carbon_pt_lang + per-language accuracy floors,40.0,0.858,0.799
-carbon_pt_floor,carbon_pt_lang + per-language accuracy floors,50.0,0.864,0.807
-carbon_pt_floor,carbon_pt_lang + per-language accuracy floors,60.0,,
 energy_pq,GreenServ with energy per query,20.0,0.699,0.581
 energy_pq,GreenServ with energy per query,30.0,0.748,0.683
 energy_pq,GreenServ with energy per query,40.0,0.788,0.715

@@ -105,8 +105,8 @@ print(matched[["carbon_g_per_1k"] + [s + "_worst" for s in routers]].round(3).to
 ablation_chain = [
     ("greenserv", "GreenServ: energy-per-token cost"),
     ("carbon_pt", "GreenServ + grid: carbon per token, grid intensity feature"),
-    ("carbon_pt_lang", "carbon_pt + language one-hot (control for floors)"),
-    ("carbon_pt_floor", "carbon_pt_lang + per-language accuracy floors"),
+    ("carbon_pt_lang", "extension: carbon_pt + language one-hot (control for floors)"),
+    ("carbon_pt_floor", "extension: carbon_pt_lang + per-language accuracy floors"),
     ("energy_pq", "GreenServ with energy per query"),
     ("carbon", "carbon cost + grid intensity feature"),
     ("carbon_no_flesch", "carbon, drop Flesch"),

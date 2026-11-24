@@ -52,7 +52,7 @@ Sorted by the mean over models.
 
 ## Caveats
 
-- 45 rows read 0 J (the energy counter missed very short answers, as in the main run). They are left as 0 in the file and excluded from the energy table above; `impute_missing_energy` in `experiments/shared/simulation_data.py` fills them at load time.
+- 45 rows read 0 J (the energy counter missed very short answers, as in the main run). They are left as 0 in the file and excluded from the energy table above; `impute_missing_energy` in `experiments/simulation/data.py` fills them at load time.
 - 1,893 rows hit the 8-token cap (tiny-aya-global: 1875, gemma-4-31b: 15, gemma-4-e4b: 3). Almost all are tiny-aya-global writing the letter followed by the option text (e.g. `C. Lọndọnu`); the letter is still extracted and scored.
 - **Anchor check against the main run** (Belebele en + sw, 3,000 matched (query, model) pairs): the generated text is identical in 100% of pairs, so accuracy matches exactly. Energy is higher on this Pod: the median per model and language is 2–18% above the main run (e.g. qwen3.5-9b en 42.2 J vs 35.9 J). Compare energy across the two files only after scaling by the anchors, or compare within this file.
 

@@ -152,7 +152,7 @@ def check_data_and_resume(gpu_name):
         report("OK", "6,000 queries in data/preprocessed/combined.csv")
 
     # data/generate.py names its output after the GPU, so a different GPU type starts a new file
-    from experiments.shared.simulation_data import hardware_slug
+    from experiments.simulation.data import hardware_slug
     expected = Path("results") / f"generations_{hardware_slug(gpu_name)}.jsonl" if gpu_name else None
     others = [p for p in Path("results").glob("generations_*.jsonl") if p != expected]
     if expected and expected.exists():

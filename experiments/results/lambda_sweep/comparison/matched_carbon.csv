@@ -1,6 +1,6 @@
-carbon_g_per_1k,greenserv,greenserv_worst,carbon_pt,carbon_pt_worst,carbon_pt_lang,carbon_pt_lang_worst,carbon_pt_floor,carbon_pt_floor_worst,energy_pq,energy_pq_worst,carbon,carbon_worst,carbon_no_flesch,carbon_no_flesch_worst,carbon_en_emb,carbon_en_emb_worst,carbon_onehot,carbon_onehot_worst,carbon_ml_emb,carbon_ml_emb_worst,lang_carbon,lang_carbon_worst,best_fixed,best_fixed_worst
-20.0,0.766,0.7,0.798,0.739,0.8,0.734,,,0.699,0.581,,,,,,,0.777,0.705,,,,,,
-30.0,0.819,0.755,0.839,0.779,0.834,0.763,,,0.748,0.683,0.802,0.735,,,0.804,0.734,0.806,0.732,0.804,0.738,0.802,0.739,0.823,0.746
-40.0,,,0.851,0.792,0.853,0.789,0.858,0.799,0.788,0.715,0.823,0.758,0.816,0.752,0.835,0.767,0.833,0.759,0.837,0.777,0.832,0.769,0.864,0.783
-50.0,,,0.858,0.8,0.863,0.803,0.864,0.807,0.823,0.743,0.841,0.774,0.838,0.775,0.857,0.798,0.849,0.781,0.854,0.798,0.853,0.796,,
-60.0,,,,,,,,,0.846,0.765,0.854,0.791,0.864,0.804,,,0.86,0.797,,,,,,
+carbon_g_per_1k,greenserv,greenserv_worst,carbon_pt,carbon_pt_worst,energy_pq,energy_pq_worst,carbon,carbon_worst,carbon_no_flesch,carbon_no_flesch_worst,carbon_en_emb,carbon_en_emb_worst,carbon_onehot,carbon_onehot_worst,carbon_ml_emb,carbon_ml_emb_worst,lang_carbon,lang_carbon_worst,best_fixed,best_fixed_worst
+20.0,0.766,0.7,0.798,0.739,0.699,0.581,,,,,,,0.777,0.705,,,,,,
+30.0,0.819,0.755,0.839,0.779,0.748,0.683,0.802,0.735,,,0.804,0.734,0.806,0.732,0.804,0.738,0.802,0.739,0.823,0.746
+40.0,,,0.851,0.792,0.788,0.715,0.823,0.758,0.816,0.752,0.835,0.767,0.833,0.759,0.837,0.777,0.832,0.769,0.864,0.783
+50.0,,,0.858,0.8,0.823,0.743,0.841,0.774,0.838,0.775,0.857,0.798,0.849,0.781,0.854,0.798,0.853,0.796,,
+60.0,,,,,0.846,0.765,0.854,0.791,0.864,0.804,,,0.86,0.797,,,,,,

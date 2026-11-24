@@ -29,12 +29,12 @@ import yaml
 
 project_root = Path(__file__).resolve().parent.parent
 sys.path.append(str(project_root))
-os.chdir(project_root)  # config.manager loads config/ relative to the working directory
+os.chdir(project_root)  # default paths (data/..., results/...) are relative to the repo root
 
 from config.manager import load_config
-from experiments.shared.analysis_utils import COST_FUNCTIONS, calculate_reward
-from experiments.shared.context_builder import ContextBuilder
-from experiments.shared.simulation_data import (
+from experiments.simulation.rewards import COST_FUNCTIONS, calculate_reward
+from experiments.simulation.features import ContextBuilder
+from experiments.simulation.data import (
     TrainBounds,
     build_query_table,
     complete_queries,

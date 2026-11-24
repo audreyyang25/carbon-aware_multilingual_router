@@ -21,7 +21,7 @@ import torch
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from config.manager import load_config
-from experiments.shared.simulation_data import hardware_slug
+from experiments.simulation.data import hardware_slug
 from src.feature_extractor.language import MultilingualEmbeddingExtractor
 from src.metrics.energy import EnergyMeasurement
 

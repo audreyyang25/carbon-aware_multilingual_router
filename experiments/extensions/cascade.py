@@ -1,5 +1,8 @@
 """Agreement cascade, evaluated offline on the stored answers.
 
+Extension, not part of the main experiment: a different routing approach (no bandit) tried as a
+comparison point. Results are in experiments/results/extensions/cascade/{main,lowres}/.
+
 Ask two cheap models; if their extracted answers agree, return the first one's answer; otherwise
 escalate to a larger model. Energy is the sum of every model that ran. The grid-aware variant
 sends a query straight to the largest model when the grid is cleaner than --clean-ci g/kWh.
@@ -8,7 +11,7 @@ Every model answered every query once, so a cascade needs no new generations. Ca
 with the routers: each test query is charged at the grid intensity it saw in an existing run
 (same zones, runs, query order and hours), read from that run's steps.csv.gz.
 
-    python -m experiments.cascade OUT_DIR --run-dir <run with steps.csv.gz> \
+    python -m experiments.extensions.cascade OUT_DIR --run-dir <run with steps.csv.gz> \
         --results <generations> [--queries <queries csv>] [--comparison <lambda_compare dir>]
 
 Writes OUT_DIR/cascade.csv (one row per variant: accuracy, worst-language accuracy, gCO2 per 1k,
@@ -22,7 +25,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-from experiments.shared.simulation_data import load_results
+from experiments.simulation.data import load_results
 from src.metrics.carbon import carbon_g
 from src.metrics.extractors import canonical_number, get_extractor
 from src.metrics.text_utils import TextNormalizer
